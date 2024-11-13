@@ -1,0 +1,1217 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2024-08-29 14:01:52.776464",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "checklist_information_section",
+  "customer_name",
+  "lnspection_location",
+  "equipment_type",
+  "manufacturers_name",
+  "model",
+  "plate_no",
+  "capacity_swl",
+  "work_boom_angle",
+  "reference_standard",
+  "column_break_mdvm",
+  "job_order_no",
+  "inspection_date",
+  "sticker_no",
+  "serial_no",
+  "wire_rope_diameter_main_aux",
+  "year_of_built",
+  "type_of_inspection",
+  "ndt",
+  "amended_from",
+  "inspection_criteria_tab",
+  "inspection_criteria",
+  "ch1_1",
+  "column_break_oqmj",
+  "com1_1",
+  "section_break_nukz",
+  "ch1_2",
+  "column_break_naku",
+  "com1_2",
+  "section_break_rpld",
+  "ch1_3",
+  "column_break_qsoi",
+  "com1_3",
+  "section_break_ddsn",
+  "ch1_4",
+  "column_break_tnny",
+  "com1_4",
+  "section_break_glay",
+  "ch1_5",
+  "column_break_fiuu",
+  "com1_5",
+  "section_break_ailh",
+  "ch1_6",
+  "column_break_wjwq",
+  "com1_6",
+  "section_break_habj",
+  "ch1_7",
+  "column_break_nsjg",
+  "com1_7",
+  "section_break_kseh",
+  "ch1_8",
+  "column_break_tbdz",
+  "com1_8",
+  "section_break_ufva",
+  "ch1_9",
+  "column_break_cukp",
+  "com1_9",
+  "section_break_dhwz",
+  "ch1_10",
+  "column_break_xfbq",
+  "com1_10",
+  "section_break_qpjw",
+  "ch1_11",
+  "column_break_bigq",
+  "com1_11",
+  "section_break_dsba",
+  "ch1_12",
+  "column_break_iumu",
+  "com1_12",
+  "section_break_qxjt",
+  "ch2_1",
+  "column_break_ruec",
+  "com2_1",
+  "section_break_hzqf",
+  "ch2_2",
+  "column_break_qmkg",
+  "com2_2",
+  "section_break_taaj",
+  "ch2_3",
+  "column_break_ruku",
+  "com2_3",
+  "section_break_zwwb",
+  "ch2_4",
+  "column_break_kbsj",
+  "com2_4",
+  "section_break_gnac",
+  "ch2_5",
+  "column_break_osnj",
+  "com2_5",
+  "section_break_vxqk",
+  "ch2_6",
+  "column_break_fbaj",
+  "com2_6",
+  "section_break_zxnd",
+  "ch2_7",
+  "column_break_mkzs",
+  "com2_7",
+  "section_break_hhow",
+  "ch2_8",
+  "column_break_rtns",
+  "com2_8",
+  "section_break_lbsu",
+  "ch2_9",
+  "column_break_ygpc",
+  "com2_9",
+  "section_break_syba",
+  "ch2_10",
+  "column_break_bryf",
+  "com2_10",
+  "section_break_uyry",
+  "ch2_11",
+  "column_break_rozz",
+  "com2_11",
+  "section_break_wvkt",
+  "ch2_12",
+  "column_break_iysz",
+  "com2_12",
+  "section_break_gjyz",
+  "ch2_13",
+  "column_break_qwxv",
+  "com2_13",
+  "section_break_wihh",
+  "ch2_14",
+  "column_break_bewa",
+  "com2_14",
+  "section_break_pery",
+  "ch2_15",
+  "column_break_qepg",
+  "com2_15",
+  "section_break_bknj",
+  "ch2_16",
+  "column_break_elts",
+  "com2_16",
+  "section_break_njzg",
+  "ch2_17",
+  "column_break_rand",
+  "com2_17",
+  "section_break_xekp",
+  "ch2_18",
+  "column_break_ldto",
+  "com2_18",
+  "section_break_vuuj",
+  "ch2_19",
+  "column_break_zolw",
+  "com2_19",
+  "section_break_loxu",
+  "ch2_20",
+  "column_break_xctf",
+  "com2_20",
+  "section_break_mdvi",
+  "ch2_21",
+  "column_break_pcbc",
+  "com2_21",
+  "section_break_zdul",
+  "ch2_22",
+  "column_break_etfi",
+  "com2_22",
+  "section_break_qvfl",
+  "ch2_23",
+  "column_break_kral",
+  "com2_23",
+  "section_break_emdd",
+  "ch2_24",
+  "column_break_ybzd",
+  "com2_24",
+  "section_break_ncbe",
+  "ch2_25",
+  "column_break_nose",
+  "com2_25",
+  "section_break_oddt",
+  "ch2_26",
+  "column_break_bqup",
+  "com2_26",
+  "section_break_wzop",
+  "ch2_27",
+  "column_break_smvz",
+  "com2_27",
+  "section_break_tsxf",
+  "ch2_28",
+  "column_break_jull",
+  "com2_28",
+  "section_break_gwyb",
+  "ch3",
+  "column_break_xtzo",
+  "com3",
+  "section_break_ogel",
+  "ch3_1",
+  "column_break_zylt",
+  "com3_1",
+  "section_break_szto",
+  "ch4",
+  "column_break_xbpe",
+  "com4",
+  "signature_checklist_tab",
+  "signature_checklist_section",
+  "inspector",
+  "date_insector",
+  "signature_inspector",
+  "column_break_vlka",
+  "customer_representative",
+  "date_representative",
+  "signature_representative"
+ ],
+ "fields": [
+  {
+   "fieldname": "checklist_information_section",
+   "fieldtype": "Section Break",
+   "label": "Checklist Information"
+  },
+  {
+   "fieldname": "customer_name",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Customer Name",
+   "options": "Customer",
+   "reqd": 1
+  },
+  {
+   "fieldname": "column_break_mdvm",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "job_order_no",
+   "fieldtype": "Data",
+   "label": "Job Order No."
+  },
+  {
+   "fieldname": "lnspection_location",
+   "fieldtype": "Data",
+   "label": "Inspection Location"
+  },
+  {
+   "fieldname": "inspection_date",
+   "fieldtype": "Date",
+   "label": "Inspection Date"
+  },
+  {
+   "fieldname": "equipment_type",
+   "fieldtype": "Data",
+   "label": "Equipment Type"
+  },
+  {
+   "fieldname": "sticker_no",
+   "fieldtype": "Data",
+   "label": "Sticker No."
+  },
+  {
+   "fieldname": "manufacturers_name",
+   "fieldtype": "Data",
+   "label": "Manufacturer\u2019s Name"
+  },
+  {
+   "fieldname": "model",
+   "fieldtype": "Data",
+   "label": "Model"
+  },
+  {
+   "fieldname": "serial_no",
+   "fieldtype": "Data",
+   "label": "Serial No."
+  },
+  {
+   "fieldname": "wire_rope_diameter_main_aux",
+   "fieldtype": "Data",
+   "label": "Wire rope Diameter Main/Aux."
+  },
+  {
+   "fieldname": "plate_no",
+   "fieldtype": "Data",
+   "label": "Plate No."
+  },
+  {
+   "fieldname": "capacity_swl",
+   "fieldtype": "Data",
+   "label": "Capacity / SWL"
+  },
+  {
+   "fieldname": "year_of_built",
+   "fieldtype": "Data",
+   "label": "Year of Built"
+  },
+  {
+   "fieldname": "type_of_inspection",
+   "fieldtype": "Data",
+   "label": "Type of Inspection"
+  },
+  {
+   "fieldname": "work_boom_angle",
+   "fieldtype": "Data",
+   "label": "Work boom angle "
+  },
+  {
+   "fieldname": "reference_standard",
+   "fieldtype": "Select",
+   "label": "Reference Standard",
+   "options": "ASME B 30.6"
+  },
+  {
+   "fieldname": "ndt",
+   "fieldtype": "Data",
+   "label": "NDT (MPI) Where applicable"
+  },
+  {
+   "fieldname": "amended_from",
+   "fieldtype": "Link",
+   "label": "Amended From",
+   "no_copy": 1,
+   "options": "Derricks",
+   "print_hide": 1,
+   "read_only": 1,
+   "search_index": 1
+  },
+  {
+   "fieldname": "inspection_criteria_tab",
+   "fieldtype": "Tab Break",
+   "label": "Inspection Criteria"
+  },
+  {
+   "description": "1 General Requirements",
+   "fieldname": "inspection_criteria",
+   "fieldtype": "Section Break",
+   "label": "Inspection Criteria"
+  },
+  {
+   "fieldname": "ch1_1",
+   "fieldtype": "Select",
+   "label": "1.1 Equipment documentation is available",
+   "options": "\nYes\nNo\nN/A"
+  },
+  {
+   "fieldname": "column_break_oqmj",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "com1_1",
+   "fieldtype": "Small Text",
+   "label": "Comment"
+  },
+  {
+   "fieldname": "section_break_nukz",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "ch1_2",
+   "fieldtype": "Select",
+   "label": "1.2 Previous inspection reports are checked",
+   "options": "\nYes\nNo\nN/A"
+  },
+  {
+   "fieldname": "column_break_naku",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "com1_2",
+   "fieldtype": "Small Text",
+   "label": "Comment"
+  },
+  {
+   "fieldname": "section_break_rpld",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "ch1_3",
+   "fieldtype": "Select",
+   "label": "1.3 Durable load chart is provided in an accessible location",
+   "options": "\nYes\nNo\nN/A"
+  },
+  {
+   "fieldname": "column_break_qsoi",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "com1_3",
+   "fieldtype": "Small Text",
+   "label": "Comment"
+  },
+  {
+   "fieldname": "section_break_ddsn",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "ch1_4",
+   "fieldtype": "Select",
+   "label": "1.4 Work areas chart is available",
+   "options": "\nYes\nNo\nN/A"
+  },
+  {
+   "fieldname": "column_break_tnny",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "com1_4",
+   "fieldtype": "Small Text",
+   "label": "Comment"
+  },
+  {
+   "fieldname": "section_break_glay",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "ch1_5",
+   "fieldtype": "Select",
+   "label": "1.5 A rating chart, legible and visible to the operator at the controls",
+   "options": "\nYes\nNo\nN/A"
+  },
+  {
+   "fieldname": "column_break_fiuu",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "com1_5",
+   "fieldtype": "Small Text",
+   "label": "Comment"
+  },
+  {
+   "fieldname": "section_break_ailh",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "ch1_6",
+   "fieldtype": "Select",
+   "label": "1.6  Operator is certified (for the inspected Derrick type/model) and licensed",
+   "options": "\nYes\nNo\nN/A"
+  },
+  {
+   "fieldname": "column_break_wjwq",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "com1_6",
+   "fieldtype": "Small Text",
+   "label": "Comment"
+  },
+  {
+   "fieldname": "section_break_habj",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "ch1_7",
+   "fieldtype": "Select",
+   "label": "1.7 A sign posted warning the operator not to rely solely on automatic device.",
+   "options": "\nYes\nNo\nN/A"
+  },
+  {
+   "fieldname": "column_break_nsjg",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "com1_7",
+   "fieldtype": "Small Text",
+   "label": "Comment"
+  },
+  {
+   "fieldname": "section_break_kseh",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "ch1_8",
+   "fieldtype": "Select",
+   "label": "1.8  Rated capacity of Derrick is marked (Arabic and English)",
+   "options": "\nYes\nNo\nN/A"
+  },
+  {
+   "fieldname": "column_break_tbdz",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "com1_8",
+   "fieldtype": "Small Text",
+   "label": "Comment"
+  },
+  {
+   "fieldname": "section_break_ufva",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "ch1_9",
+   "fieldtype": "Select",
+   "label": "1.9  Fire extinguisher is in place with minimum Rating 10 BC",
+   "options": "\nYes\nNo\nN/A"
+  },
+  {
+   "fieldname": "column_break_cukp",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "com1_9",
+   "fieldtype": "Small Text",
+   "label": "Comment"
+  },
+  {
+   "fieldname": "section_break_dhwz",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "ch1_10",
+   "fieldtype": "Select",
+   "label": "1.10 Markings and direction of all control levers are clearly displayed",
+   "options": "\nYes\nNo\nN/A"
+  },
+  {
+   "fieldname": "column_break_xfbq",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "com1_10",
+   "fieldtype": "Small Text",
+   "label": "Comment"
+  },
+  {
+   "fieldname": "section_break_qpjw",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "ch1_11",
+   "fieldtype": "Select",
+   "label": "1.11 Electrical equipment's are protected from the environment and guarded",
+   "options": "\nYes\nNo\nN/A"
+  },
+  {
+   "fieldname": "column_break_bigq",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "com1_11",
+   "fieldtype": "Small Text",
+   "label": "Comment"
+  },
+  {
+   "fieldname": "section_break_dsba",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "ch1_12",
+   "fieldtype": "Select",
+   "label": "1.12 Limiting devices are fully operational ",
+   "options": "\nYes\nNo\nN/A"
+  },
+  {
+   "fieldname": "column_break_iumu",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "com1_12",
+   "fieldtype": "Small Text",
+   "label": "Comment"
+  },
+  {
+   "description": "2 INSPECTION POINTS",
+   "fieldname": "section_break_qxjt",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "ch2_1",
+   "fieldtype": "Select",
+   "label": "2.1 Boom is operational",
+   "options": "\nYes\nNo\nN/A"
+  },
+  {
+   "fieldname": "column_break_ruec",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "com2_1",
+   "fieldtype": "Small Text",
+   "label": "Comment"
+  },
+  {
+   "fieldname": "section_break_hzqf",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "ch2_2",
+   "fieldtype": "Select",
+   "label": "2.2 Two (2) full wraps of rope remain on the drum when hook is in the extreme low position",
+   "options": "\nYes\nNo\nN/A"
+  },
+  {
+   "fieldname": "column_break_qmkg",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "com2_2",
+   "fieldtype": "Small Text",
+   "label": "Comment"
+  },
+  {
+   "fieldname": "section_break_taaj",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "ch2_3",
+   "fieldtype": "Select",
+   "label": "2.3 Control is smoothly operating on acceleration and deceleration",
+   "options": "\nYes\nNo\nN/A"
+  },
+  {
+   "fieldname": "column_break_ruku",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "com2_3",
+   "fieldtype": "Small Text",
+   "label": "Comment"
+  },
+  {
+   "fieldname": "section_break_zwwb",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "ch2_4",
+   "fieldtype": "Select",
+   "label": "2.4 Swing braking operates, as well as positive locking devices",
+   "options": "\nYes\nNo\nN/A"
+  },
+  {
+   "fieldname": "column_break_kbsj",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "com2_4",
+   "fieldtype": "Small Text",
+   "label": "Comment"
+  },
+  {
+   "fieldname": "section_break_gnac",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "ch2_5",
+   "fieldtype": "Select",
+   "label": "2.5 Hook Travel controls are properly operating/functioning",
+   "options": "\nYes\nNo\nN/A"
+  },
+  {
+   "fieldname": "column_break_osnj",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "com2_5",
+   "fieldtype": "Small Text",
+   "label": "Comment"
+  },
+  {
+   "fieldname": "section_break_vxqk",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "ch2_6",
+   "fieldtype": "Select",
+   "label": "2.6 reduction of rope diameter due to loss of core support or internal or external corrosion",
+   "options": "\nYes\nNo\nN/A"
+  },
+  {
+   "fieldname": "column_break_fbaj",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "com2_6",
+   "fieldtype": "Small Text",
+   "label": "Comment"
+  },
+  {
+   "fieldname": "section_break_zxnd",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "ch2_7",
+   "fieldtype": "Select",
+   "label": "2.7 Brakes and locks are correctly operating",
+   "options": "\nYes\nNo\nN/A"
+  },
+  {
+   "fieldname": "column_break_mkzs",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "com2_7",
+   "fieldtype": "Small Text",
+   "label": "Comment"
+  },
+  {
+   "fieldname": "section_break_hhow",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "ch2_8",
+   "fieldtype": "Select",
+   "label": "2.8 severely corroded, cracked, bent, worn, or improperly applied end connections",
+   "options": "\nYes\nNo\nN/A"
+  },
+  {
+   "fieldname": "column_break_rtns",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "com2_8",
+   "fieldtype": "Small Text",
+   "label": "Comment"
+  },
+  {
+   "fieldname": "section_break_lbsu",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "ch2_9",
+   "fieldtype": "Select",
+   "label": "2.9 Sheave grooves have surface has no defects and guards in place",
+   "options": "\nYes\nNo\nN/A"
+  },
+  {
+   "fieldname": "column_break_ygpc",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "com2_9",
+   "fieldtype": "Small Text",
+   "label": "Comment"
+  },
+  {
+   "fieldname": "section_break_syba",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "ch2_10",
+   "fieldtype": "Select",
+   "label": "2.10 Verify cab functionality and condition",
+   "options": "\nYes\nNo\nN/A"
+  },
+  {
+   "fieldname": "column_break_bryf",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "com2_10",
+   "fieldtype": "Small Text",
+   "label": "Comment"
+  },
+  {
+   "fieldname": "section_break_uyry",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "ch2_11",
+   "fieldtype": "Select",
+   "label": "2.11 structural members for deformation, cracks, and corrosion",
+   "options": "\nYes\nNo\nN/A"
+  },
+  {
+   "fieldname": "column_break_rozz",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "com2_11",
+   "fieldtype": "Small Text",
+   "label": "Comment"
+  },
+  {
+   "fieldname": "section_break_wvkt",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "ch2_12",
+   "fieldtype": "Select",
+   "label": "2.12 Walking platforms and areas of structure are skid-resistance",
+   "options": "\nYes\nNo\nN/A"
+  },
+  {
+   "fieldname": "column_break_iysz",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "com2_12",
+   "fieldtype": "Small Text",
+   "label": "Comment"
+  },
+  {
+   "fieldname": "section_break_gjyz",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "ch2_13",
+   "fieldtype": "Select",
+   "label": "2.13 bolts and rivets for tightness",
+   "options": "\nYes\nNo\nN/A"
+  },
+  {
+   "fieldname": "column_break_qwxv",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "com2_13",
+   "fieldtype": "Small Text",
+   "label": "Comment"
+  },
+  {
+   "fieldname": "section_break_wihh",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "ch2_14",
+   "fieldtype": "Select",
+   "label": "2.14 parts such as pins, bearings, shafts, gears, sheaves, drums, rollers, and locking and clamping devices for wear, cracks, and distortion",
+   "options": "\nYes\nNo\nN/A"
+  },
+  {
+   "fieldname": "column_break_bewa",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "com2_14",
+   "fieldtype": "Small Text",
+   "label": "Comment"
+  },
+  {
+   "fieldname": "section_break_pery",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "ch2_15",
+   "fieldtype": "Select",
+   "label": "2.15 gudgeon pin for cracks, wear, and distortion",
+   "options": "\nYes\nNo\nN/A"
+  },
+  {
+   "fieldname": "column_break_qepg",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "com2_15",
+   "fieldtype": "Small Text",
+   "label": "Comment"
+  },
+  {
+   "fieldname": "section_break_bknj",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "ch2_16",
+   "fieldtype": "Select",
+   "label": "2.16 Boom angle indicator is fitted, operable & can be read from operator cabin",
+   "options": "\nYes\nNo\nN/A"
+  },
+  {
+   "fieldname": "column_break_elts",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "com2_16",
+   "fieldtype": "Small Text",
+   "label": "Comment"
+  },
+  {
+   "fieldname": "section_break_njzg",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "ch2_17",
+   "fieldtype": "Select",
+   "label": "2.17 power plants for performance and compliance with applicable safety requirements",
+   "options": "\nYes\nNo\nN/A"
+  },
+  {
+   "fieldname": "column_break_rand",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "com2_17",
+   "fieldtype": "Small Text",
+   "label": "Comment"
+  },
+  {
+   "fieldname": "section_break_xekp",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "ch2_18",
+   "fieldtype": "Select",
+   "label": "2.18 Foundation or supports shall be inspected for continued ability to sustain the imposed l",
+   "options": "\nYes\nNo\nN/A"
+  },
+  {
+   "fieldname": "column_break_ldto",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "com2_18",
+   "fieldtype": "Small Text",
+   "label": "Comment"
+  },
+  {
+   "fieldname": "section_break_vuuj",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "ch2_19",
+   "fieldtype": "Select",
+   "label": "2.19 all chords and lacing",
+   "options": "\nYes\nNo\nN/A"
+  },
+  {
+   "fieldname": "column_break_zolw",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "com2_19",
+   "fieldtype": "Small Text",
+   "label": "Comment"
+  },
+  {
+   "fieldname": "section_break_loxu",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "ch2_20",
+   "fieldtype": "Select",
+   "label": "2.20 tension in guys",
+   "options": "\nYes\nNo\nN/A"
+  },
+  {
+   "fieldname": "column_break_xctf",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "com2_20",
+   "fieldtype": "Small Text",
+   "label": "Comment"
+  },
+  {
+   "fieldname": "section_break_mdvi",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "ch2_21",
+   "fieldtype": "Select",
+   "label": "2.21 plumb of the mast",
+   "options": "\nYes\nNo\nN/A"
+  },
+  {
+   "fieldname": "column_break_pcbc",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "com2_21",
+   "fieldtype": "Small Text",
+   "label": "Comment"
+  },
+  {
+   "fieldname": "section_break_zdul",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "ch2_22",
+   "fieldtype": "Select",
+   "label": "2.22 external indication of deterioration or leakage in air or hydraulic systems",
+   "options": "\nYes\nNo\nN/A"
+  },
+  {
+   "fieldname": "column_break_etfi",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "com2_22",
+   "fieldtype": "Small Text",
+   "label": "Comment"
+  },
+  {
+   "fieldname": "section_break_qvfl",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "ch2_23",
+   "fieldtype": "Select",
+   "label": "2.23 rope reeving",
+   "options": "\nYes\nNo\nN/A"
+  },
+  {
+   "fieldname": "column_break_kral",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "com2_23",
+   "fieldtype": "Small Text",
+   "label": "Comment"
+  },
+  {
+   "fieldname": "section_break_emdd",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "ch2_24",
+   "fieldtype": "Select",
+   "label": "2.24 Brake linings are not oil contaminated",
+   "options": "\nYes\nNo\nN/A"
+  },
+  {
+   "fieldname": "column_break_ybzd",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "com2_24",
+   "fieldtype": "Small Text",
+   "label": "Comment"
+  },
+  {
+   "fieldname": "section_break_ncbe",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "ch2_25",
+   "fieldtype": "Select",
+   "label": "2.25 Brake hoses have not deteriorated, e.g. cracks, splits, leaks, etc.",
+   "options": "\nYes\nNo\nN/A"
+  },
+  {
+   "fieldname": "column_break_nose",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "com2_25",
+   "fieldtype": "Small Text",
+   "label": "Comment"
+  },
+  {
+   "fieldname": "section_break_oddt",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "ch2_26",
+   "fieldtype": "Select",
+   "label": "2.26 Rope is free damage of max 6 randomly broken wires or 3 broken wires in 1 strand",
+   "options": "\nYes\nNo\nN/A"
+  },
+  {
+   "fieldname": "column_break_bqup",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "com2_26",
+   "fieldtype": "Small Text",
+   "label": "Comment"
+  },
+  {
+   "fieldname": "section_break_wzop",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "ch2_27",
+   "fieldtype": "Select",
+   "label": "2.27  Wear on clutch, Brake, chain drive, lining, pawls, Any abrasion evidence",
+   "options": "\nYes\nNo\nN/A"
+  },
+  {
+   "fieldname": "column_break_smvz",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "com2_27",
+   "fieldtype": "Small Text",
+   "label": "Comment"
+  },
+  {
+   "fieldname": "section_break_tsxf",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "ch2_28",
+   "fieldtype": "Select",
+   "label": "2.28  Leakage (in pneumatic hydraulic system, threaded clamps, fluid)",
+   "options": "\nYes\nNo\nN/A"
+  },
+  {
+   "fieldname": "column_break_jull",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "com2_28",
+   "fieldtype": "Small Text",
+   "label": "Comment"
+  },
+  {
+   "fieldname": "section_break_gwyb",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "ch3",
+   "fieldtype": "Select",
+   "label": "3 Load test/Proof Test  Where applicable",
+   "options": "\nYes\nNo\nN/A"
+  },
+  {
+   "fieldname": "column_break_xtzo",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "com3",
+   "fieldtype": "Small Text",
+   "label": "Comment"
+  },
+  {
+   "fieldname": "section_break_ogel",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "ch3_1",
+   "fieldtype": "Select",
+   "label": "3.1 Load test Parameters (M/Aux.) Hook",
+   "options": "\nYes\nNo\nN/A"
+  },
+  {
+   "fieldname": "column_break_zylt",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "Angle=\nNo. of Falls=\n Load Value=\n SWL=",
+   "fieldname": "com3_1",
+   "fieldtype": "Small Text",
+   "label": "Comment"
+  },
+  {
+   "fieldname": "section_break_szto",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "ch4",
+   "fieldtype": "Select",
+   "label": "4 Final Conclusion (Accepted/Rejected)",
+   "options": "\nYes\nNo\nN/A"
+  },
+  {
+   "fieldname": "column_break_xbpe",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "com4",
+   "fieldtype": "Small Text",
+   "label": "Comment"
+  },
+  {
+   "fieldname": "signature_checklist_tab",
+   "fieldtype": "Tab Break",
+   "label": "Signature Checklist"
+  },
+  {
+   "fieldname": "signature_checklist_section",
+   "fieldtype": "Section Break",
+   "label": "Signature Checklist"
+  },
+  {
+   "fieldname": "inspector",
+   "fieldtype": "Data",
+   "label": "Inspector"
+  },
+  {
+   "fieldname": "column_break_vlka",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "customer_representative",
+   "fieldtype": "Data",
+   "label": "Customer Representative"
+  },
+  {
+   "fieldname": "date_insector",
+   "fieldtype": "Date",
+   "label": "Date"
+  },
+  {
+   "fieldname": "date_representative",
+   "fieldtype": "Date",
+   "label": "Date"
+  },
+  {
+   "fieldname": "signature_inspector",
+   "fieldtype": "Signature",
+   "label": "Signature"
+  },
+  {
+   "fieldname": "signature_representative",
+   "fieldtype": "Signature",
+   "label": "Signature"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "is_submittable": 1,
+ "links": [],
+ "modified": "2024-09-01 14:33:38.599981",
+ "modified_by": "Administrator",
+ "module": "Uis",
+ "name": "Derricks",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "submit": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}

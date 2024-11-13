@@ -1,0 +1,64 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "autoname": "field:orgnization_department",
+ "creation": "2024-10-12 15:00:00.181668",
+ "default_view": "List",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "orgnization_department",
+  "orgnization_type",
+  "orgnization_name"
+ ],
+ "fields": [
+  {
+   "fieldname": "orgnization_department",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Orgnization Department",
+   "reqd": 1,
+   "unique": 1
+  },
+  {
+   "fieldname": "orgnization_type",
+   "fieldtype": "Select",
+   "label": "Orgnization Type",
+   "options": "Customer\nCompetitors\nGovernment\nSupplier\nBank Funds",
+   "reqd": 1
+  },
+  {
+   "fieldname": "orgnization_name",
+   "fieldtype": "Dynamic Link",
+   "label": "Orgnization Name",
+   "options": "orgnization_type",
+   "reqd": 1
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2024-10-12 15:02:47.684987",
+ "modified_by": "Administrator",
+ "module": "UIS CRM",
+ "name": "Orgnization Department",
+ "naming_rule": "By fieldname",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}

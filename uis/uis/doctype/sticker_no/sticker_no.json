@@ -1,0 +1,59 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2024-09-16 11:19:08.801712",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "section_break_psyf",
+  "sticker_no",
+  "column_break_bpfu",
+  "sticker_name"
+ ],
+ "fields": [
+  {
+   "fieldname": "section_break_psyf",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "sticker_no",
+   "fieldtype": "Data",
+   "label": "Sticker No"
+  },
+  {
+   "fieldname": "column_break_bpfu",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "sticker_name",
+   "fieldtype": "Data",
+   "label": "Sticker Name"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "is_submittable": 1,
+ "links": [],
+ "modified": "2024-09-16 11:21:04.400213",
+ "modified_by": "Administrator",
+ "module": "Uis",
+ "name": "Sticker No",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "submit": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}

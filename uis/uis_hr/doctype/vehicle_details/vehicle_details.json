@@ -1,0 +1,79 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2024-10-08 12:36:07.430749",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "vehicle",
+  "vehicle_model",
+  "manufacurer",
+  "plate_no",
+  "year_of_built",
+  "branch"
+ ],
+ "fields": [
+  {
+   "columns": 2,
+   "fieldname": "vehicle",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Vehicle",
+   "options": "Vehicle",
+   "reqd": 1
+  },
+  {
+   "columns": 2,
+   "fetch_from": "vehicle.model",
+   "fieldname": "vehicle_model",
+   "fieldtype": "Read Only",
+   "in_list_view": 1,
+   "label": "Vehicle Model"
+  },
+  {
+   "columns": 2,
+   "fetch_from": "vehicle.make",
+   "fieldname": "manufacurer",
+   "fieldtype": "Read Only",
+   "in_list_view": 1,
+   "label": "Manufacurer"
+  },
+  {
+   "columns": 2,
+   "fetch_from": "vehicle.license_plate",
+   "fieldname": "plate_no",
+   "fieldtype": "Read Only",
+   "in_list_view": 1,
+   "label": "Plate No."
+  },
+  {
+   "columns": 1,
+   "fetch_from": "vehicle.year_of_built",
+   "fieldname": "year_of_built",
+   "fieldtype": "Read Only",
+   "in_list_view": 1,
+   "label": "Year of Built"
+  },
+  {
+   "columns": 1,
+   "fetch_from": "vehicle.branch",
+   "fieldname": "branch",
+   "fieldtype": "Read Only",
+   "in_list_view": 1,
+   "label": "Branch"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "istable": 1,
+ "links": [],
+ "modified": "2024-10-08 14:26:35.910244",
+ "modified_by": "Administrator",
+ "module": "UIS HR",
+ "name": "Vehicle Details",
+ "owner": "Administrator",
+ "permissions": [],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}

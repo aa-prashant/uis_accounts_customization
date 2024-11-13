@@ -1,0 +1,148 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "autoname": "field:serial_no",
+ "creation": "2024-09-16 14:47:43.915279",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "section_break_czbf",
+  "customer_name",
+  "serial_no",
+  "service_group",
+  "manufacturer",
+  "year_of_built",
+  "plate_no",
+  "least_count_resolution",
+  "column_break_dpvl",
+  "equpment_name",
+  "equipment_type",
+  "identification_no",
+  "model",
+  "capacity_range_swl",
+  "uom",
+  "amended_from"
+ ],
+ "fields": [
+  {
+   "fieldname": "section_break_czbf",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "serial_no",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Serial No.",
+   "reqd": 1,
+   "unique": 1
+  },
+  {
+   "fieldname": "column_break_dpvl",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "manufacturer",
+   "fieldtype": "Link",
+   "label": "Manufacturer\u2019s Name",
+   "options": "Manufacturers"
+  },
+  {
+   "fieldname": "model",
+   "fieldtype": "Link",
+   "label": "Model",
+   "options": "Model"
+  },
+  {
+   "fieldname": "identification_no",
+   "fieldtype": "Data",
+   "label": "Identification No."
+  },
+  {
+   "fieldname": "plate_no",
+   "fieldtype": "Data",
+   "label": "Plate No."
+  },
+  {
+   "fieldname": "equpment_name",
+   "fieldtype": "Data",
+   "label": "Equpment Name"
+  },
+  {
+   "fieldname": "capacity_range_swl",
+   "fieldtype": "Data",
+   "label": "Capacity / Range (SWL)"
+  },
+  {
+   "fieldname": "equipment_type",
+   "fieldtype": "Link",
+   "label": "Equipment Type",
+   "options": "Equipment Type"
+  },
+  {
+   "fieldname": "uom",
+   "fieldtype": "Link",
+   "label": "UOM",
+   "options": "UOM"
+  },
+  {
+   "fieldname": "service_group",
+   "fieldtype": "Link",
+   "label": "Service Group",
+   "options": "Item Group"
+  },
+  {
+   "fieldname": "least_count_resolution",
+   "fieldtype": "Data",
+   "label": "Least Count / Resolution"
+  },
+  {
+   "fieldname": "amended_from",
+   "fieldtype": "Link",
+   "label": "Amended From",
+   "no_copy": 1,
+   "options": "Equpment Data",
+   "print_hide": 1,
+   "read_only": 1,
+   "search_index": 1
+  },
+  {
+   "fieldname": "year_of_built",
+   "fieldtype": "Date",
+   "label": "Year of Built"
+  },
+  {
+   "fieldname": "customer_name",
+   "fieldtype": "Link",
+   "label": "Customer Name",
+   "options": "Customer",
+   "reqd": 1
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "is_submittable": 1,
+ "links": [],
+ "modified": "2024-09-17 17:31:22.969524",
+ "modified_by": "Administrator",
+ "module": "Uis",
+ "name": "Equpment Data",
+ "naming_rule": "By fieldname",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "submit": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}

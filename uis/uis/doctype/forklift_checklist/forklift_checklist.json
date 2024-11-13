@@ -1,0 +1,1050 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2024-08-22 13:47:56.054323",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "checklist_information_section",
+  "job_order_no",
+  "lnspection_location",
+  "equipment_type",
+  "manufacturers_name",
+  "model",
+  "plate_no",
+  "capacity_swl",
+  "fork_size",
+  "column_break_gbbl",
+  "customer_name",
+  "inspection_date",
+  "sticker_no",
+  "serial_no",
+  "identification_no",
+  "year_of_built",
+  "type_of_inspection",
+  "ndt_mpi",
+  "inspection_criteria",
+  "ch1_1",
+  "column_break_bgqm",
+  "com1_1",
+  "section_break_vtts",
+  "ch1_2",
+  "column_break_sbyl",
+  "com1_2",
+  "section_break_pfda",
+  "ch1_3",
+  "column_break_rzan",
+  "com1_3",
+  "section_break_uanf",
+  "ch1_4",
+  "column_break_bbbr",
+  "com1_4",
+  "section_break_vyjj",
+  "ch1_5",
+  "column_break_xzft",
+  "com1_5",
+  "section_break_wufr",
+  "ch1_6",
+  "column_break_hlxb",
+  "com1_6",
+  "section_break_upow",
+  "ch2_1",
+  "column_break_ojfz",
+  "com2_1",
+  "section_break_hcaz",
+  "ch2_2",
+  "column_break_nglp",
+  "com2_2",
+  "section_break_fote",
+  "ch2_3",
+  "column_break_fdwu",
+  "com2_3",
+  "section_break_lykd",
+  "ch2_4",
+  "column_break_upsw",
+  "com2_4",
+  "section_break_czyi",
+  "ch2_5",
+  "column_break_xept",
+  "com2_5",
+  "section_break_nfsn",
+  "ch3_1",
+  "column_break_ggpn",
+  "com3_1",
+  "section_break_awft",
+  "ch3_2",
+  "column_break_tkfu",
+  "com3_2",
+  "section_break_unxw",
+  "ch3_3",
+  "column_break_gvyg",
+  "com3_3",
+  "section_break_oxwi",
+  "ch3_4",
+  "column_break_khlu",
+  "com3_4",
+  "section_break_brfp",
+  "ch3_5",
+  "column_break_vikn",
+  "com3_5",
+  "section_break_umta",
+  "ch3_6",
+  "column_break_dhrg",
+  "com3_6",
+  "section_break_mqvp",
+  "ch4_1",
+  "column_break_xgxh",
+  "com4_1",
+  "section_break_zmys",
+  "ch4_2",
+  "column_break_kyib",
+  "com4_2",
+  "section_break_yhpq",
+  "ch4_3",
+  "column_break_xnfw",
+  "com4_3",
+  "section_break_sqsq",
+  "ch4_4",
+  "column_break_hobc",
+  "com4_4",
+  "section_break_omqx",
+  "ch5_1",
+  "column_break_dowy",
+  "com5_1",
+  "section_break_vprv",
+  "ch5_2",
+  "column_break_jjqi",
+  "com5_2",
+  "section_break_hezj",
+  "ch5_3",
+  "column_break_rzux",
+  "com5_3",
+  "section_break_iqmj",
+  "ch5_4",
+  "column_break_xfjv",
+  "com5_4",
+  "section_break_ueos",
+  "ch6_1",
+  "column_break_odsd",
+  "com6_1",
+  "section_break_lcis",
+  "ch6_2",
+  "column_break_zlgg",
+  "com6_2",
+  "section_break_tecs",
+  "ch6_3",
+  "column_break_gquc",
+  "com6_3",
+  "section_break_eucm",
+  "ch6_4",
+  "column_break_mjmn",
+  "com6_4",
+  "section_break_kagk",
+  "ch6_5",
+  "column_break_mrqb",
+  "com6_5",
+  "section_break_pkpz",
+  "ch6_6",
+  "column_break_tigs",
+  "com6_6",
+  "section_break_syno",
+  "ch7_1",
+  "column_break_ibsu",
+  "com7_1",
+  "section_break_klrg",
+  "ch7_2",
+  "column_break_mrez",
+  "com7_2",
+  "section_break_kpus",
+  "ch7_3",
+  "column_break_gtll",
+  "com7_3",
+  "section_break_nbfg",
+  "ch8",
+  "column_break_dsgo",
+  "com8",
+  "section_break_bleb",
+  "ch9",
+  "column_break_wqbg",
+  "com9",
+  "section_break_itho",
+  "inspector",
+  "date_insector",
+  "signature_inspector",
+  "column_break_rqey",
+  "customer_representative",
+  "date_representative",
+  "signature_representative",
+  "amended_from"
+ ],
+ "fields": [
+  {
+   "fieldname": "checklist_information_section",
+   "fieldtype": "Section Break",
+   "label": "Checklist Information"
+  },
+  {
+   "fetch_from": "job_order_no.customer_name",
+   "fieldname": "customer_name",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Customer Name",
+   "read_only": 1,
+   "reqd": 1
+  },
+  {
+   "fieldname": "lnspection_location",
+   "fieldtype": "Data",
+   "label": "Inspection Location"
+  },
+  {
+   "fieldname": "equipment_type",
+   "fieldtype": "Select",
+   "label": "Equipment Type",
+   "options": "\n1\n2\n3\n4"
+  },
+  {
+   "fieldname": "manufacturers_name",
+   "fieldtype": "Data",
+   "label": "Manufacturer\u2019s Name"
+  },
+  {
+   "fieldname": "model",
+   "fieldtype": "Data",
+   "label": "Model"
+  },
+  {
+   "fieldname": "plate_no",
+   "fieldtype": "Data",
+   "label": "Plate No."
+  },
+  {
+   "fieldname": "capacity_swl",
+   "fieldtype": "Data",
+   "label": "Capacity / SWL"
+  },
+  {
+   "fieldname": "fork_size",
+   "fieldtype": "Data",
+   "label": "Fork Size"
+  },
+  {
+   "fieldname": "column_break_gbbl",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "job_order_no",
+   "fieldtype": "Link",
+   "label": "Job Order No.",
+   "options": "Job Order",
+   "reqd": 1
+  },
+  {
+   "default": "Today",
+   "fieldname": "inspection_date",
+   "fieldtype": "Date",
+   "label": "Inspection Date"
+  },
+  {
+   "fieldname": "sticker_no",
+   "fieldtype": "Data",
+   "label": "Sticker No."
+  },
+  {
+   "fieldname": "serial_no",
+   "fieldtype": "Data",
+   "label": "Serial No."
+  },
+  {
+   "fieldname": "identification_no",
+   "fieldtype": "Data",
+   "label": "Identification No."
+  },
+  {
+   "fieldname": "year_of_built",
+   "fieldtype": "Data",
+   "label": "Year of Built"
+  },
+  {
+   "fieldname": "type_of_inspection",
+   "fieldtype": "Data",
+   "label": "Type of Inspection"
+  },
+  {
+   "fieldname": "ndt_mpi",
+   "fieldtype": "Data",
+   "label": "NDT (MPI) Where applicable"
+  },
+  {
+   "description": "1 General Requirements",
+   "fieldname": "inspection_criteria",
+   "fieldtype": "Section Break",
+   "label": "Inspection Criteria"
+  },
+  {
+   "fieldname": "ch1_1",
+   "fieldtype": "Select",
+   "label": "1.1 Equipment documentation is available",
+   "options": "Yes\nNo\nN/A"
+  },
+  {
+   "fieldname": "column_break_bgqm",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "com1_1",
+   "fieldtype": "Data",
+   "label": "Comment"
+  },
+  {
+   "fieldname": "section_break_vtts",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "ch1_2",
+   "fieldtype": "Select",
+   "label": "1.2 Previous inspection reports are checked",
+   "options": "Yes\nNo\nN/A"
+  },
+  {
+   "fieldname": "column_break_sbyl",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "com1_2",
+   "fieldtype": "Data",
+   "label": "Comment "
+  },
+  {
+   "fieldname": "section_break_pfda",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "ch1_3",
+   "fieldtype": "Select",
+   "label": "1.3 Fork lift identification number, SWL/payload, and the maximum gross weight is clearly displayed",
+   "options": "Yes\nNo\nN/A"
+  },
+  {
+   "fieldname": "column_break_rzan",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "com1_3",
+   "fieldtype": "Data",
+   "label": "Comment"
+  },
+  {
+   "fieldname": "section_break_uanf",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "ch1_4",
+   "fieldtype": "Select",
+   "label": "1.4 Check Lift/Tilt (and reach) Rams for leaks.",
+   "options": "Yes\nNo\nN/A"
+  },
+  {
+   "fieldname": "column_break_bbbr",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "com1_4",
+   "fieldtype": "Data",
+   "label": "Comment"
+  },
+  {
+   "fieldname": "section_break_vyjj",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "ch1_5",
+   "fieldtype": "Select",
+   "label": "1.5 Startup truck/ Check all transmission functions i.e. Drive Steering.",
+   "options": "Yes\nNo\nN/A"
+  },
+  {
+   "fieldname": "column_break_xzft",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "com1_5",
+   "fieldtype": "Data",
+   "label": "Comment"
+  },
+  {
+   "fieldname": "section_break_wufr",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "ch1_6",
+   "fieldtype": "Select",
+   "label": "1.6 Check all lifting functions i.e. Lower Tilt, Reach etc.....",
+   "options": "Yes\nNo\nN/A"
+  },
+  {
+   "fieldname": "column_break_hlxb",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "com1_6",
+   "fieldtype": "Data",
+   "label": "Comment"
+  },
+  {
+   "description": "2 TIRES",
+   "fieldname": "section_break_upow",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "ch2_1",
+   "fieldtype": "Select",
+   "label": "2.1 Tires Condition ",
+   "options": "Yes\nNo\nN/A"
+  },
+  {
+   "fieldname": "column_break_ojfz",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "com2_1",
+   "fieldtype": "Data",
+   "label": "Comment"
+  },
+  {
+   "fieldname": "section_break_hcaz",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "ch2_2",
+   "fieldtype": "Select",
+   "label": "2.2  Tires free of  cut and worn out.",
+   "options": "Yes\nNo\nN/A"
+  },
+  {
+   "fieldname": "column_break_nglp",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "com2_2",
+   "fieldtype": "Data",
+   "label": "Comment"
+  },
+  {
+   "fieldname": "section_break_fote",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "ch2_3",
+   "fieldtype": "Select",
+   "label": "2.3 Re-treaded on tires ",
+   "options": "Yes\nNo\nN/A"
+  },
+  {
+   "fieldname": "column_break_fdwu",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "com2_3",
+   "fieldtype": "Data",
+   "label": "Comment"
+  },
+  {
+   "fieldname": "section_break_lykd",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "ch2_4",
+   "fieldtype": "Select",
+   "label": "2.4 Wheel loader to be fitted with a spare tire and changing equipment to safely change a tire.",
+   "options": "Yes\nNo\nN/A"
+  },
+  {
+   "fieldname": "column_break_upsw",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "com2_4",
+   "fieldtype": "Data",
+   "label": "Comment"
+  },
+  {
+   "fieldname": "section_break_czyi",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "ch2_5",
+   "fieldtype": "Select",
+   "label": "2.5 Check condition and security of wheel nuts.",
+   "options": "Yes\nNo\nN/A"
+  },
+  {
+   "fieldname": "column_break_xept",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "com2_5",
+   "fieldtype": "Data",
+   "label": "Comment"
+  },
+  {
+   "description": "3 CABIN",
+   "fieldname": "section_break_nfsn",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "ch3_1",
+   "fieldtype": "Select",
+   "label": "3.1 Signs, stickers or labels fitted not obstructing operator's vision or use of any controls.",
+   "options": "Yes\nNo\nN/A"
+  },
+  {
+   "fieldname": "column_break_ggpn",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "com3_1",
+   "fieldtype": "Data",
+   "label": "Comment"
+  },
+  {
+   "fieldname": "section_break_awft",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "ch3_2",
+   "fieldtype": "Select",
+   "label": "3.2 Horn is operational.",
+   "options": "Yes\nNo\nN/A"
+  },
+  {
+   "fieldname": "column_break_tkfu",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "com3_2",
+   "fieldtype": "Data",
+   "label": "Comment"
+  },
+  {
+   "fieldname": "section_break_unxw",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "ch3_3",
+   "fieldtype": "Select",
+   "label": "3.3 All instrumentation in working order. (fuel gauge, temperature indicator and hydraulic pressure gauge)",
+   "options": "Yes\nNo\nN/A"
+  },
+  {
+   "fieldname": "column_break_gvyg",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "com3_3",
+   "fieldtype": "Data",
+   "label": "Comment"
+  },
+  {
+   "fieldname": "section_break_oxwi",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "ch3_4",
+   "fieldtype": "Select",
+   "label": "3.4 Operator's seat shall be fitted with at least two points seat belt if originally designed.",
+   "options": "Yes\nNo\nN/A"
+  },
+  {
+   "fieldname": "column_break_khlu",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "com3_4",
+   "fieldtype": "Data",
+   "label": "Comment"
+  },
+  {
+   "fieldname": "section_break_brfp",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "ch3_5",
+   "fieldtype": "Select",
+   "label": "3.5 Equipped with a protection device that protects Operator in case of roll over or from falling cargo.",
+   "options": "Yes\nNo\nN/A"
+  },
+  {
+   "fieldname": "column_break_vikn",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "com3_5",
+   "fieldtype": "Data",
+   "label": "Comment"
+  },
+  {
+   "fieldname": "section_break_umta",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "ch3_6",
+   "fieldtype": "Select",
+   "label": "3.6 No handles exposed on outside of protective cabin cage",
+   "options": "Yes\nNo\nN/A"
+  },
+  {
+   "fieldname": "column_break_dhrg",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "com3_6",
+   "fieldtype": "Data",
+   "label": "Comment"
+  },
+  {
+   "description": "4 LIGHTS AND ALARMS",
+   "fieldname": "section_break_mqvp",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "ch4_1",
+   "fieldtype": "Select",
+   "label": "4.1  Orange or Yellow revolving light or strobe light.",
+   "options": "Yes\nNo\nN/A"
+  },
+  {
+   "fieldname": "column_break_xgxh",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "com4_1",
+   "fieldtype": "Data",
+   "label": "Comment"
+  },
+  {
+   "fieldname": "section_break_zmys",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "ch4_2",
+   "fieldtype": "Select",
+   "label": "4.2  Brake lights and indicator (if fitted) in good working order.",
+   "options": "Yes\nNo\nN/A"
+  },
+  {
+   "fieldname": "column_break_kyib",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "com4_2",
+   "fieldtype": "Data",
+   "label": "Comment"
+  },
+  {
+   "fieldname": "section_break_yhpq",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "ch4_3",
+   "fieldtype": "Select",
+   "label": "4.3 Equipped with driving head and reverse lights and beam light for support during lifting operations.",
+   "options": "Yes\nNo\nN/A"
+  },
+  {
+   "fieldname": "column_break_xnfw",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "com4_3",
+   "fieldtype": "Data",
+   "label": "Comment"
+  },
+  {
+   "fieldname": "section_break_sqsq",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "ch4_4",
+   "fieldtype": "Select",
+   "label": "4.4  Be fitted with rear mounted audible reversing alarm.",
+   "options": "Yes\nNo\nN/A"
+  },
+  {
+   "fieldname": "column_break_hobc",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "com4_4",
+   "fieldtype": "Data",
+   "label": "Comment"
+  },
+  {
+   "description": "5 FORKS",
+   "fieldname": "section_break_omqx",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "ch5_1",
+   "fieldtype": "Select",
+   "label": "5.1 Forks and its sliding bar shall be free of any unauthorized welding, cracks and easily adjusted.",
+   "options": "Yes\nNo\nN/A"
+  },
+  {
+   "fieldname": "column_break_dowy",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "com5_1",
+   "fieldtype": "Data",
+   "label": "Comment"
+  },
+  {
+   "fieldname": "section_break_vprv",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "ch5_2",
+   "fieldtype": "Select",
+   "label": "5.2 Forks to be properly aligned (not bent).",
+   "options": "Yes\nNo\nN/A"
+  },
+  {
+   "fieldname": "column_break_jjqi",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "com5_2",
+   "fieldtype": "Data",
+   "label": "Comment"
+  },
+  {
+   "fieldname": "section_break_hezj",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "ch5_3",
+   "fieldtype": "Select",
+   "label": "5.3 Any fork extension or other attachments must be certified for use with rated capacities",
+   "options": "Yes\nNo\nN/A"
+  },
+  {
+   "fieldname": "column_break_rzux",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "com5_3",
+   "fieldtype": "Data",
+   "label": "Comment"
+  },
+  {
+   "fieldname": "section_break_iqmj",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "ch5_4",
+   "fieldtype": "Select",
+   "label": "5.4 Ensure the lateral locks on the forks are working.",
+   "options": "Yes\nNo\nN/A"
+  },
+  {
+   "fieldname": "column_break_xfjv",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "com5_4",
+   "fieldtype": "Data",
+   "label": "Comment"
+  },
+  {
+   "description": "6 CONSUMABLE CHECK",
+   "fieldname": "section_break_ueos",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "ch6_1",
+   "fieldtype": "Select",
+   "label": "6.1  Engine oil maintained at required level.",
+   "options": "Yes\nNo\nN/A"
+  },
+  {
+   "fieldname": "column_break_odsd",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "com6_1",
+   "fieldtype": "Data",
+   "label": "Comment"
+  },
+  {
+   "fieldname": "section_break_lcis",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "ch6_2",
+   "fieldtype": "Select",
+   "label": "6.2  Radiator fluid maintained at required level.",
+   "options": "Yes\nNo\nN/A"
+  },
+  {
+   "fieldname": "column_break_zlgg",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "com6_2",
+   "fieldtype": "Data",
+   "label": "Comment"
+  },
+  {
+   "fieldname": "section_break_tecs",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "ch6_3",
+   "fieldtype": "Select",
+   "label": "6.3  Brake & Clutch fluid maintained at required level.",
+   "options": "Yes\nNo\nN/A"
+  },
+  {
+   "fieldname": "column_break_gquc",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "com6_3",
+   "fieldtype": "Data",
+   "label": "Comment"
+  },
+  {
+   "fieldname": "section_break_eucm",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "ch6_4",
+   "fieldtype": "Select",
+   "label": "6.4  Battery condition and connections.",
+   "options": "Yes\nNo\nN/A"
+  },
+  {
+   "fieldname": "column_break_mjmn",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "com6_4",
+   "fieldtype": "Data",
+   "label": "Comment"
+  },
+  {
+   "fieldname": "section_break_kagk",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "ch6_5",
+   "fieldtype": "Select",
+   "label": "6.5  Fuel and Oil tanks shall be free of leakage.",
+   "options": "Yes\nNo\nN/A"
+  },
+  {
+   "fieldname": "column_break_mrqb",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "com6_5",
+   "fieldtype": "Data",
+   "label": "Comment"
+  },
+  {
+   "fieldname": "section_break_pkpz",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "ch6_6",
+   "fieldtype": "Select",
+   "label": "6.6  All hydraulics (hydraulic hoses, hydraulic pump, pistons) to be fully functional without leakage.",
+   "options": "Yes\nNo\nN/A"
+  },
+  {
+   "fieldname": "column_break_tigs",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "com6_6",
+   "fieldtype": "Data",
+   "label": "Comment"
+  },
+  {
+   "description": "7 SAFETY & EMERGENCY EQUIPMENT",
+   "fieldname": "section_break_syno",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "ch7_1",
+   "fieldtype": "Select",
+   "label": "7.1  In cab fire extinguisher securely mounted on a bracket and located so it is easily accessible in an emergency.",
+   "options": "Yes\nNo\nN/A"
+  },
+  {
+   "fieldname": "column_break_ibsu",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "com7_1",
+   "fieldtype": "Data",
+   "label": "Comment"
+  },
+  {
+   "fieldname": "section_break_klrg",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "ch7_2",
+   "fieldtype": "Select",
+   "label": "7.2  Foot brake and Hand brake control system are operational and could hold the wheel loader on an inclined.",
+   "options": "Yes\nNo\nN/A"
+  },
+  {
+   "fieldname": "column_break_mrez",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "com7_2",
+   "fieldtype": "Data",
+   "label": "Comment"
+  },
+  {
+   "fieldname": "section_break_kpus",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "ch7_3",
+   "fieldtype": "Select",
+   "label": "7.3  All rotating parts are guarded with cover.",
+   "options": "Yes\nNo\nN/A"
+  },
+  {
+   "fieldname": "column_break_gtll",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "com7_3",
+   "fieldtype": "Data",
+   "label": "Comment"
+  },
+  {
+   "fieldname": "section_break_nbfg",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "ch8",
+   "fieldtype": "Select",
+   "label": "8 Load test  Where applicable",
+   "options": "Yes\nNo\nN/A"
+  },
+  {
+   "fieldname": "column_break_dsgo",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "com8",
+   "fieldtype": "Data",
+   "label": "Comment"
+  },
+  {
+   "fieldname": "section_break_bleb",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "ch9",
+   "fieldtype": "Select",
+   "label": "9  Final Conclusion (Accepted/Rejected)",
+   "options": "Yes\nNo\nN/A"
+  },
+  {
+   "fieldname": "column_break_wqbg",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "com9",
+   "fieldtype": "Data",
+   "label": "Comment"
+  },
+  {
+   "fieldname": "section_break_itho",
+   "fieldtype": "Section Break",
+   "label": "Signature Checklist"
+  },
+  {
+   "default": "user",
+   "fieldname": "inspector",
+   "fieldtype": "Data",
+   "label": "Inspector"
+  },
+  {
+   "fieldname": "column_break_rqey",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "customer_representative",
+   "fieldtype": "Link",
+   "label": "Customer Representative",
+   "options": "Contact"
+  },
+  {
+   "default": "Today",
+   "fieldname": "date_insector",
+   "fieldtype": "Date",
+   "label": "Date"
+  },
+  {
+   "default": "Today",
+   "fieldname": "date_representative",
+   "fieldtype": "Date",
+   "label": "Date"
+  },
+  {
+   "fieldname": "signature_inspector",
+   "fieldtype": "Signature",
+   "label": "Signature"
+  },
+  {
+   "fieldname": "signature_representative",
+   "fieldtype": "Signature",
+   "label": "Signature"
+  },
+  {
+   "fieldname": "amended_from",
+   "fieldtype": "Link",
+   "label": "Amended From",
+   "no_copy": 1,
+   "options": "Forklift Checklist",
+   "print_hide": 1,
+   "read_only": 1,
+   "search_index": 1
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "is_submittable": 1,
+ "links": [],
+ "modified": "2024-09-11 15:41:37.722605",
+ "modified_by": "Administrator",
+ "module": "Uis",
+ "name": "Forklift Checklist",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "submit": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}

@@ -1,0 +1,57 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2024-09-05 15:06:28.678414",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "asset_code",
+  "asset_name",
+  "asset_category",
+  "branch"
+ ],
+ "fields": [
+  {
+   "fieldname": "asset_code",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Asset Code",
+   "options": "Asset",
+   "reqd": 1
+  },
+  {
+   "fetch_from": "asset_code.asset_name",
+   "fieldname": "asset_name",
+   "fieldtype": "Read Only",
+   "in_list_view": 1,
+   "label": "Asset Name"
+  },
+  {
+   "fetch_from": "asset_code.asset_category",
+   "fieldname": "asset_category",
+   "fieldtype": "Read Only",
+   "in_list_view": 1,
+   "label": "Asset Category"
+  },
+  {
+   "fetch_from": "asset_code.custom_branch",
+   "fieldname": "branch",
+   "fieldtype": "Read Only",
+   "in_list_view": 1,
+   "label": "Branch"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "istable": 1,
+ "links": [],
+ "modified": "2024-09-17 12:50:21.182725",
+ "modified_by": "Administrator",
+ "module": "UIS Project",
+ "name": "asset job order",
+ "owner": "Administrator",
+ "permissions": [],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}

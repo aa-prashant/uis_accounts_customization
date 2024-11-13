@@ -1,0 +1,773 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2024-08-25 09:47:25.553786",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "checklist_information_section",
+  "customer_name",
+  "lnspection_location",
+  "equipment_type",
+  "manufacturers_name",
+  "model",
+  "plate_no",
+  "capacity_swl",
+  "column_break_fdws",
+  "job_order_no",
+  "inspection_date",
+  "sticker_no",
+  "serial_no",
+  "ndt_mpi",
+  "year_of_built",
+  "type_of_inspection",
+  "inspection_criteria",
+  "ch1_1",
+  "column_break_iscl",
+  "com1_1",
+  "section_break_jqrb",
+  "ch1_2",
+  "column_break_mndx",
+  "com1_2",
+  "section_break_exgl",
+  "ch1_3",
+  "column_break_jwxr",
+  "com1_3",
+  "section_break_itfp",
+  "ch1_4",
+  "column_break_dzwl",
+  "com1_4",
+  "section_break_dnzt",
+  "ch1_5",
+  "column_break_zhyz",
+  "com1_5",
+  "section_break_ihjp",
+  "ch1_6",
+  "column_break_fyza",
+  "com1_6",
+  "section_break_jcrr",
+  "ch1_7",
+  "column_break_nvcv",
+  "com1_7",
+  "section_break_dppj",
+  "ch2_1",
+  "column_break_rnod",
+  "com2_1",
+  "section_break_ialv",
+  "ch2_2",
+  "column_break_udca",
+  "com2_2",
+  "section_break_ktmu",
+  "ch2_3",
+  "column_break_ugbn",
+  "com2_3",
+  "section_break_gpqk",
+  "ch2_4",
+  "column_break_fyee",
+  "com2_4",
+  "section_break_pfkg",
+  "ch2_5",
+  "column_break_kwjz",
+  "com2_5",
+  "section_break_qgar",
+  "ch2_6",
+  "column_break_htrv",
+  "com2_6",
+  "section_break_rydd",
+  "ch2_7",
+  "column_break_hffk",
+  "com2_7",
+  "section_break_ndnz",
+  "ch2_8",
+  "column_break_kisn",
+  "com2_8",
+  "section_break_xaxp",
+  "ch2_9",
+  "column_break_knkb",
+  "com2_9",
+  "section_break_vflm",
+  "ch2_10",
+  "column_break_fxdj",
+  "com2_10",
+  "section_break_xubf",
+  "ch2_11",
+  "column_break_qklf",
+  "com2_11",
+  "section_break_qwwg",
+  "ch2_12",
+  "column_break_ajgj",
+  "com2_12",
+  "section_break_nxsl",
+  "ch2_13",
+  "column_break_hgzz",
+  "com2_13",
+  "section_break_qtzr",
+  "ch2_14",
+  "column_break_xooq",
+  "com2_14",
+  "section_break_tyyb",
+  "ch2_15",
+  "column_break_etht",
+  "com2_15",
+  "section_break_ioeh",
+  "ch3_1",
+  "column_break_trpy",
+  "com3_1",
+  "section_break_juhj",
+  "ch4",
+  "column_break_nziu",
+  "com4",
+  "section_break_vgit",
+  "ch5",
+  "column_break_byqt",
+  "com5",
+  "signature_checklist_section",
+  "inspector",
+  "date_insector",
+  "signature_inspector",
+  "column_break_btic",
+  "customer_representative",
+  "date_representative",
+  "signature_representative",
+  "amended_from"
+ ],
+ "fields": [
+  {
+   "fieldname": "checklist_information_section",
+   "fieldtype": "Section Break",
+   "label": "Checklist Information"
+  },
+  {
+   "fieldname": "customer_name",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Customer Name",
+   "options": "Customer",
+   "reqd": 1
+  },
+  {
+   "fieldname": "column_break_fdws",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "job_order_no",
+   "fieldtype": "Data",
+   "label": "Job Order No."
+  },
+  {
+   "fieldname": "lnspection_location",
+   "fieldtype": "Data",
+   "label": "Inspection Location"
+  },
+  {
+   "fieldname": "inspection_date",
+   "fieldtype": "Date",
+   "label": "Inspection Date"
+  },
+  {
+   "fieldname": "equipment_type",
+   "fieldtype": "Select",
+   "label": "Equipment Type",
+   "options": "\n1\n2\n3\n4"
+  },
+  {
+   "fieldname": "sticker_no",
+   "fieldtype": "Data",
+   "label": "Sticker No."
+  },
+  {
+   "fieldname": "manufacturers_name",
+   "fieldtype": "Data",
+   "label": "Manufacturer\u2019s Name"
+  },
+  {
+   "fieldname": "serial_no",
+   "fieldtype": "Data",
+   "label": "Serial No."
+  },
+  {
+   "fieldname": "model",
+   "fieldtype": "Data",
+   "label": "Model"
+  },
+  {
+   "fieldname": "ndt_mpi",
+   "fieldtype": "Data",
+   "label": "NDT (MPI) Where applicable"
+  },
+  {
+   "fieldname": "plate_no",
+   "fieldtype": "Data",
+   "label": "Plate No."
+  },
+  {
+   "fieldname": "year_of_built",
+   "fieldtype": "Data",
+   "label": "Year of Built"
+  },
+  {
+   "fieldname": "capacity_swl",
+   "fieldtype": "Data",
+   "label": "Capacity / SWL"
+  },
+  {
+   "fieldname": "type_of_inspection",
+   "fieldtype": "Data",
+   "label": "Type of Inspection"
+  },
+  {
+   "description": "1 General Requirements",
+   "fieldname": "inspection_criteria",
+   "fieldtype": "Section Break",
+   "label": "Inspection Criteria"
+  },
+  {
+   "fieldname": "ch1_1",
+   "fieldtype": "Select",
+   "label": "1.1  Equipment documentation is available",
+   "options": "\nYes\nNo\nN/A"
+  },
+  {
+   "fieldname": "column_break_iscl",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "com1_1",
+   "fieldtype": "Data",
+   "label": "Comment"
+  },
+  {
+   "fieldname": "section_break_jqrb",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "ch1_2",
+   "fieldtype": "Select",
+   "label": "1.2  Previous inspection reports are checked",
+   "options": "\nYes\nNo\nN/A"
+  },
+  {
+   "fieldname": "column_break_mndx",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "com1_2",
+   "fieldtype": "Data",
+   "label": "Comment"
+  },
+  {
+   "fieldname": "section_break_exgl",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "ch1_3",
+   "fieldtype": "Select",
+   "label": "1.3  Manufacturer name, Serial number, and power ratings are clearly tagged or marked",
+   "options": "\nYes\nNo\nN/A"
+  },
+  {
+   "fieldname": "column_break_jwxr",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "com1_3",
+   "fieldtype": "Data",
+   "label": "Comment"
+  },
+  {
+   "fieldname": "section_break_itfp",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "ch1_4",
+   "fieldtype": "Select",
+   "label": "1.4  Controls are marked of its function",
+   "options": "\nYes\nNo\nN/A"
+  },
+  {
+   "fieldname": "column_break_dzwl",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "com1_4",
+   "fieldtype": "Data",
+   "label": "Comment"
+  },
+  {
+   "fieldname": "section_break_dnzt",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "ch1_5",
+   "fieldtype": "Select",
+   "label": "1.5  Warning tags Visibility/Legibility",
+   "options": "\nYes\nNo\nN/A"
+  },
+  {
+   "fieldname": "column_break_zhyz",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "com1_5",
+   "fieldtype": "Data",
+   "label": "Comment"
+  },
+  {
+   "fieldname": "section_break_ihjp",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "ch1_6",
+   "fieldtype": "Select",
+   "label": "1.6  Parts and Body structural integrity",
+   "options": "\nYes\nNo\nN/A"
+  },
+  {
+   "fieldname": "column_break_fyza",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "com1_6",
+   "fieldtype": "Data",
+   "label": "Comment"
+  },
+  {
+   "fieldname": "section_break_jcrr",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "ch1_7",
+   "fieldtype": "Select",
+   "label": "1.7  Painting Condition",
+   "options": "\nYes\nNo\nN/A"
+  },
+  {
+   "fieldname": "column_break_nvcv",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "com1_7",
+   "fieldtype": "Data",
+   "label": "Comment"
+  },
+  {
+   "description": "2 PARTS COMPLETE CHECKS",
+   "fieldname": "section_break_dppj",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "ch2_1",
+   "fieldtype": "Select",
+   "label": "2.1  Hydraulic Oil, Seals check",
+   "options": "\nYes\nNo\nN/A"
+  },
+  {
+   "fieldname": "column_break_rnod",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "com2_1",
+   "fieldtype": "Data",
+   "label": "Comment"
+  },
+  {
+   "fieldname": "section_break_ialv",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "ch2_2",
+   "fieldtype": "Select",
+   "label": "2.2  Piston Cylinder/head/cap secure",
+   "options": "\nYes\nNo\nN/A"
+  },
+  {
+   "fieldname": "column_break_udca",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "com2_2",
+   "fieldtype": "Data",
+   "label": "Comment"
+  },
+  {
+   "fieldname": "section_break_ktmu",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "ch2_3",
+   "fieldtype": "Select",
+   "label": "2.3  Piston/cylinder number of stroke (Telescopic) condition",
+   "options": "\nYes\nNo\nN/A"
+  },
+  {
+   "fieldname": "column_break_ugbn",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "com2_3",
+   "fieldtype": "Data",
+   "label": "Comment"
+  },
+  {
+   "fieldname": "section_break_gpqk",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "ch2_4",
+   "fieldtype": "Select",
+   "label": "2.4  Extension Screw condition",
+   "options": "\nYes\nNo\nN/A"
+  },
+  {
+   "fieldname": "column_break_fyee",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "com2_4",
+   "fieldtype": "Data",
+   "label": "Comment"
+  },
+  {
+   "fieldname": "section_break_pfkg",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "ch2_5",
+   "fieldtype": "Select",
+   "label": "2.5  Base pressure cylinder",
+   "options": "\nYes\nNo\nN/A"
+  },
+  {
+   "fieldname": "column_break_kwjz",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "com2_5",
+   "fieldtype": "Data",
+   "label": "Comment"
+  },
+  {
+   "fieldname": "section_break_qgar",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "ch2_6",
+   "fieldtype": "Select",
+   "label": "2.6 Piston Pump and Seal",
+   "options": "\nYes\nNo\nN/A"
+  },
+  {
+   "fieldname": "column_break_htrv",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "com2_6",
+   "fieldtype": "Data",
+   "label": "Comment"
+  },
+  {
+   "fieldname": "section_break_rydd",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "ch2_7",
+   "fieldtype": "Select",
+   "label": "2.7  Pump Handle",
+   "options": "\nYes\nNo\nN/A"
+  },
+  {
+   "fieldname": "column_break_hffk",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "com2_7",
+   "fieldtype": "Data",
+   "label": "Comment"
+  },
+  {
+   "fieldname": "section_break_ndnz",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "ch2_8",
+   "fieldtype": "Select",
+   "label": "2.8  Pressure Valve/Release",
+   "options": "\nYes\nNo\nN/A"
+  },
+  {
+   "fieldname": "column_break_kisn",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "com2_8",
+   "fieldtype": "Data",
+   "label": "Comment"
+  },
+  {
+   "fieldname": "section_break_xaxp",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "ch2_9",
+   "fieldtype": "Select",
+   "label": "2.9  Hydraulic Oil Fill/Drain Cap/Seal",
+   "options": "\nYes\nNo\nN/A"
+  },
+  {
+   "fieldname": "column_break_knkb",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "com2_9",
+   "fieldtype": "Data",
+   "label": "Comment"
+  },
+  {
+   "fieldname": "section_break_vflm",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "ch2_10",
+   "fieldtype": "Select",
+   "label": "2.10  Pawl or rack teeth that are chipped, cracked, broken, or excessively worn",
+   "options": "\nYes\nNo\nN/A"
+  },
+  {
+   "fieldname": "column_break_fxdj",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "com2_10",
+   "fieldtype": "Data",
+   "label": "Comment"
+  },
+  {
+   "fieldname": "section_break_xubf",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "ch2_11",
+   "fieldtype": "Select",
+   "label": "2.11  Cracked or damaged housing",
+   "options": "\nYes\nNo\nN/A"
+  },
+  {
+   "fieldname": "column_break_qklf",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "com2_11",
+   "fieldtype": "Data",
+   "label": "Comment"
+  },
+  {
+   "fieldname": "section_break_qwwg",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "ch2_12",
+   "fieldtype": "Select",
+   "label": "2.12  Excessive pitting or corrosion",
+   "options": "\nYes\nNo\nN/A"
+  },
+  {
+   "fieldname": "column_break_ajgj",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "com2_12",
+   "fieldtype": "Data",
+   "label": "Comment"
+  },
+  {
+   "fieldname": "section_break_nxsl",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "ch2_13",
+   "fieldtype": "Select",
+   "label": "2.13  Excessive nicks or gouges",
+   "options": "\nYes\nNo\nN/A"
+  },
+  {
+   "fieldname": "column_break_hgzz",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "com2_13",
+   "fieldtype": "Data",
+   "label": "Comment"
+  },
+  {
+   "fieldname": "section_break_qtzr",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "ch2_14",
+   "fieldtype": "Select",
+   "label": "2.14  Improper engagement between rack bar and the pawls or wear plate",
+   "options": "\nYes\nNo\nN/A"
+  },
+  {
+   "fieldname": "column_break_xooq",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "com2_14",
+   "fieldtype": "Data",
+   "label": "Comment"
+  },
+  {
+   "fieldname": "section_break_tyyb",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "ch2_15",
+   "fieldtype": "Select",
+   "label": "2.15  Damaged or improperly assembled accessory equipment.",
+   "options": "\nYes\nNo\nN/A"
+  },
+  {
+   "fieldname": "column_break_etht",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "com2_15",
+   "fieldtype": "Data",
+   "label": "Comment"
+  },
+  {
+   "description": "3 SAFETY DEVICES/PARTS CHECK",
+   "fieldname": "section_break_ioeh",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "ch3_1",
+   "fieldtype": "Select",
+   "label": "3.1  Safety valve against overloading",
+   "options": "\nYes\nNo\nN/A"
+  },
+  {
+   "fieldname": "column_break_trpy",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "com3_1",
+   "fieldtype": "Data",
+   "label": "Comment"
+  },
+  {
+   "fieldname": "section_break_juhj",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "ch4",
+   "fieldtype": "Select",
+   "label": "4  Load test /Proof Load test Where applicable Load test value: SWL:",
+   "options": "\nYes\nNo\nN/A"
+  },
+  {
+   "fieldname": "column_break_nziu",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "com4",
+   "fieldtype": "Data",
+   "label": "Comment"
+  },
+  {
+   "fieldname": "section_break_vgit",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "ch5",
+   "fieldtype": "Select",
+   "label": "5  Safety valve against overloading",
+   "options": "\nYes\nNo\nN/A"
+  },
+  {
+   "fieldname": "column_break_byqt",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "com5",
+   "fieldtype": "Data",
+   "label": "Comment"
+  },
+  {
+   "fieldname": "signature_checklist_section",
+   "fieldtype": "Section Break",
+   "label": "Signature Checklist"
+  },
+  {
+   "fieldname": "inspector",
+   "fieldtype": "Data",
+   "label": "Inspector"
+  },
+  {
+   "fieldname": "column_break_btic",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "customer_representative",
+   "fieldtype": "Data",
+   "label": "Customer Representative"
+  },
+  {
+   "fieldname": "date_insector",
+   "fieldtype": "Date",
+   "label": "Date"
+  },
+  {
+   "fieldname": "signature_inspector",
+   "fieldtype": "Signature",
+   "label": "Signature"
+  },
+  {
+   "fieldname": "date_representative",
+   "fieldtype": "Date",
+   "label": "Date"
+  },
+  {
+   "fieldname": "signature_representative",
+   "fieldtype": "Signature",
+   "label": "Signature"
+  },
+  {
+   "fieldname": "amended_from",
+   "fieldtype": "Link",
+   "label": "Amended From",
+   "no_copy": 1,
+   "options": "Jacks Checklist",
+   "print_hide": 1,
+   "read_only": 1,
+   "search_index": 1
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "is_submittable": 1,
+ "links": [],
+ "modified": "2024-08-25 11:52:57.439370",
+ "modified_by": "Administrator",
+ "module": "Uis",
+ "name": "Jacks Checklist",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "submit": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}

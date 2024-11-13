@@ -1,0 +1,218 @@
+{
+ "actions": [],
+ "autoname": "Checklist.YYYY.#######",
+ "creation": "2024-08-21 18:24:09.342244",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "checklist_information_section",
+  "checklist_template",
+  "job_order_no",
+  "lnspection_location",
+  "equipment_type",
+  "manufacturers_name",
+  "model",
+  "plate_no",
+  "capacity_swl",
+  "wire_rope_diameter_length",
+  "column_break_tutu",
+  "customer_name",
+  "inspection_date",
+  "sticker_no",
+  "serial_no",
+  "identification_no",
+  "year_of_built",
+  "type_of_inspection",
+  "ndt_mpi",
+  "inspection_criteria_section",
+  "checklist_table",
+  "amended_from"
+ ],
+ "fields": [
+  {
+   "fieldname": "checklist_information_section",
+   "fieldtype": "Section Break",
+   "label": "Checklist Information"
+  },
+  {
+   "fetch_from": "job_order_no.customer_name",
+   "fieldname": "customer_name",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Customer Name",
+   "options": "Customer",
+   "read_only": 1,
+   "reqd": 1
+  },
+  {
+   "fetch_from": "job_order_no.location",
+   "fieldname": "lnspection_location",
+   "fieldtype": "Data",
+   "label": "Inspection Location",
+   "read_only": 1,
+   "reqd": 1
+  },
+  {
+   "fetch_from": "serial_no.equipment_type",
+   "fieldname": "equipment_type",
+   "fieldtype": "Data",
+   "label": "Equipment Type",
+   "read_only": 1,
+   "reqd": 1
+  },
+  {
+   "fetch_from": "serial_no.manufacturer",
+   "fieldname": "manufacturers_name",
+   "fieldtype": "Data",
+   "label": "Manufacturer\u2019s Name",
+   "options": "Manufacturers",
+   "read_only": 1,
+   "reqd": 1
+  },
+  {
+   "fetch_from": "serial_no.model",
+   "fieldname": "model",
+   "fieldtype": "Data",
+   "label": "Model",
+   "read_only": 1,
+   "reqd": 1
+  },
+  {
+   "fetch_from": "serial_no.plate_no",
+   "fieldname": "plate_no",
+   "fieldtype": "Data",
+   "label": "Plate No.",
+   "read_only": 1,
+   "reqd": 1
+  },
+  {
+   "fetch_from": "serial_no.capacity_range_swl",
+   "fieldname": "capacity_swl",
+   "fieldtype": "Data",
+   "label": "Capacity / Range (SWL)",
+   "read_only": 1,
+   "reqd": 1
+  },
+  {
+   "fieldname": "wire_rope_diameter_length",
+   "fieldtype": "Data",
+   "label": "Wire Rope Diameter/Length"
+  },
+  {
+   "fieldname": "column_break_tutu",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "job_order_no",
+   "fieldtype": "Link",
+   "label": "Job Order No.",
+   "options": "Job Order",
+   "reqd": 1
+  },
+  {
+   "default": "Today",
+   "fieldname": "inspection_date",
+   "fieldtype": "Date",
+   "label": "Inspection Date",
+   "reqd": 1
+  },
+  {
+   "depends_on": "doc.name",
+   "fieldname": "sticker_no",
+   "fieldtype": "Data",
+   "label": "Sticker No.",
+   "read_only": 1
+  },
+  {
+   "fieldname": "serial_no",
+   "fieldtype": "Link",
+   "label": "Serial No.",
+   "options": "Equpment Data",
+   "reqd": 1
+  },
+  {
+   "fetch_from": "serial_no.identification_no",
+   "fieldname": "identification_no",
+   "fieldtype": "Data",
+   "label": "Identification No.",
+   "read_only": 1,
+   "reqd": 1
+  },
+  {
+   "fetch_from": "serial_no.year_of_built",
+   "fieldname": "year_of_built",
+   "fieldtype": "Data",
+   "label": "Year of Built",
+   "read_only": 1,
+   "reqd": 1
+  },
+  {
+   "fieldname": "type_of_inspection",
+   "fieldtype": "Link",
+   "label": "Type of Inspection",
+   "options": "Type of Inspection",
+   "reqd": 1
+  },
+  {
+   "fieldname": "ndt_mpi",
+   "fieldtype": "Link",
+   "label": "NDT",
+   "options": "NDT Type",
+   "reqd": 1
+  },
+  {
+   "fieldname": "amended_from",
+   "fieldtype": "Link",
+   "label": "Amended From",
+   "no_copy": 1,
+   "options": "Checklist",
+   "print_hide": 1,
+   "read_only": 1,
+   "search_index": 1
+  },
+  {
+   "fieldname": "inspection_criteria_section",
+   "fieldtype": "Section Break",
+   "label": "Inspection Criteria"
+  },
+  {
+   "fieldname": "checklist_table",
+   "fieldtype": "Table",
+   "options": "Checklist Table"
+  },
+  {
+   "fieldname": "checklist_template",
+   "fieldtype": "Link",
+   "label": "Checklist Template",
+   "options": "Checklist Template",
+   "reqd": 1
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "is_submittable": 1,
+ "links": [],
+ "modified": "2024-10-07 01:18:52.922691",
+ "modified_by": "Administrator",
+ "module": "Uis",
+ "name": "Checklist",
+ "naming_rule": "By script",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "submit": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}

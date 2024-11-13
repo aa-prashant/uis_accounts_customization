@@ -1,0 +1,734 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2024-08-25 12:02:19.152547",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "checklist_information_section",
+  "customer_name",
+  "lnspection_location",
+  "equipment_type",
+  "manufacturers_name",
+  "model",
+  "plate_no",
+  "capacity_swl",
+  "chain_rope_size_no_of_falls",
+  "column_break_yvve",
+  "job_order_no",
+  "inspection_date",
+  "sticker_no",
+  "serial_no",
+  "load_test_value",
+  "year_of_built",
+  "type_of_inspection",
+  "standard_lift_m",
+  "inspection_criteria",
+  "ch1",
+  "column_break_vptd",
+  "com1",
+  "section_break_zpuk",
+  "ch2",
+  "column_break_wwui",
+  "com2",
+  "section_break_gphu",
+  "ch3",
+  "column_break_eefw",
+  "com3",
+  "section_break_gaco",
+  "ch4",
+  "column_break_sspt",
+  "com4",
+  "section_break_fndg",
+  "ch5",
+  "column_break_cdsl",
+  "com5",
+  "section_break_daxo",
+  "ch6",
+  "column_break_wchh",
+  "com6",
+  "section_break_rvjo",
+  "ch7",
+  "column_break_giyh",
+  "com7",
+  "section_break_nfst",
+  "ch8",
+  "column_break_zqlp",
+  "com8",
+  "section_break_qkua",
+  "ch9",
+  "column_break_angh",
+  "com9",
+  "section_break_omdy",
+  "ch10",
+  "column_break_orxb",
+  "com10",
+  "section_break_vnvt",
+  "ch11",
+  "column_break_gzuy",
+  "com11",
+  "section_break_fdxz",
+  "ch12",
+  "column_break_detl",
+  "com12",
+  "section_break_mxfy",
+  "ch13",
+  "column_break_xpbh",
+  "com13",
+  "section_break_fvoi",
+  "ch14",
+  "column_break_pedy",
+  "com14",
+  "section_break_bddo",
+  "ch15",
+  "column_break_vjof",
+  "com15",
+  "section_break_wkkb",
+  "ch16",
+  "column_break_dlop",
+  "com16",
+  "section_break_bpww",
+  "ch17",
+  "column_break_ekup",
+  "com17",
+  "section_break_ywfq",
+  "ch18",
+  "column_break_eypr",
+  "com18",
+  "section_break_djpf",
+  "ch19",
+  "column_break_hpms",
+  "com19",
+  "section_break_cbwv",
+  "ch20",
+  "column_break_ixya",
+  "com20",
+  "section_break_sity",
+  "ch21",
+  "column_break_mabo",
+  "com21",
+  "section_break_ufoa",
+  "ch22",
+  "column_break_pqyb",
+  "com22",
+  "section_break_jqyj",
+  "ch23",
+  "column_break_serk",
+  "com23",
+  "signature_checklist_section",
+  "inspector",
+  "date_insector",
+  "signature_inspector",
+  "column_break_dbzz",
+  "customer_representative",
+  "date_representative",
+  "signature_representative",
+  "amended_from"
+ ],
+ "fields": [
+  {
+   "fieldname": "checklist_information_section",
+   "fieldtype": "Section Break",
+   "label": "Checklist Information"
+  },
+  {
+   "fieldname": "customer_name",
+   "fieldtype": "Link",
+   "label": "Customer Name",
+   "options": "Customer"
+  },
+  {
+   "fieldname": "column_break_yvve",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "job_order_no",
+   "fieldtype": "Data",
+   "label": "Job Order No."
+  },
+  {
+   "fieldname": "lnspection_location",
+   "fieldtype": "Data",
+   "label": "Inspection Location"
+  },
+  {
+   "fieldname": "inspection_date",
+   "fieldtype": "Date",
+   "label": "Inspection Date"
+  },
+  {
+   "fieldname": "equipment_type",
+   "fieldtype": "Select",
+   "label": "Equipment Type",
+   "options": "\n1\n2\n3\n4"
+  },
+  {
+   "fieldname": "sticker_no",
+   "fieldtype": "Data",
+   "label": "Sticker No."
+  },
+  {
+   "fieldname": "manufacturers_name",
+   "fieldtype": "Data",
+   "label": "Manufacturer\u2019s Name"
+  },
+  {
+   "fieldname": "serial_no",
+   "fieldtype": "Data",
+   "label": "Serial No."
+  },
+  {
+   "fieldname": "model",
+   "fieldtype": "Data",
+   "label": "Model"
+  },
+  {
+   "fieldname": "load_test_value",
+   "fieldtype": "Data",
+   "label": "Load test Value"
+  },
+  {
+   "fieldname": "plate_no",
+   "fieldtype": "Data",
+   "label": "Plate No."
+  },
+  {
+   "fieldname": "year_of_built",
+   "fieldtype": "Data",
+   "label": "Year of Built"
+  },
+  {
+   "fieldname": "capacity_swl",
+   "fieldtype": "Data",
+   "label": "Capacity / SWL"
+  },
+  {
+   "fieldname": "type_of_inspection",
+   "fieldtype": "Data",
+   "label": "Type of Inspection"
+  },
+  {
+   "fieldname": "chain_rope_size_no_of_falls",
+   "fieldtype": "Data",
+   "label": "Chain/Rope Size & No. of Falls"
+  },
+  {
+   "fieldname": "standard_lift_m",
+   "fieldtype": "Data",
+   "label": "Standard Lift (m)"
+  },
+  {
+   "fieldname": "inspection_criteria",
+   "fieldtype": "Section Break",
+   "label": "Inspection Criterea"
+  },
+  {
+   "fieldname": "ch1",
+   "fieldtype": "Select",
+   "label": "1 Identification",
+   "options": "\nYes\nNo\nN/A"
+  },
+  {
+   "fieldname": "column_break_vptd",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "com1",
+   "fieldtype": "Data",
+   "label": "Comment"
+  },
+  {
+   "fieldname": "section_break_zpuk",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "ch2",
+   "fieldtype": "Select",
+   "label": "2  Manufacturer\u2019s information (Data)",
+   "options": "\nYes\nNo\nN/A"
+  },
+  {
+   "fieldname": "column_break_wwui",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "com2",
+   "fieldtype": "Data",
+   "label": "Comment"
+  },
+  {
+   "fieldname": "section_break_gphu",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "ch3",
+   "fieldtype": "Select",
+   "label": "3  Visual inspection ",
+   "options": "\nYes\nNo\nN/A"
+  },
+  {
+   "fieldname": "column_break_eefw",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "com3",
+   "fieldtype": "Data",
+   "label": "Comment"
+  },
+  {
+   "fieldname": "section_break_gaco",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "ch4",
+   "fieldtype": "Select",
+   "label": "4  Frequency of use",
+   "options": "\nYes\nNo\nN/A"
+  },
+  {
+   "fieldname": "column_break_sspt",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "com4",
+   "fieldtype": "Data",
+   "label": "Comment"
+  },
+  {
+   "fieldname": "section_break_fndg",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "ch5",
+   "fieldtype": "Select",
+   "label": "5  Severity of service condition",
+   "options": "\nYes\nNo\nN/A"
+  },
+  {
+   "fieldname": "column_break_cdsl",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "com5",
+   "fieldtype": "Data",
+   "label": "Comment"
+  },
+  {
+   "fieldname": "section_break_daxo",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "ch6",
+   "fieldtype": "Select",
+   "label": "6  Nature of load handling activites",
+   "options": "\nYes\nNo\nN/A"
+  },
+  {
+   "fieldname": "column_break_wchh",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "com6",
+   "fieldtype": "Data",
+   "label": "Comment"
+  },
+  {
+   "fieldname": "section_break_rvjo",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "ch7",
+   "fieldtype": "Select",
+   "label": "7  Normal, severe, and special service",
+   "options": "\nYes\nNo\nN/A"
+  },
+  {
+   "fieldname": "column_break_giyh",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "com7",
+   "fieldtype": "Data",
+   "label": "Comment"
+  },
+  {
+   "fieldname": "section_break_nfst",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "ch8",
+   "fieldtype": "Select",
+   "label": "8  Documentation that the most recent periodic inspection was performed ",
+   "options": "\nYes\nNo\nN/A"
+  },
+  {
+   "fieldname": "column_break_zqlp",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "com8",
+   "fieldtype": "Data",
+   "label": "Comment"
+  },
+  {
+   "fieldname": "section_break_qkua",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "ch9",
+   "fieldtype": "Select",
+   "label": "9  Missing or eligible lever hoist identification",
+   "options": "\nYes\nNo\nN/A"
+  },
+  {
+   "fieldname": "column_break_angh",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "com9",
+   "fieldtype": "Data",
+   "label": "Comment"
+  },
+  {
+   "fieldname": "section_break_omdy",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "ch10",
+   "fieldtype": "Select",
+   "label": "10  No physical damage",
+   "options": "\nYes\nNo\nN/A"
+  },
+  {
+   "fieldname": "column_break_orxb",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "com10",
+   "fieldtype": "Data",
+   "label": "Comment"
+  },
+  {
+   "fieldname": "section_break_vnvt",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "ch11",
+   "fieldtype": "Select",
+   "label": "11 Chain not kinked or damaged ",
+   "options": "\nYes\nNo\nN/A"
+  },
+  {
+   "fieldname": "column_break_gzuy",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "com11",
+   "fieldtype": "Data",
+   "label": "Comment"
+  },
+  {
+   "fieldname": "section_break_fdxz",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "ch12",
+   "fieldtype": "Select",
+   "label": "12 Casings not kinked or damaged",
+   "options": "\nYes\nNo\nN/A"
+  },
+  {
+   "fieldname": "column_break_detl",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "com12",
+   "fieldtype": "Data",
+   "label": "Comment"
+  },
+  {
+   "fieldname": "section_break_mxfy",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "ch13",
+   "fieldtype": "Select",
+   "label": "13  Hand chain not damaged or kinked",
+   "options": "\nYes\nNo\nN/A"
+  },
+  {
+   "fieldname": "column_break_xpbh",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "com13",
+   "fieldtype": "Data",
+   "label": "Comment"
+  },
+  {
+   "fieldname": "section_break_fvoi",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "ch14",
+   "fieldtype": "Select",
+   "label": "14 Smooth action, no binding when operated",
+   "options": "\nYes\nNo\nN/A"
+  },
+  {
+   "fieldname": "column_break_pedy",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "com14",
+   "fieldtype": "Data",
+   "label": "Comment"
+  },
+  {
+   "fieldname": "section_break_bddo",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "ch15",
+   "fieldtype": "Select",
+   "label": "15 Weld spatter",
+   "options": "\nYes\nNo\nN/A"
+  },
+  {
+   "fieldname": "column_break_vjof",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "com15",
+   "fieldtype": "Data",
+   "label": "Comment"
+  },
+  {
+   "fieldname": "section_break_wkkb",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "ch16",
+   "fieldtype": "Select",
+   "label": "16  No nick, cracks, cut, gouges in hooks ",
+   "options": "\nYes\nNo\nN/A"
+  },
+  {
+   "fieldname": "column_break_dlop",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "com16",
+   "fieldtype": "Data",
+   "label": "Comment"
+  },
+  {
+   "fieldname": "section_break_bpww",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "ch17",
+   "fieldtype": "Select",
+   "label": "17  No damage to hook latch",
+   "options": "\nYes\nNo\nN/A"
+  },
+  {
+   "fieldname": "column_break_ekup",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "com17",
+   "fieldtype": "Data",
+   "label": "Comment"
+  },
+  {
+   "fieldname": "section_break_ywfq",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "ch18",
+   "fieldtype": "Select",
+   "label": "18  Wire rope examination",
+   "options": "\nYes\nNo\nN/A"
+  },
+  {
+   "fieldname": "column_break_eypr",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "com18",
+   "fieldtype": "Data",
+   "label": "Comment"
+  },
+  {
+   "fieldname": "section_break_djpf",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "ch19",
+   "fieldtype": "Select",
+   "label": "19 Hook not bent or distorted",
+   "options": "\nYes\nNo\nN/A"
+  },
+  {
+   "fieldname": "column_break_hpms",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "com19",
+   "fieldtype": "Data",
+   "label": "Comment"
+  },
+  {
+   "fieldname": "section_break_cbwv",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "ch20",
+   "fieldtype": "Select",
+   "label": "20 Web Straps",
+   "options": "\nYes\nNo\nN/A"
+  },
+  {
+   "fieldname": "column_break_ixya",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "com20",
+   "fieldtype": "Data",
+   "label": "Comment"
+  },
+  {
+   "fieldname": "section_break_sity",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "ch21",
+   "fieldtype": "Select",
+   "label": "21 Bolts, Nuts,Sprockets",
+   "options": "\nYes\nNo\nN/A"
+  },
+  {
+   "fieldname": "column_break_mabo",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "com21",
+   "fieldtype": "Data",
+   "label": "Comment"
+  },
+  {
+   "fieldname": "section_break_ufoa",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "ch22",
+   "fieldtype": "Select",
+   "label": "22 Levers, chain attachments, clevises, yokes, suspension bolts, shafts, gears, bearings, pins, rollers, and locking and clamping devices",
+   "options": "\nYes\nNo\nN/A"
+  },
+  {
+   "fieldname": "column_break_pqyb",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "com22",
+   "fieldtype": "Data",
+   "label": "Comment"
+  },
+  {
+   "fieldname": "section_break_jqyj",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "ch23",
+   "fieldtype": "Select",
+   "label": "23 Final Conclusion (Accepted/Rejected)",
+   "options": "\nYes\nNo\nN/A"
+  },
+  {
+   "fieldname": "column_break_serk",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "com23",
+   "fieldtype": "Data",
+   "label": "Comment"
+  },
+  {
+   "fieldname": "signature_checklist_section",
+   "fieldtype": "Section Break",
+   "label": "Signature Checklist"
+  },
+  {
+   "fieldname": "inspector",
+   "fieldtype": "Data",
+   "label": "Inspector"
+  },
+  {
+   "fieldname": "column_break_dbzz",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "customer_representative",
+   "fieldtype": "Data",
+   "label": "Customer Representative"
+  },
+  {
+   "fieldname": "date_insector",
+   "fieldtype": "Date",
+   "label": "Date"
+  },
+  {
+   "fieldname": "date_representative",
+   "fieldtype": "Date",
+   "label": "Date"
+  },
+  {
+   "fieldname": "signature_inspector",
+   "fieldtype": "Signature",
+   "label": "Signature"
+  },
+  {
+   "fieldname": "signature_representative",
+   "fieldtype": "Signature",
+   "label": "Signature"
+  },
+  {
+   "fieldname": "amended_from",
+   "fieldtype": "Link",
+   "label": "Amended From",
+   "no_copy": 1,
+   "options": "Lever Hoist Checklist",
+   "print_hide": 1,
+   "read_only": 1,
+   "search_index": 1
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "is_submittable": 1,
+ "links": [],
+ "modified": "2024-08-25 18:31:02.392333",
+ "modified_by": "Administrator",
+ "module": "Uis",
+ "name": "Lever Hoist Checklist",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "submit": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}

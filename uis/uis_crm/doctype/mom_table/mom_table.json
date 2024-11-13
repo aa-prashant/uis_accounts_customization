@@ -1,0 +1,87 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2024-10-08 15:54:33.626964",
+ "default_view": "List",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "topic",
+  "decision_action",
+  "responsible_person",
+  "employee_name",
+  "job_title",
+  "closing_date",
+  "status"
+ ],
+ "fields": [
+  {
+   "columns": 2,
+   "fieldname": "topic",
+   "fieldtype": "Small Text",
+   "in_list_view": 1,
+   "label": "Topic",
+   "reqd": 1
+  },
+  {
+   "columns": 1,
+   "fieldname": "decision_action",
+   "fieldtype": "Small Text",
+   "in_list_view": 1,
+   "label": "Decision/Action",
+   "reqd": 1
+  },
+  {
+   "columns": 2,
+   "fieldname": "responsible_person",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Responsible Person",
+   "options": "Employee"
+  },
+  {
+   "columns": 2,
+   "fetch_from": "responsible_person.employee_name",
+   "fieldname": "employee_name",
+   "fieldtype": "Read Only",
+   "in_list_view": 1,
+   "label": "Employee Name"
+  },
+  {
+   "columns": 1,
+   "fetch_from": "responsible_person.designation",
+   "fieldname": "job_title",
+   "fieldtype": "Read Only",
+   "in_list_view": 1,
+   "label": "Job Title"
+  },
+  {
+   "columns": 1,
+   "fieldname": "closing_date",
+   "fieldtype": "Date",
+   "in_list_view": 1,
+   "label": "Closing Date"
+  },
+  {
+   "columns": 1,
+   "fieldname": "status",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Status",
+   "options": "Open\nClosed"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "istable": 1,
+ "links": [],
+ "modified": "2024-10-26 20:09:21.641225",
+ "modified_by": "Administrator",
+ "module": "UIS CRM",
+ "name": "MOM Table",
+ "owner": "Administrator",
+ "permissions": [],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}

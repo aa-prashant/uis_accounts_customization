@@ -1,0 +1,224 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "autoname": "VISIT.######",
+ "creation": "2024-09-24 10:36:05.642623",
+ "default_view": "List",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "visit_details_section",
+  "column_break_nbixc",
+  "visit_type",
+  "orgnization_type",
+  "orgnization_name",
+  "contact_person",
+  "phone",
+  "email",
+  "location",
+  "location_das",
+  "google_map_link",
+  "date_of_visit_column",
+  "subject_of_visit",
+  "purpose",
+  "from_dt",
+  "to_dt",
+  "territory",
+  "branch",
+  "reference_type",
+  "reference_name",
+  "employee_details_section",
+  "employee_details",
+  "text_of_the_visit_section",
+  "text_of_the_visit",
+  "amended_from"
+ ],
+ "fields": [
+  {
+   "fieldname": "visit_details_section",
+   "fieldtype": "Section Break",
+   "label": "Visit Details"
+  },
+  {
+   "fieldname": "visit_type",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Visit Type",
+   "options": "Visit Type",
+   "reqd": 1
+  },
+  {
+   "fieldname": "amended_from",
+   "fieldtype": "Link",
+   "label": "Amended From",
+   "no_copy": 1,
+   "options": "UIS Visit",
+   "print_hide": 1,
+   "read_only": 1,
+   "search_index": 1
+  },
+  {
+   "fieldname": "column_break_nbixc",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "date_of_visit_column",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "Today",
+   "fieldname": "from_dt",
+   "fieldtype": "Datetime",
+   "in_list_view": 1,
+   "label": "Date of Visit From",
+   "reqd": 1
+  },
+  {
+   "default": "Today",
+   "fieldname": "to_dt",
+   "fieldtype": "Datetime",
+   "label": "Date of Visit To"
+  },
+  {
+   "fieldname": "orgnization_type",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Orgnization Type",
+   "options": "Customer\nLead\nCompetitors\nGovernment\nSupplier\nBank Funds",
+   "reqd": 1
+  },
+  {
+   "fieldname": "orgnization_name",
+   "fieldtype": "Dynamic Link",
+   "in_list_view": 1,
+   "label": "Orgnization Name",
+   "options": "orgnization_type",
+   "reqd": 1
+  },
+  {
+   "fieldname": "contact_person",
+   "fieldtype": "Link",
+   "label": "Contact Person",
+   "options": "Contact",
+   "reqd": 1
+  },
+  {
+   "fieldname": "location",
+   "fieldtype": "Link",
+   "label": "Location",
+   "options": "Address",
+   "reqd": 1
+  },
+  {
+   "fieldname": "subject_of_visit",
+   "fieldtype": "Link",
+   "label": "Subject of Visit",
+   "options": "Subject of Visit",
+   "reqd": 1
+  },
+  {
+   "fieldname": "text_of_the_visit_section",
+   "fieldtype": "Section Break",
+   "label": "Text of the visit"
+  },
+  {
+   "fieldname": "text_of_the_visit",
+   "fieldtype": "Text",
+   "label": "Description"
+  },
+  {
+   "fetch_from": "location.address_title",
+   "fieldname": "location_das",
+   "fieldtype": "Data",
+   "label": "Address Title ",
+   "read_only": 1
+  },
+  {
+   "fetch_from": "location.custom_google_map_link",
+   "fieldname": "google_map_link",
+   "fieldtype": "Data",
+   "label": "Google Map Link",
+   "read_only": 1
+  },
+  {
+   "fieldname": "purpose",
+   "fieldtype": "Link",
+   "label": "Purpose",
+   "options": "Visit Purpose",
+   "reqd": 1
+  },
+  {
+   "fetch_from": "contact_person.custom_contact_phone",
+   "fieldname": "phone",
+   "fieldtype": "Read Only",
+   "label": "Mobile"
+  },
+  {
+   "fetch_from": "contact_person.email_id",
+   "fieldname": "email",
+   "fieldtype": "Read Only",
+   "label": "Email"
+  },
+  {
+   "fieldname": "territory",
+   "fieldtype": "Link",
+   "label": "UIS Territory",
+   "options": "Territory"
+  },
+  {
+   "fieldname": "branch",
+   "fieldtype": "Link",
+   "label": "UIS Branch",
+   "options": "Branch"
+  },
+  {
+   "fieldname": "reference_type",
+   "fieldtype": "Link",
+   "label": "Reference Type",
+   "options": "DocType"
+  },
+  {
+   "fieldname": "reference_name",
+   "fieldtype": "Dynamic Link",
+   "label": "Reference Name",
+   "options": "reference_type"
+  },
+  {
+   "fieldname": "employee_details_section",
+   "fieldtype": "Section Break",
+   "label": "Employee Details"
+  },
+  {
+   "fieldname": "employee_details",
+   "fieldtype": "Table",
+   "options": "Employee Details"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "is_submittable": 1,
+ "links": [],
+ "modified": "2024-10-08 18:03:08.549240",
+ "modified_by": "Administrator",
+ "module": "UIS CRM",
+ "name": "UIS Visit",
+ "naming_rule": "By script",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}

@@ -1,0 +1,167 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2024-09-30 15:41:49.140617",
+ "default_view": "List",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "platforms_details_section",
+  "column_break_o4krp",
+  "platform_name",
+  "purpose",
+  "active_date",
+  "username",
+  "link",
+  "reference_type",
+  "column_break_s0l4a",
+  "platform_owner",
+  "type_of_authority",
+  "expirey_date",
+  "passowrd",
+  "authentication",
+  "reference_name",
+  "employee_details_section",
+  "employee_details",
+  "amended_from"
+ ],
+ "fields": [
+  {
+   "fieldname": "platforms_details_section",
+   "fieldtype": "Section Break",
+   "label": "Platforms Details"
+  },
+  {
+   "fieldname": "platform_name",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Platform Name",
+   "options": "Platform Name",
+   "reqd": 1
+  },
+  {
+   "fieldname": "amended_from",
+   "fieldtype": "Link",
+   "label": "Amended From",
+   "no_copy": 1,
+   "options": "Platforms",
+   "print_hide": 1,
+   "read_only": 1,
+   "search_index": 1
+  },
+  {
+   "fieldname": "column_break_o4krp",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "column_break_s0l4a",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "platform_owner",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Platform Owner",
+   "options": "Platform Owner",
+   "reqd": 1
+  },
+  {
+   "fieldname": "purpose",
+   "fieldtype": "Link",
+   "label": "Purpose",
+   "options": "Platform Purpose",
+   "reqd": 1
+  },
+  {
+   "fieldname": "type_of_authority",
+   "fieldtype": "Link",
+   "label": "Type of Authority",
+   "options": "Type of Authority",
+   "reqd": 1
+  },
+  {
+   "fieldname": "active_date",
+   "fieldtype": "Datetime",
+   "label": "Active Date & Time",
+   "reqd": 1
+  },
+  {
+   "fieldname": "expirey_date",
+   "fieldtype": "Datetime",
+   "label": "Expirey Date & Time",
+   "reqd": 1
+  },
+  {
+   "fieldname": "username",
+   "fieldtype": "Data",
+   "label": "User Name ",
+   "reqd": 1
+  },
+  {
+   "fieldname": "passowrd",
+   "fieldtype": "Data",
+   "label": "Passowrd",
+   "reqd": 1
+  },
+  {
+   "fieldname": "link",
+   "fieldtype": "Data",
+   "label": "Link",
+   "reqd": 1
+  },
+  {
+   "fieldname": "authentication",
+   "fieldtype": "Data",
+   "label": "Authentication",
+   "reqd": 1
+  },
+  {
+   "fieldname": "employee_details_section",
+   "fieldtype": "Section Break",
+   "label": "Employee Details"
+  },
+  {
+   "fieldname": "employee_details",
+   "fieldtype": "Table",
+   "options": "Employee Details"
+  },
+  {
+   "fieldname": "reference_type",
+   "fieldtype": "Link",
+   "label": "Reference Type",
+   "options": "DocType"
+  },
+  {
+   "fieldname": "reference_name",
+   "fieldtype": "Dynamic Link",
+   "label": "Reference Name",
+   "options": "reference_type"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "is_submittable": 1,
+ "links": [],
+ "modified": "2024-10-09 20:33:49.125480",
+ "modified_by": "Administrator",
+ "module": "UIS HR",
+ "name": "Platforms",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}

@@ -1,0 +1,135 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2024-09-08 10:42:08.817760",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "section_break_b4mg",
+  "bank_name",
+  "bank_type",
+  "column_break_ktuq",
+  "territory",
+  "bank_group",
+  "address_and_contact_section",
+  "address",
+  "address_text",
+  "column_break_ezpp",
+  "contact",
+  "contact_text",
+  "branch_section",
+  "branch_table",
+  "amended_from"
+ ],
+ "fields": [
+  {
+   "fieldname": "section_break_b4mg",
+   "fieldtype": "Section Break",
+   "label": "Bank Details"
+  },
+  {
+   "fieldname": "bank_name",
+   "fieldtype": "Date",
+   "label": "Bank Name"
+  },
+  {
+   "fieldname": "column_break_ktuq",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "territory",
+   "fieldtype": "Link",
+   "label": "Territory",
+   "options": "Territory"
+  },
+  {
+   "fieldname": "bank_type",
+   "fieldtype": "Select",
+   "label": "Bank Type",
+   "options": "Company\nIndividual\nPartnership"
+  },
+  {
+   "fieldname": "bank_group",
+   "fieldtype": "Link",
+   "label": "Bank Group",
+   "options": "Customer Group"
+  },
+  {
+   "fieldname": "address_and_contact_section",
+   "fieldtype": "Section Break",
+   "label": "Address and Contact"
+  },
+  {
+   "fieldname": "address",
+   "fieldtype": "Link",
+   "label": "Address ",
+   "options": "Address"
+  },
+  {
+   "fieldname": "column_break_ezpp",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "contact",
+   "fieldtype": "Link",
+   "label": "Contact ",
+   "options": "Contact"
+  },
+  {
+   "fetch_from": "address.address_title",
+   "fieldname": "address_text",
+   "fieldtype": "Read Only"
+  },
+  {
+   "fetch_from": "contact.full_name",
+   "fieldname": "contact_text",
+   "fieldtype": "Read Only"
+  },
+  {
+   "fieldname": "amended_from",
+   "fieldtype": "Link",
+   "label": "Amended From",
+   "no_copy": 1,
+   "options": "Bank Funds",
+   "print_hide": 1,
+   "read_only": 1,
+   "search_index": 1
+  },
+  {
+   "fieldname": "branch_section",
+   "fieldtype": "Section Break",
+   "label": "Branch"
+  },
+  {
+   "fieldname": "branch_table",
+   "fieldtype": "Table",
+   "options": "Branch Table"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "is_submittable": 1,
+ "links": [],
+ "modified": "2024-10-06 18:25:56.390336",
+ "modified_by": "Administrator",
+ "module": "UIS CRM",
+ "name": "Bank Funds",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "submit": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}
