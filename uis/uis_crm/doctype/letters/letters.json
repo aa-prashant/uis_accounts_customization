@@ -147,13 +147,6 @@
    "fieldtype": "Dynamic Link",
    "label": "Reference Name",
    "options": "reference_type"
-  },
-  {
-   "default": "<img src=\"{{ gen_qrcode(doc.name) }}\" width=\"100\">",
-   "documentation_url": "<img src=\"{{ gen_qrcode(doc.name) }}\" width=\"100\">",
-   "fieldname": "qi",
-   "fieldtype": "Image",
-   "label": "qr"
   }
  ],
  "index_web_pages_for_search": 1,
