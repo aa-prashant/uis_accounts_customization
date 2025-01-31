@@ -8,7 +8,16 @@ app_license = "mit"
 
 # Includes in <head>
 # ------------------
-
+fixtures = [
+    {
+        "dt": "Custom Field", "filters": [
+        [
+            "module", "in", [
+                "Uis"
+            ]
+        ]
+        ]
+    },]
 # include js, css files in header of desk.html
 # app_include_css = "/assets/uis/css/uis.css"
 # app_include_js = "/assets/uis/js/uis.js"
