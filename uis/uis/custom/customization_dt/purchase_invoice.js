@@ -3,10 +3,10 @@ frappe.ui.form.on("Purchase Invoice Item", {
         console.log("From Item code")
         frappe.call({
             method : "uis.uis.api.utils.get_allocated_amount",
-            args : {"item_code" : frm.selected_doc.item_code},
+            args : {"doc" : frm.doc, "selected_doc" : frm.selected_doc},
             callback:(response)=>{
                 if(response.message){
-                    console.log(response.message)
+                    frappe.model.set_value(cur_frm.selected_doc.doctype, cur_frm.selected_doc.name, "custom_allocated_budget", response.message)
                 }
             }
         })
