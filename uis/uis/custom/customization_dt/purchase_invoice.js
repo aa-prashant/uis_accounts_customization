@@ -1,6 +1,17 @@
+frappe.ui.form.on("Purchase Invoice", {
+    validate:(frm)=>{
+        item_tables = frm.doc.items 
+        for(let item of item_tables){
+            if(item.amount > item.custom_allocated_budget){
+                frappe.throw("Amount cannot exceed then allocate budget.");
+                
+            }
+        }
+    }
+})
+
 frappe.ui.form.on("Purchase Invoice Item", {
     item_code:(frm)=>{
-        console.log("From Item code")
         frappe.call({
             method : "uis.uis.api.utils.get_allocated_amount",
             args : {"doc" : frm.doc, "selected_doc" : frm.selected_doc},

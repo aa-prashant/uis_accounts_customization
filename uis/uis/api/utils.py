@@ -14,8 +14,6 @@ def get_allocated_amount(doc, selected_doc=None):
     if not bool(selected_doc.item_code):
         return True
     
-    fiscal_year = get_fiscal_year(doc.posting_date)
-
     selected_branch = selected_doc.branch
     branch = doc.branch
    
@@ -24,24 +22,9 @@ def get_allocated_amount(doc, selected_doc=None):
     elif bool(selected_branch) and branch != selected_branch:
         branch = selected_branch
 
-    filters = {
-        
-        "branch" : branch,
-        "company" : doc.company,
-        "docstatus" : 1
-    }
-    budget_name = frappe.get_value("Allocate Budget for Asset", filters, "name")
-    if not bool(budget_name):
-        return True
-    
-    filters = {
-        "parent":budget_name,
-        "item_code" : selected_doc.item_code
-    }
-
-    get_allocated_budget = frappe.get_value("Budget Item",filters, ["budget_amount"])
-    return get_allocated_budget
-
+    allocated_budget = get_allocated_budget(doc, selected_doc, branch)
+    pi_item_amount = get_used_budget(doc, selected_doc)
+    return allocated_budget - pi_item_amount
 
 def get_fiscal_year(date):
     fiscal_year = frappe.get_doc("Fiscal Year", 
@@ -53,3 +36,33 @@ def get_fiscal_year(date):
 def fetch_fiscal_year(purchase_invoice):
     doc = frappe.get_doc("Purchase Invoice", purchase_invoice)
     return get_fiscal_year(doc.posting_date)  # or doc.transaction_date
+
+def get_allocated_budget(doc, selected_doc, branch):
+    fiscal_year = get_fiscal_year(doc.posting_date)
+
+
+    filters = {
+        
+        "branch" : branch,
+        "company" : doc.company,
+        "docstatus" : 1
+    }
+    budget_name = frappe.get_value("Allocate Budget for Asset", filters, "name")
+    if not bool(budget_name):
+        return 0
+    
+    filters = {
+        "parent":budget_name,
+        "item_code" : selected_doc.item_code
+    }
+
+    allocated_budget = frappe.get_value("Budget Item",filters, ["budget_amount"])
+    return allocated_budget if allocated_budget is not None else 0
+
+def get_used_budget(doc, selected_doc):
+    filters = {'item_code' : selected_doc.item_code, 
+               "docstatus" : 1
+            }
+    pi_item = frappe.get_value("Purchase Invoice Item", filters , "amount")
+    return pi_item if pi_item is not None else 0
+
