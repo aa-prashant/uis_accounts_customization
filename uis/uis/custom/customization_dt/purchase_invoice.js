@@ -1,12 +1,8 @@
 frappe.ui.form.on("Purchase Invoice", {
-    validate:(frm)=>{
-        item_tables = frm.doc.items 
-        for(let item of item_tables){
-            if(item.amount > item.custom_allocated_budget){
-                frappe.throw("Amount cannot exceed then allocate budget.");
-                
-            }
-        }
+    branch: function(frm) {
+        frm.doc.items.forEach(item => {
+            frappe.model.set_value(item.doctype, item.name, "branch", frm.doc.branch);
+        });
     }
 })
 
@@ -16,10 +12,8 @@ frappe.ui.form.on("Purchase Invoice Item", {
             method : "uis.uis.api.utils.get_allocated_amount",
             args : {"doc" : frm.doc, "selected_doc" : frm.selected_doc},
             callback:(response)=>{
-                if(response.message){
-                    frappe.model.set_value(cur_frm.selected_doc.doctype, cur_frm.selected_doc.name, "custom_allocated_budget", response.message)
-                }
+                frappe.model.set_value(cur_frm.selected_doc.doctype, cur_frm.selected_doc.name, "custom_allocated_budget", response.message)
             }
         })
-    }
+    },
 })

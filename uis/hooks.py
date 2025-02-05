@@ -134,13 +134,13 @@ doctype_js = {
 # ---------------
 # Hook on document methods and events
 
-# doc_events = {
-# 	"*": {
-# 		"on_update": "method",
-# 		"on_cancel": "method",
-# 		"on_trash": "method"
-# 	}
-# }
+doc_events = {
+	"Purchase Invoice": {
+		"validate": "uis.uis.custom.customization_script.purchase_invoice.validate",
+        
+	}
+
+}
 
 # Scheduled Tasks
 # ---------------
