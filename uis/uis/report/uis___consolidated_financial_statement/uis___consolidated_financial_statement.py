@@ -63,11 +63,33 @@ def execute(filters=None):
 
 
 def get_balance_sheet_data(fiscal_year, companies, columns, filters):
-	asset = get_data(companies, "Asset", "Debit", fiscal_year, filters=filters)
+	
+	branches, company_fetched_list = [], []
+	data_list, report_summary_list = [], []
+	for key in companies:
+		for company in companies[key]:
+			if company in company_fetched_list:
+				continue
+			company_fetched_list.append(company)
+			branches = company_branches(company)
+			
+			for branch in branches:
+				data_list +=[{
+								'account_name' : f"{branch}-{company}"
+								
+								}]
+				data, message, chart, report_summary = get_balance_sheet_data_branch(fiscal_year, companies, columns, filters, branch)
+				report_summary_list = calculate_report_summary(report_summary, report_summary_list)
+				data_list += data
+				data_list +=[{}]
+	return data_list, message, chart, report_summary_list
 
-	liability = get_data(companies, "Liability", "Credit", fiscal_year, filters=filters)
+def get_balance_sheet_data_branch(fiscal_year, companies, columns, filters, branch):
+	asset = get_data(companies, "Asset", "Debit", fiscal_year, filters=filters, branch=branch)
 
-	equity = get_data(companies, "Equity", "Credit", fiscal_year, filters=filters)
+	liability = get_data(companies, "Liability", "Credit", fiscal_year, filters=filters, branch=branch)
+
+	equity = get_data(companies, "Equity", "Credit", fiscal_year, filters=filters, branch=branch)
 
 	data = []
 	data.extend(asset or [])
@@ -317,7 +339,7 @@ def get_columns(companies, filters):
 	return columns
 
 
-def get_data(companies, root_type, balance_must_be, fiscal_year, filters=None, ignore_closing_entries=False):
+def get_data(companies, root_type, balance_must_be, fiscal_year, filters=None, ignore_closing_entries=False, branch=None):
 	accounts, accounts_by_name, parent_children_map = get_account_heads(root_type, companies, filters)
 
 	if not accounts:
@@ -352,6 +374,7 @@ def get_data(companies, root_type, balance_must_be, fiscal_year, filters=None, i
 			accounts,
 			ignore_closing_entries=ignore_closing_entries,
 			root_type=root_type,
+			branch=branch
 		)
 
 	calculate_values(accounts_by_name, gl_entries_by_account, companies, filters, fiscal_year)
@@ -587,6 +610,7 @@ def set_gl_entries_by_account(
 	accounts,
 	ignore_closing_entries=False,
 	root_type=None,
+	branch = None
 ):
 	"""Returns a dict like { "account": [gl entries], ... }"""
 
@@ -634,6 +658,7 @@ def set_gl_entries_by_account(
 				& (gle.posting_date <= to_date)
 				& (account.lft >= root_lft)
 				& (account.rgt <= root_rgt)
+				& (gle.branch == branch)
 			)
 			.orderby(gle.account, gle.posting_date)
 		)
@@ -794,3 +819,20 @@ def filter_accounts(accounts, depth=10):
 	add_to_list(None, 0)
 
 	return filtered_accounts, accounts_by_name, parent_children_map
+
+def company_branches(company):
+	branches = frappe.get_all("Branch", filters={"company": company}, pluck="name")
+	return branches
+
+def calculate_report_summary(report_summary, report_summary_list):
+	if not report_summary_list:
+		return report_summary
+
+	row_key_value = {row.get("label"): row.get("value") for row in report_summary_list if row.get("label")}
+	for element in report_summary:
+		value = row_key_value[element.get('label')]
+		value += element.get('value')
+		element['value'] = value
+	
+	return report_summary
+
