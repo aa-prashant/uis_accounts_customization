@@ -5,6 +5,7 @@
 from collections import defaultdict
 
 import frappe
+from frappe.utils import cstr
 from frappe import _
 from frappe.query_builder import Criterion
 from frappe.utils import flt, getdate
@@ -19,7 +20,6 @@ from erpnext.accounts.report.balance_sheet.balance_sheet import (
 )
 from erpnext.accounts.report.cash_flow.cash_flow import (
 	add_total_row_account,
-	get_account_type_based_gl_data,
 	get_cash_flow_accounts,
 )
 from erpnext.accounts.report.cash_flow.cash_flow import get_report_summary as get_cash_flow_summary
@@ -39,6 +39,7 @@ from erpnext.accounts.report.profit_and_loss_statement.profit_and_loss_statement
 )
 from erpnext.accounts.report.utils import convert, convert_to_presentation_currency
 
+from erpnext.accounts.report.financial_statements import get_cost_centers_with_children
 
 def execute(filters=None):
 	columns, data, message, chart = [], [], [], []
@@ -243,22 +244,35 @@ def get_cash_flow_data(fiscal_year, companies, filters):
 				)
 				data.append(net_profit_loss)
 				section_data.append(net_profit_loss)
-
+		account_data_dict_list= {}
 		for account in cash_flow_account["account_types"]:
-			account_data = get_account_type_based_data(
+			account_data_dict = get_account_type_based_data(
 				account["account_type"], companies, fiscal_year, filters
 			)
-			account_data.update(
-				{
-					"account_name": account["label"],
-					"account": account["label"],
-					"indent": 1,
-					"parent_account": cash_flow_account["section_header"],
-					"currency": company_currency,
-				}
-			)
-			data.append(account_data)
-			section_data.append(account_data)
+			
+			for key, item in account_data_dict.items():
+				account_data= {}
+				account_data.update(
+					{
+						"account_name": account["label"],
+						"account": account["label"],
+						"indent": 1,
+						"parent_account": cash_flow_account["section_header"],
+						"currency": company_currency,
+						key[0]:account_data_dict[key]
+					}
+				)
+				if key not in account_data_dict_list:
+					account_data_dict_list.update({key : [account_data]})
+				else:
+					account_data_dict_list.get(key).append(account_data)
+
+		for key,data_row in account_data_dict_list.items():
+			data.append({"account_name": f'{key[1]}-{key[0]}'})
+			data += data_row
+			
+		section_data.append(account_data)
+
 
 		add_total_row_account(
 			data,
@@ -288,15 +302,17 @@ def get_account_type_based_data(account_type, companies, fiscal_year, filters):
 	filters.end_date = fiscal_year.year_end_date
 
 	for company in companies:
-		amount = get_account_type_based_gl_data(company, filters)
+		branches = company_branches(company)
+		for branch in branches:
+			key = (company, branch)
+			amount = get_account_type_based_gl_data(company, filters, branch)
 
-		if amount and account_type == "Depreciation":
-			amount *= -1
+			if amount and account_type == "Depreciation":
+				amount *= -1
 
-		total += amount
-		data.setdefault(company, amount)
-
-	data["total"] = total
+			total += amount
+			data[key] = amount
+		data["total"] = total
 	return data
 
 
@@ -832,7 +848,41 @@ def calculate_report_summary(report_summary, report_summary_list):
 	for element in report_summary:
 		value = row_key_value[element.get('label')]
 		value += element.get('value')
-		element['value'] = value
+		element['value'] = value 
 	
 	return report_summary
 
+
+def get_account_type_based_gl_data(company, filters=None, branch_val = None):
+	cond = ""
+	filters = frappe._dict(filters or {})
+
+	if filters.include_default_book_entries:
+		company_fb = frappe.get_cached_value("Company", company, "default_finance_book")
+		cond = """ AND (finance_book in ({}, {}, '') OR finance_book IS NULL)
+			""".format(
+			frappe.db.escape(filters.finance_book),
+			frappe.db.escape(company_fb),
+		)
+	else:
+		cond = " AND (finance_book in (%s, '') OR finance_book IS NULL)" % (
+			frappe.db.escape(cstr(filters.finance_book))
+		)
+
+	if filters.get("cost_center"):
+		filters.cost_center = get_cost_centers_with_children(filters.cost_center)
+		cond += " and cost_center in %(cost_center)s"
+
+	gl_sum = frappe.db.sql_list(
+		f"""
+		select  sum(credit) - sum(debit)
+		from `tabGL Entry`
+		where company=%(company)s and posting_date >= %(start_date)s and posting_date <= %(end_date)s
+			and voucher_type != 'Period Closing Voucher'
+			and branch = "{branch_val}"
+			and account in ( SELECT name FROM tabAccount WHERE account_type = %(account_type)s) {cond}
+	""",
+		filters,
+	)
+
+	return gl_sum[0] if gl_sum and gl_sum[0] else 0
