@@ -50,18 +50,19 @@ def execute(filters=None):
 	fiscal_year = get_fiscal_year_data(filters.get("from_fiscal_year"), filters.get("to_fiscal_year"))
 	companies_column, companies = get_companies(filters)
 	columns = get_columns(companies_column, filters)
-
+	is_pnl = False
 	if filters.get("report") == "Balance Sheet":
 		data, message, chart, report_summary = get_balance_sheet_data(
 			fiscal_year, companies, columns, filters
 		)
 	elif filters.get("report") == "Profit and Loss Statement":
 		data, message, chart, report_summary = get_profit_loss_data(fiscal_year, companies, columns, filters)
+		is_pnl = True
 	else:
 		data, report_summary = get_cash_flow_data(fiscal_year, companies, filters)
 	
-	columns = get_columns_branch_wise(companies_column, filters)
-	data = formated_data_list(data)
+	columns = get_columns_branch_wise(companies_column, filters, is_pnl)
+	data = formated_data_list(data, is_pnl)
 	return columns, data, message, chart, report_summary
 
 
@@ -380,7 +381,7 @@ def get_columns(companies, filters):
 	return columns
 
 
-def get_columns_branch_wise(companies, filters):
+def get_columns_branch_wise(companies, filters, is_pnl = False):
 
 	columns = [
 		{
@@ -424,6 +425,30 @@ def get_columns_branch_wise(companies, filters):
 					"company_name": company,
 				}
 			)
+			if is_pnl:
+				columns.append(
+					{
+						"fieldname": f"{branch}_{company}",
+						"label": f"Estimated {branch} - ({currency})",
+						"fieldtype": "Currency",
+						"options": "currency",
+						"width": 150,
+						"apply_currency_formatter": apply_currency_formatter,
+						"company_name": company,
+					}
+				)
+
+				columns.append(
+					{
+						"fieldname": f"{branch}_{company}",
+						"label": f"Utilized {branch} - ({currency})",
+						"fieldtype": "Currency",
+						"options": "currency",
+						"width": 150,
+						"apply_currency_formatter": apply_currency_formatter,
+						"company_name": company,
+					}
+				)
 	return columns
 
 def formated_data_list(data_list, is_pnl=False):
