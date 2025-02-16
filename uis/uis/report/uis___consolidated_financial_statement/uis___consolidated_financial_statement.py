@@ -59,7 +59,9 @@ def execute(filters=None):
 		data, message, chart, report_summary = get_profit_loss_data(fiscal_year, companies, columns, filters)
 	else:
 		data, report_summary = get_cash_flow_data(fiscal_year, companies, filters)
-
+	
+	columns = get_columns_branch_wise(companies_column, filters)
+	data = formated_data_list(data)
 	return columns, data, message, chart, report_summary
 
 
@@ -75,14 +77,10 @@ def get_balance_sheet_data(fiscal_year, companies, columns, filters):
 			branches = company_branches(company)
 			
 			for branch in branches:
-				data_list +=[{
-								'account_name' : f"{branch}-{company}"
-								
-								}]
+				key = (company, branch)
 				data, message, chart, report_summary = get_balance_sheet_data_branch(fiscal_year, companies, columns, filters, branch)
 				report_summary_list = calculate_report_summary(report_summary, report_summary_list)
-				data_list += data
-				data_list +=[{}]
+				data_list.append({key: data})
 	return data_list, message, chart, report_summary_list
 
 def get_balance_sheet_data_branch(fiscal_year, companies, columns, filters, branch):
@@ -187,7 +185,24 @@ def get_root_account_name(root_type, company):
 
 
 def get_profit_loss_data(fiscal_year, companies, columns, filters):
-	income, expense, net_profit_loss = get_income_expense_data(companies, fiscal_year, filters)
+
+	branches, company_fetched_list = [], []
+	data_list, report_summary_list = [], []
+	for key in companies:
+		for company in companies[key]:
+			if company in company_fetched_list:
+				continue
+			company_fetched_list.append(company)
+			branches = company_branches(company)
+			
+			for branch in branches:
+				key = (company, branch)
+				data, message, chart, report_summary = get_profit_loss_data_branch_wise(fiscal_year, companies, columns, filters, branch)
+				data_list.append({key:data})
+	return data_list, message, chart, report_summary 
+
+def get_profit_loss_data_branch_wise(fiscal_year, companies, columns, filters, branch):
+	income, expense, net_profit_loss = get_income_expense_data(companies, fiscal_year, filters, branch)
 	company_currency = get_company_currency(filters)
 
 	data = []
@@ -205,11 +220,11 @@ def get_profit_loss_data(fiscal_year, companies, columns, filters):
 	return data, None, chart, report_summary
 
 
-def get_income_expense_data(companies, fiscal_year, filters):
+def get_income_expense_data(companies, fiscal_year, filters, branch):
 	company_currency = get_company_currency(filters)
-	income = get_data(companies, "Income", "Credit", fiscal_year, filters, True)
+	income = get_data(companies, "Income", "Credit", fiscal_year, filters, True, branch)
 
-	expense = get_data(companies, "Expense", "Debit", fiscal_year, filters, True)
+	expense = get_data(companies, "Expense", "Debit", fiscal_year, filters, True, branch)
 
 	net_profit_loss = get_net_profit_loss(income, expense, companies, filters.company, company_currency, True)
 
@@ -217,9 +232,28 @@ def get_income_expense_data(companies, fiscal_year, filters):
 
 
 def get_cash_flow_data(fiscal_year, companies, filters):
+
+	branches, company_fetched_list = [], []
+	data_list, report_summary_list = [], []
+	for key in companies:
+		for company in companies[key]:
+			if company in company_fetched_list:
+				continue
+			company_fetched_list.append(company)
+			branches = company_branches(company)
+			
+			for branch in branches:
+				key = (company, branch)
+				data, report_summary = get_cash_flow_data_base_branch(fiscal_year, companies, filters, branch)
+				data_list.append({key:data})
+				report_summary_list.append(report_summary)
+	return data_list, report_summary
+
+
+def get_cash_flow_data_base_branch(fiscal_year, companies, filters, branch):
 	cash_flow_accounts = get_cash_flow_accounts()
 
-	income, expense, net_profit_loss = get_income_expense_data(companies, fiscal_year, filters)
+	income, expense, net_profit_loss = get_income_expense_data(companies, fiscal_year, filters, branch )
 
 	data = []
 	summary_data = {}
@@ -244,35 +278,22 @@ def get_cash_flow_data(fiscal_year, companies, filters):
 				)
 				data.append(net_profit_loss)
 				section_data.append(net_profit_loss)
-		account_data_dict_list= {}
+
 		for account in cash_flow_account["account_types"]:
-			account_data_dict = get_account_type_based_data(
+			account_data = get_account_type_based_data(
 				account["account_type"], companies, fiscal_year, filters
 			)
-			
-			for key, item in account_data_dict.items():
-				account_data= {}
-				account_data.update(
-					{
-						"account_name": account["label"],
-						"account": account["label"],
-						"indent": 1,
-						"parent_account": cash_flow_account["section_header"],
-						"currency": company_currency,
-						key[0]:account_data_dict[key]
-					}
-				)
-				if key not in account_data_dict_list:
-					account_data_dict_list.update({key : [account_data]})
-				else:
-					account_data_dict_list.get(key).append(account_data)
-
-		for key,data_row in account_data_dict_list.items():
-			data.append({"account_name": f'{key[1]}-{key[0]}'})
-			data += data_row
-			
-		section_data.append(account_data)
-
+			account_data.update(
+				{
+					"account_name": account["label"],
+					"account": account["label"],
+					"indent": 1,
+					"parent_account": cash_flow_account["section_header"],
+					"currency": company_currency,
+				}
+			)
+			data.append(account_data)
+			section_data.append(account_data)
 
 		add_total_row_account(
 			data,
@@ -302,17 +323,15 @@ def get_account_type_based_data(account_type, companies, fiscal_year, filters):
 	filters.end_date = fiscal_year.year_end_date
 
 	for company in companies:
-		branches = company_branches(company)
-		for branch in branches:
-			key = (company, branch)
-			amount = get_account_type_based_gl_data(company, filters, branch)
+		amount = get_account_type_based_gl_data(company, filters)
 
-			if amount and account_type == "Depreciation":
-				amount *= -1
+		if amount and account_type == "Depreciation":
+			amount *= -1
 
-			total += amount
-			data[key] = amount
-		data["total"] = total
+		total += amount
+		data.setdefault(company, amount)
+
+	data["total"] = total
 	return data
 
 
@@ -331,6 +350,12 @@ def get_columns(companies, filters):
 			"fieldtype": "Link",
 			"options": "Currency",
 			"hidden": 1,
+		},
+		{
+			"fieldname": "branch",
+			"label": _("Branch"),
+			"fieldtype": "Data",
+			"default":1
 		},
 	]
 
@@ -354,6 +379,80 @@ def get_columns(companies, filters):
 
 	return columns
 
+
+def get_columns_branch_wise(companies, filters):
+
+	columns = [
+		{
+			"fieldname": "account",
+			"label": _("Account"),
+			"fieldtype": "Link",
+			"options": "Account",
+			"width": 300,
+		},
+		{
+			"fieldname": "currency",
+			"label": _("Currency"),
+			"fieldtype": "Link",
+			"options": "Currency",
+			"hidden": 1,
+		}
+	]
+
+	branches, company_fetched_list = [], []
+	
+	for company in companies:
+		if company in company_fetched_list:
+				continue
+		company_fetched_list.append(company)
+		branches = company_branches(company)
+		
+		for branch in branches:
+			apply_currency_formatter = 1 if not filters.presentation_currency else 0
+			currency = filters.presentation_currency
+			if not currency:
+				currency = erpnext.get_company_currency(company)
+
+			columns.append(
+				{
+					"fieldname": f"{branch}_{company}",
+					"label": f"{branch} - ({currency})",
+					"fieldtype": "Currency",
+					"options": "currency",
+					"width": 150,
+					"apply_currency_formatter": apply_currency_formatter,
+					"company_name": company,
+				}
+			)
+	return columns
+
+def formated_data_list(data_list):
+	try:
+		data = []
+		data_list_account_name = {}
+		for row in data_list:
+			for key, item in row.items():
+				branch_key = f"{key[1]}_{key[0]}"
+				if len(data) < 1:
+					for index,element in enumerate(item):
+						if key[0] in element:
+							element.update({branch_key : element[key[0]], "index" :index })
+							data_list_account_name.update({element.get('account_name') : element})
+					data = item
+					continue
+				for index, element in enumerate(item):
+					if "total" in element:
+						account_name = element.get('account_name')
+						if account_name:
+							account_row = data_list_account_name.get(account_name)
+							data_index_ = account_row['index']
+							data[data_index_].update({ branch_key : element[key[0]]})			
+						else:
+							element.update({ branch_key : element[key[0]]})			
+							data.append(element)
+		return data
+	except Exception as e:
+		print("Hi")
 
 def get_data(companies, root_type, balance_must_be, fiscal_year, filters=None, ignore_closing_entries=False, branch=None):
 	accounts, accounts_by_name, parent_children_map = get_account_heads(root_type, companies, filters)

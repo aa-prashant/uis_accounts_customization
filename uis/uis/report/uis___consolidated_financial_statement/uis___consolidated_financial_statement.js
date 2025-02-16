@@ -16,7 +16,7 @@ frappe.query_reports["UIS - Consolidated Financial Statement"] = {
 			label: __("Filter Based On"),
 			fieldtype: "Select",
 			options: ["Fiscal Year", "Date Range"],
-			default: ["Fiscal Year"],
+			default: ["Date Range"],
 			reqd: 1,
 			on_change: function () {
 				let filter_based_on = frappe.query_report.get_filter_value("filter_based_on");
@@ -41,14 +41,12 @@ frappe.query_reports["UIS - Consolidated Financial Statement"] = {
 			fieldname: "period_start_date",
 			label: __("Start Date"),
 			fieldtype: "Date",
-			hidden: 1,
 			reqd: 1,
 		},
 		{
 			fieldname: "period_end_date",
 			label: __("End Date"),
 			fieldtype: "Date",
-			hidden: 1,
 			reqd: 1,
 		},
 		{
@@ -58,6 +56,7 @@ frappe.query_reports["UIS - Consolidated Financial Statement"] = {
 			options: "Fiscal Year",
 			default: erpnext.utils.get_fiscal_year(frappe.datetime.get_today()),
 			reqd: 1,
+			hidden: 1,
 			on_change: () => {
 				frappe.model.with_doc(
 					"Fiscal Year",
@@ -82,6 +81,7 @@ frappe.query_reports["UIS - Consolidated Financial Statement"] = {
 			options: "Fiscal Year",
 			default: erpnext.utils.get_fiscal_year(frappe.datetime.get_today()),
 			reqd: 1,
+			hidden: 1,
 			on_change: () => {
 				frappe.model.with_doc(
 					"Fiscal Year",
