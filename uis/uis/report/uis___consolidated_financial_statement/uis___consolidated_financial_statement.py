@@ -426,33 +426,30 @@ def get_columns_branch_wise(companies, filters):
 			)
 	return columns
 
-def formated_data_list(data_list):
-	try:
-		data = []
-		data_list_account_name = {}
-		for row in data_list:
-			for key, item in row.items():
-				branch_key = f"{key[1]}_{key[0]}"
-				if len(data) < 1:
-					for index,element in enumerate(item):
-						if key[0] in element:
-							element.update({branch_key : element[key[0]], "index" :index })
-							data_list_account_name.update({element.get('account_name') : element})
-					data = item
-					continue
-				for index, element in enumerate(item):
-					if "total" in element:
-						account_name = element.get('account_name')
-						if account_name:
-							account_row = data_list_account_name.get(account_name)
-							data_index_ = account_row['index']
-							data[data_index_].update({ branch_key : element[key[0]]})			
-						else:
-							element.update({ branch_key : element[key[0]]})			
-							data.append(element)
-		return data
-	except Exception as e:
-		print("Hi")
+def formated_data_list(data_list, is_pnl=False):
+	data = []
+	data_list_account_name = {}
+	for row in data_list:
+		for key, item in row.items():
+			branch_key = f"{key[1]}_{key[0]}"
+			if len(data) < 1:
+				for index,element in enumerate(item):
+					if key[0] in element:
+						element.update({branch_key : element[key[0]], "index" :index })
+						data_list_account_name.update({element.get('account_name') : element})
+				data = item
+				continue
+			for index, element in enumerate(item):
+				if "total" in element:
+					account_name = element.get('account_name')
+					if account_name:
+						account_row = data_list_account_name.get(account_name)
+						data_index_ = account_row['index']
+						data[data_index_].update({ branch_key : element[key[0]]})			
+					else:
+						element.update({ branch_key : element[key[0]]})			
+						data.append(element)
+	return data
 
 def get_data(companies, root_type, balance_must_be, fiscal_year, filters=None, ignore_closing_entries=False, branch=None):
 	accounts, accounts_by_name, parent_children_map = get_account_heads(root_type, companies, filters)
