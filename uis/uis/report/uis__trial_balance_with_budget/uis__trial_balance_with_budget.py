@@ -1,7 +1,7 @@
 # Copyright (c) 2025, Mohamed Elyamany and contributors
 # For license information, please see license.txt
 
-# import frappe
+import frappe
 
 
 def execute(filters=None):

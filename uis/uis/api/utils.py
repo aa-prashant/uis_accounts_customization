@@ -5,6 +5,18 @@ from frappe.utils import getdate
 def get_allocated_amount(doc, selected_doc=None):
     doc = frappe._dict(frappe.parse_json(doc)) if type(doc) == str else doc
     selected_doc = frappe._dict(frappe.parse_json(selected_doc))  if type(selected_doc) == str else selected_doc
+    
+    if not selected_doc.item_code :
+        return
+    
+    item_type = get_item_type(selected_doc.item_code)
+    if item_type:
+        return get_allocated_amount_for_asset(doc, selected_doc)
+    
+    return get_allocated_amount_for_gl(doc, selected_doc)
+
+
+def get_allocated_amount_for_asset(doc, selected_doc):
 
     if not selected_doc.get("item_code"):
         return 0
@@ -75,3 +87,36 @@ def get_used_budget(doc, selected_doc, branch):
             used_amount +=item.amount
     return used_amount
 
+def get_item_type(item_code):
+    item_type = frappe.db.get_value("Item", item_code, "is_fixed_asset")
+    return item_type
+
+def get_allocated_amount_for_gl(doc, selected_doc):
+    if not selected_doc.get("item_code"):
+        return 0
+    
+    branch = selected_doc.get("branch") or doc.get("branch")
+
+    if not branch:
+        frappe.throw("Branch cannot be empty")
+
+    fiscal_year = get_fiscal_year(doc)
+    if not fiscal_year:
+        return 0
+    
+    budget_name = frappe.get_value(
+        "Budget",
+        {"fiscal_year": fiscal_year, "branch": branch, "company": doc.company, "docstatus": 1},
+        "name"
+    )
+    
+    if not budget_name:
+        return 0
+
+    allocated_budget = frappe.get_value(
+        "Budget Item",
+        {"parent": budget_name, "item_code": selected_doc.item_code},
+        "budget_amount"
+    )
+
+    return allocated_budget or 0
