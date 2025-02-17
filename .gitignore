@@ -3,3 +3,7 @@
 *.egg-info
 *.swp
 ._.gitignore
+*.cpython-312.pyc
+*.cpython-312.pyc
+uis/__pycache__/
+uis/uis/__pycache__/
