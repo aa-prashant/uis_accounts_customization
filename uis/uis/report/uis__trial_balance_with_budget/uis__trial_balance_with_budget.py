@@ -6,6 +6,7 @@ import frappe
 from frappe import _
 from frappe.query_builder.functions import Sum
 from frappe.utils import add_days, cstr, flt, formatdate, getdate
+import datetime
 
 import erpnext
 from erpnext.accounts.doctype.accounting_dimension.accounting_dimension import (
@@ -18,6 +19,8 @@ from erpnext.accounts.report.financial_statements import (
 	set_gl_entries_by_account,
 )
 from erpnext.accounts.report.utils import convert_to_presentation_currency, get_currency
+from datetime import datetime
+from typing import Dict, List, Optional, Tuple, Any
 
 value_fields = (
 	"opening_debit",
@@ -32,7 +35,16 @@ value_fields = (
 def execute(filters=None):
 	validate_filters(filters)
 	account_budget = get_total_budget(filters)
-	data = get_data(filters)
+	companies_column, companies = get_companies(filters)
+	data = {}
+	for company in companies_column:
+		if "UIS Group" == company:
+			continue
+		filters['company'] = company
+		
+		data_list = get_data(filters)
+		data[company] = data_list
+	data = format_data_list(data, account_budget)
 	columns = get_columns()
 	return columns, data
 
@@ -523,16 +535,264 @@ def prepare_opening_closing(row):
 		else:
 			row[reverse_col] = 0.0
 
-def get_total_budget(filters):
-	budget_parent_details = frappe.get_all("Budget", 
-										{"fiscal_year":filters.get('fiscal_year'), "branch" :["in", filters.get('branch')]}, ["name", "monthly_distribution", "fiscal_year"]
-									)
-	
-	if not budget_parent_details:
-		return []
-	budget_name_list = [row.name for row in budget_parent_details]
-	distribution_name_list = [row.monthly_distribution for row in budget_parent_details if row.monthly_distribution]
-	account_with_amount = frappe.get_all("Budget Account", {"parent":['in', budget_name_list]}, ["account", "budget_amount"])
-	monthly_distribution = frappe.get_all("Monthly Distribution Percentages", {"parent":['in', distribution_name_list]}, ["*"])
-	return account_with_amount
 
+def get_total_budget(filters: Dict[str, Any]) -> Dict[str, Any]:
+    """
+    Calculate total budget based on given filters.
+    
+    Args:
+        filters: Dictionary containing fiscal_year, company, branch, from_date, to_date
+    
+    Returns:
+        Dictionary mapping accounts to their budget details
+    """
+    budget_records = _get_budget_records(filters)
+    if not budget_records:
+        return {}
+
+    fiscal_year_details = None
+    account_budgets = {}
+    
+    for budget in budget_records:
+        # Fetch fiscal year details only once
+        if fiscal_year_details is None:
+            fiscal_year_details = _get_fiscal_year_details(budget.fiscal_year)
+        
+        month_ranges = {
+            'fy_start': fiscal_year_details.year_start_date.month,
+            'fy_end': fiscal_year_details.year_end_date.month,
+            'from_month': filters['from_date'].month,
+            'to_month': filters['to_date'].month
+        }
+        
+        accounts = _get_budget_accounts(budget.name)
+        
+        if budget.monthly_distribution:
+            distribution_data = _get_monthly_distribution(budget.monthly_distribution)
+            budget_factors = _calculate_budget_factors(
+                distribution_data, 
+                month_ranges['from_month'],
+                month_ranges['to_month'],
+                month_ranges['fy_start'],
+                month_ranges['fy_end']
+            )
+            
+            account_budgets.update(
+                _calculate_accounts_with_distribution(
+                    accounts, 
+                    budget_factors,
+                    is_distribution_exists=True
+                )
+            )
+        else:
+            account_budgets.update(
+                _calculate_accounts_with_distribution(
+                    accounts, 
+                    (0, 0, 0),
+                    is_distribution_exists=False
+                )
+            )
+    
+    return account_budgets
+
+def _get_budget_records(filters: Dict[str, Any]) -> List[Any]:
+    """Fetch budget records based on filters."""
+    budget_filter = {
+        "fiscal_year": filters.get("fiscal_year"),
+        "company": filters.get('company'),
+        "branch": ["in", filters.get("branch")],
+        "docstatus": 1,
+    }
+    
+    return frappe.get_all(
+        "Budget",
+        filters=budget_filter,
+        fields=["name", "monthly_distribution", "fiscal_year"]
+    )
+
+def _get_fiscal_year_details(fiscal_year: str) -> Any:
+    """Fetch fiscal year start and end dates."""
+    return frappe.get_value(
+        "Fiscal Year",
+        fiscal_year,
+        ["year_start_date", "year_end_date"],
+        as_dict=True
+    )
+
+def _get_budget_accounts(budget_name: str) -> List[Any]:
+    """Fetch budget accounts for a given budget."""
+    return frappe.get_all(
+        "Budget Account",
+        {"parent": budget_name},
+        ["account", "budget_amount"]
+    )
+
+def _get_monthly_distribution(distribution_name: str) -> Dict[int, Tuple[Any, int]]:
+    """
+    Get monthly distribution percentages.
+    Returns a dictionary mapping month numbers to (distribution_record, index) tuples.
+    """
+    distributions = frappe.get_all(
+        "Monthly Distribution Percentage",
+        {"parent": distribution_name},
+        ["*"],
+        order_by="idx ASC"
+    )
+    
+    return {
+        datetime.strptime(dist.month, "%B").month: (dist, dist.idx - 1)
+        for dist in distributions
+    }
+
+def _calculate_budget_factors(
+    monthly_distribution: Dict[int, Tuple[Any, int]],
+    from_month: int,
+    to_month: int,
+    fy_start_month: int,
+    fy_end_month: int
+) -> Tuple[float, float, float]:
+    """
+    Calculate budget distribution factors.
+    Returns (total_percentage, total_estimate_monthly, year_to_budget)
+    """
+    def sum_percentages(start: int, end: int) -> float:
+        return sum(
+            monthly_distribution[month][0].percentage_allocation
+            for month in range(start, end + 1)
+            if month in monthly_distribution
+        )
+    
+    total_percentage = (
+        0 if fy_start_month == from_month
+        else sum_percentages(fy_start_month, from_month - 1)
+    )
+    
+    total_estimate_monthly = sum_percentages(from_month, to_month)
+    year_to_budget = sum_percentages(fy_start_month, to_month)
+    
+    return total_percentage, total_estimate_monthly, year_to_budget
+def _parse_account_name(account_string: str) -> str:
+    """
+    Extract and clean account name from account string.
+    
+    Args:
+        account_string: Full account string with hyphen-separated parts
+        
+    Returns:
+        Cleaned account name from second part if available, otherwise first part
+    """
+    try:
+        parts = account_string.split("-")[:-1]
+        return (parts[1] if len(parts) > 1 else parts[0]).strip()
+    except (IndexError, AttributeError):
+        return account_string
+
+def _calculate_budget_values(
+    budget_amount: float,
+    budget_factors: Tuple[float, float, float],
+    is_distribution_exists: bool
+) -> Dict[str, float]:
+    """
+    Calculate budget values based on distribution factors.
+    
+    Args:
+        budget_amount: Base budget amount
+        budget_factors: Distribution percentage factors
+        is_distribution_exists: Whether to apply distribution
+        
+    Returns:
+        Dictionary of calculated budget values
+    """
+    amount = float(budget_amount or 0)
+    
+    if not is_distribution_exists:
+        return {
+            'opening_budget': amount,
+            'total_estimate_monthly': amount,
+            'year_till_date_budget': amount
+        }
+        
+    total_percentage, total_estimate_monthly, year_to_budget = budget_factors
+    return {
+        'opening_budget': amount * total_percentage / 100,
+        'total_estimate_monthly': amount * total_estimate_monthly / 100,
+        'year_till_date_budget': amount * year_to_budget / 100
+    }
+
+def _calculate_accounts_with_distribution(
+    accounts: List[Any],
+    budget_factors: Tuple[float, float, float],
+    is_distribution_exists: bool = True
+) -> Dict[str, Any]:
+    """
+    Calculate account budgets with distribution factors applied.
+    
+    Args:
+        accounts: List of account records
+        budget_factors: Tuple of (total_percentage, total_estimate_monthly, year_to_budget)
+        is_distribution_exists: Boolean indicating if monthly distribution exists
+        
+    Returns:
+        Dictionary mapping account names to their budget details
+    """
+    account_key = {}
+    
+    for account in accounts:
+        # Parse account name once
+        account_name = _parse_account_name(account.account)
+        
+        # Calculate budget values
+        budget_values = _calculate_budget_values(
+            account.budget_amount,
+            budget_factors,
+            is_distribution_exists
+        )
+        
+        # Update account with new values
+        account.update(budget_values)
+        
+        # Store in dictionary using processed account name as key
+        account_key[account_name] = account
+    
+    return account_key
+
+
+def get_companies(filters):
+	companies = {}
+	all_companies = get_subsidiary_companies(filters.get("company"))
+	companies.setdefault(filters.get("company"), all_companies)
+
+	for d in all_companies:
+		if d not in companies:
+			subsidiary_companies = get_subsidiary_companies(d)
+			companies.setdefault(d, subsidiary_companies)
+
+	return all_companies, companies
+
+
+
+def get_subsidiary_companies(company):
+	lft, rgt = frappe.get_cached_value("Company", company, ["lft", "rgt"])
+
+	return frappe.db.sql_list(
+		f"""select name from `tabCompany`
+		where lft >= {lft} and rgt <= {rgt} order by lft, rgt"""
+	)
+
+def format_data_list(data_list, budget_list):
+	data_dict = []
+	key_dict = {}
+	
+	for key in data_list:
+		data = data_list[key]
+		for index,element in enumerate(data):
+			if not element:
+				data_dict.append(element)
+				continue
+			account_name = element.get('account_name').split("-")[-1].strip()
+			key_dict[account_name] = index
+			if account_name in budget_list:
+				element.update(budget_list[account_name])
+
+			data_dict.append(element)
+	return data_dict
