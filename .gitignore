@@ -7,3 +7,7 @@
 *.cpython-312.pyc
 uis/__pycache__/
 uis/uis/__pycache__/
+uis/uis/report/.___pycache__
+uis/uis/report/uis__trial_balance_with_budget/._uis__trial_balance_with_budget.py
+.gitignore
+uis/uis/report/uis__trial_balance_with_budget/.___pycache__
