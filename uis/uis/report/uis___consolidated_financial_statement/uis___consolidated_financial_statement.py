@@ -62,7 +62,7 @@ def execute(filters=None):
 		data, report_summary = get_cash_flow_data(fiscal_year, companies, filters)
 	
 	columns = get_columns_branch_wise(companies_column, filters, is_pnl)
-	data = formated_data_list(data, is_pnl)
+	data = formated_data_list(data)
 	return columns, data, message, chart, report_summary
 
 
@@ -416,7 +416,7 @@ def get_columns_branch_wise(companies, filters, is_pnl = False):
 
 			columns.append(
 				{
-					"fieldname": f"{branch}_{company}",
+					"fieldname": branch,
 					"label": f"{branch} - ({currency})",
 					"fieldtype": "Currency",
 					"options": "currency",
@@ -451,30 +451,130 @@ def get_columns_branch_wise(companies, filters, is_pnl = False):
 				)
 	return columns
 
-def formated_data_list(data_list, is_pnl=False):
-	data = []
-	data_list_account_name = {}
-	for row in data_list:
-		for key, item in row.items():
-			branch_key = f"{key[1]}_{key[0]}"
-			if len(data) < 1:
-				for index,element in enumerate(item):
-					if key[0] in element:
-						element.update({branch_key : element[key[0]], "index" :index })
-						data_list_account_name.update({element.get('account_name') : element})
-				data = item
-				continue
-			for index, element in enumerate(item):
-				if "total" in element:
-					account_name = element.get('account_name')
-					if account_name:
-						account_row = data_list_account_name.get(account_name)
-						data_index_ = account_row['index']
-						data[data_index_].update({ branch_key : element[key[0]]})			
-					else:
-						element.update({ branch_key : element[key[0]]})			
-						data.append(element)
-	return data
+def formated_data_list(data_list):
+# Create a dictionary to store consolidated data by account
+    consolidated_data = {}
+    branches = []
+    
+    # First pass: extract all branches and account names
+    for branch_data in data_list:
+        for (company, branch), accounts in branch_data.items():
+            if branch not in branches:
+                branches.append(branch)
+            
+            for account in accounts:
+                if not isinstance(account, dict) or 'account_name' not in account:
+                    continue
+                    
+                account_name = account['account_name']
+                if account_name not in consolidated_data:
+                    consolidated_data[account_name] = {
+                        'account_name': account_name,
+                        'account': account.get('account', ''),
+                        'parent_account': account.get('parent_account', ''),
+                        'indent': account.get('indent', 0),
+                        'root_type': account.get('root_type', ''),
+                        'branches': {}
+                    }
+    
+    # Second pass: populate branch-specific values
+    for branch_data in data_list:
+        for (company, branch), accounts in branch_data.items():
+            for account in accounts:
+                if not isinstance(account, dict) or 'account_name' not in account:
+                    continue
+                    
+                account_name = account['account_name']
+                if account_name in consolidated_data:
+                    if company in account:
+                        consolidated_data[account_name]['branches'][branch] = account[company]
+    
+    # Group accounts by root_type
+    assets = []
+    liabilities = []
+    equity = []
+    other = []
+    
+    # Prepare report data grouped by root_type
+    for account_name, account_data in consolidated_data.items():
+        row = {
+            'account_name': account_name,
+            'account': account_data['account'],
+            'parent_account': account_data['parent_account'],
+            'indent': account_data['indent'],
+            'root_type': account_data['root_type'],
+        }
+        
+        # Add branch-specific columns
+        for branch in branches:
+            row[branch] = account_data['branches'].get(branch, 0)
+        
+        # Calculate total for the row across all branches
+        row['total'] = sum(account_data['branches'].values())
+        
+        # Sort into appropriate category
+        root_type = account_data['root_type'].lower() if account_data['root_type'] else ''
+        if root_type == 'asset':
+            assets.append(row)
+        elif root_type == 'liability':
+            liabilities.append(row)
+        elif root_type == 'equity':
+            equity.append(row)
+        else:
+            other.append(row)
+    
+    # Sort each category separately by indent and account name
+    for category in [assets, liabilities, equity, other]:
+        category.sort(key=lambda x: (x.get('indent', 0), x.get('account_name', '')))
+    
+    # Combine results with separator rows
+    result = []
+    
+    # Add assets section
+    result.extend(assets)
+    
+    # Add separator row after assets
+    if assets and (liabilities or equity or other):
+        result.append(create_separator_row(branches))
+    
+    # Add liabilities section
+    result.extend(liabilities)
+    
+    # Add separator row after liabilities
+    if liabilities and (equity or other):
+        result.append(create_separator_row(branches))
+    
+    # Add equity section
+    result.extend(equity)
+    
+    # Add separator row after equity if there are other accounts
+    if equity and other:
+        result.append(create_separator_row(branches))
+    
+    # Add other accounts if any
+    result.extend(other)
+    
+    return result
+
+# Helper function to create a separator row
+def create_separator_row(branches):
+    separator = {
+        'account_name': '',
+        'account': '',
+        'parent_account': '',
+        'indent': 0,
+        'root_type': '',
+        'is_separator': True  # Flag to identify separator rows
+    }
+    
+    # Add empty values for branch columns
+    for branch in branches:
+        separator[branch] = ''
+    
+    separator['total'] = ''
+    
+    return separator
+
 
 def get_data(companies, root_type, balance_must_be, fiscal_year, filters=None, ignore_closing_entries=False, branch=None):
 	accounts, accounts_by_name, parent_children_map = get_account_heads(root_type, companies, filters)
