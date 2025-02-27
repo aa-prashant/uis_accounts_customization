@@ -5,5 +5,5 @@
 from frappe.model.document import Document
 
 
-class AllocateBudgetforAsset(Document):
+class UISAllocateBudget(Document):
 	pass
