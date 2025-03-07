@@ -597,7 +597,7 @@ def pnl_formatted_report(data):
                 
                 if existing_row:
                     # Update existing row with this branch's data
-                    existing_row[f"{company}_{branch}"] = account.get(company, 0)
+                    existing_row[f"{branch}"] = account.get(company, 0)
                     if 'total' in account:
                         existing_row['total'] = account.get('total', 0)
                 else:
