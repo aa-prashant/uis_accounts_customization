@@ -59,6 +59,7 @@ def execute(filters=None):
 	elif filters.get("report") == "Profit and Loss Statement":
 		data, message, chart, report_summary = get_profit_loss_data(fiscal_year, companies, columns, filters)
 		data = pnl_formatted_report(data)
+		is_pnl = True
 		
 	else:
 		data, report_summary = get_cash_flow_data(fiscal_year, companies, filters)

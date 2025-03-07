@@ -109,7 +109,7 @@ frappe.query_reports["UIS - Consolidated Financial Statement"] = {
 			fieldname: "report",
 			label: __("Report"),
 			fieldtype: "Select",
-			options: ["Profit and Loss Statement", "Balance Sheet", "Cash Flow"],
+			options: ["Profit and Loss Statement", "Balance Sheet"],
 			default: "Balance Sheet",
 			reqd: 1,
 		},
