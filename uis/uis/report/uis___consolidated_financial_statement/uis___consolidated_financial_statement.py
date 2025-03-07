@@ -58,6 +58,7 @@ def execute(filters=None):
 		data = balance_sheet_data_format(data)
 	elif filters.get("report") == "Profit and Loss Statement":
 		data, message, chart, report_summary = get_profit_loss_data(fiscal_year, companies, columns, filters)
+		data = pnl_formatted_report(data)
 		
 	else:
 		data, report_summary = get_cash_flow_data(fiscal_year, companies, filters)
@@ -578,6 +579,45 @@ def create_separator_row(branches):
     
     return separator
 
+
+def pnl_formatted_report(data):
+    formatted_data = []
+    
+    for company_branch_data in data:
+        for (company, branch), accounts in company_branch_data.items():
+            # Process each account
+            for account in accounts:
+                if not account or 'account_name' not in account:
+                    continue
+                    
+                # Find if this account already exists in formatted_data
+                existing_row = next((row for row in formatted_data 
+                                    if row.get('account_name') == account.get('account_name')), None)
+                
+                if existing_row:
+                    # Update existing row with this branch's data
+                    existing_row[f"{company}_{branch}"] = account.get(company, 0)
+                    if 'total' in account:
+                        existing_row['total'] = account.get('total', 0)
+                else:
+                    # Create new row for this account
+                    new_row = {
+                        'account_name': account.get('account_name'),
+                        'account': account.get('account'),
+                        'currency': account.get('currency'),
+                        f"{branch}": account.get(company, 0),
+                    }
+                    
+                    if 'total' in account:
+                        new_row['total'] = account.get('total', 0)
+                        
+                    # Add indentation info if available
+                    if 'indent' in account:
+                        new_row['indent'] = account.get('indent')
+                        
+                    formatted_data.append(new_row)
+    
+    return formatted_data
 
 def get_data(companies, root_type, balance_must_be, fiscal_year, filters=None, ignore_closing_entries=False, branch=None):
 	accounts, accounts_by_name, parent_children_map = get_account_heads(root_type, companies, filters)
