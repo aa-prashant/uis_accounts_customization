@@ -55,14 +55,15 @@ def execute(filters=None):
 		data, message, chart, report_summary = get_balance_sheet_data(
 			fiscal_year, companies, columns, filters
 		)
+		data = balance_sheet_data_format(data)
 	elif filters.get("report") == "Profit and Loss Statement":
 		data, message, chart, report_summary = get_profit_loss_data(fiscal_year, companies, columns, filters)
-		is_pnl = True
+		
 	else:
 		data, report_summary = get_cash_flow_data(fiscal_year, companies, filters)
 	
 	columns = get_columns_branch_wise(companies_column, filters, is_pnl)
-	data = formated_data_list(data)
+	
 	return columns, data, message, chart, report_summary
 
 
@@ -451,7 +452,7 @@ def get_columns_branch_wise(companies, filters, is_pnl = False):
 				)
 	return columns
 
-def formated_data_list(data_list):
+def balance_sheet_data_format(data_list):
 # Create a dictionary to store consolidated data by account
     consolidated_data = {}
     branches = []
@@ -474,7 +475,8 @@ def formated_data_list(data_list):
                         'parent_account': account.get('parent_account', ''),
                         'indent': account.get('indent', 0),
                         'root_type': account.get('root_type', ''),
-                        'branches': {}
+                        'branches': {},
+						'currency' : account.get('currency')
                     }
     
     # Second pass: populate branch-specific values
@@ -503,6 +505,7 @@ def formated_data_list(data_list):
             'parent_account': account_data['parent_account'],
             'indent': account_data['indent'],
             'root_type': account_data['root_type'],
+			'currency' : account.get('currency')
         }
         
         # Add branch-specific columns
