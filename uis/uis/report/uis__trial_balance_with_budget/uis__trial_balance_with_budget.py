@@ -6,7 +6,6 @@ import frappe
 from frappe import _
 from frappe.query_builder.functions import Sum
 from frappe.utils import add_days, cstr, flt, formatdate, getdate
-import datetime
 
 import erpnext
 from erpnext.accounts.doctype.accounting_dimension.accounting_dimension import (
@@ -16,12 +15,10 @@ from erpnext.accounts.doctype.accounting_dimension.accounting_dimension import (
 from erpnext.accounts.report.financial_statements import (
 	filter_accounts,
 	filter_out_zero_value_rows,
-	get_accounting_entries,
+	set_gl_entries_by_account,
 )
 from erpnext.accounts.report.utils import convert_to_presentation_currency, get_currency
-from datetime import datetime
 from typing import Dict, List, Optional, Tuple, Any
-from pypika.terms import ExistsCriterion
 
 value_fields = (
 	"opening_debit",
@@ -37,15 +34,12 @@ def execute(filters=None):
 	validate_filters(filters)
 	account_budget = get_total_budget(filters)
 	companies_column, companies = get_companies(filters)
-	data = {}
+	data_list = {}
 	for company in companies_column:
-		if "UIS Group" == company:
-			continue
-		filters['company'] = companies_column
-		
-		data_list = get_data(filters)
-		data[company] = data_list
-	data = format_data_list(data, account_budget)
+		filters['company'] = company
+		data_list[company] = get_data(filters)
+	data = prepare_consolidated_trial_balance(data_list)
+
 	columns = get_columns()
 	return columns, data
 
@@ -94,14 +88,11 @@ def validate_filters(filters):
 
 
 def get_data(filters):
-	company = ""
-	for company_name in filters.company:
-		company += f'"{company_name}",'
-
-	company = company[:-1]
-	query = f"select name, account_number, parent_account, account_name, root_type, report_type, lft, rgt from `tabAccount` where company in ({company}) order by lft"
 	accounts = frappe.db.sql(
-		query,
+		"""select name, account_number, parent_account, account_name, root_type, report_type, lft, rgt
+
+		from `tabAccount` where company=%s order by lft""",
+		filters.company,
 		as_dict=True,
 	)
 	company_currency = filters.presentation_currency or erpnext.get_company_currency(filters.company)
@@ -171,7 +162,7 @@ def get_rootwise_opening_balances(filters, report_type, ignore_is_opening):
 	if not ignore_closing_balances:
 		last_period_closing_voucher = frappe.db.get_all(
 			"Period Closing Voucher",
-			filters={"docstatus": 1, "company": ['in', filters.company], "period_end_date": ("<", filters.from_date)},
+			filters={"docstatus": 1, "company": filters.company, "period_end_date": ("<", filters.from_date)},
 			fields=["period_end_date", "name"],
 			order_by="period_end_date desc",
 			limit=1,
@@ -244,7 +235,7 @@ def get_opening_balance(
 			Sum(closing_balance.credit_in_account_currency).as_("credit_in_account_currency"),
 		)
 		.where(
-			(closing_balance.company.isin( filters.company))
+			(closing_balance.company == filters.company)
 			& (
 				closing_balance.account.isin(
 					frappe.qb.from_(account).select("name").where(account.report_type == report_type)
@@ -473,13 +464,6 @@ def get_columns():
 			"width": 120,
 		},
 		{
-			"fieldname": "opening_budget",
-			"label": _("Budget"),
-			"fieldtype": "Currency",
-			"options": "currency",
-			"width": 120,
-		},
-		{
 			"fieldname": "debit",
 			"label": _("Debit"),
 			"fieldtype": "Currency",
@@ -489,13 +473,6 @@ def get_columns():
 		{
 			"fieldname": "credit",
 			"label": _("Credit"),
-			"fieldtype": "Currency",
-			"options": "currency",
-			"width": 120,
-		},
-		{
-			"fieldname": "total_estimate_monthly",
-			"label": _("Total Estimation Monthly"),
 			"fieldtype": "Currency",
 			"options": "currency",
 			"width": 120,
@@ -514,14 +491,6 @@ def get_columns():
 			"options": "currency",
 			"width": 120,
 		},
-		{
-			"fieldname": "year_till_date_budget",
-			"label": _("Year to Date Budget"),
-			"fieldtype": "Currency",
-			"options": "currency",
-			"width": 120,
-		},
-
 	]
 
 
@@ -538,6 +507,7 @@ def prepare_opening_closing(row):
 			row[valid_col] = 0.0
 		else:
 			row[reverse_col] = 0.0
+
 
 
 def get_total_budget(filters: Dict[str, Any]) -> Dict[str, Any]:
@@ -614,152 +584,6 @@ def _get_budget_records(filters: Dict[str, Any]) -> List[Any]:
         fields=["name", "monthly_distribution", "fiscal_year"]
     )
 
-def _get_fiscal_year_details(fiscal_year: str) -> Any:
-    """Fetch fiscal year start and end dates."""
-    return frappe.get_value(
-        "Fiscal Year",
-        fiscal_year,
-        ["year_start_date", "year_end_date"],
-        as_dict=True
-    )
-
-def _get_budget_accounts(budget_name: str) -> List[Any]:
-    """Fetch budget accounts for a given budget."""
-    return frappe.get_all(
-        "Budget Account",
-        {"parent": budget_name},
-        ["account", "budget_amount"]
-    )
-
-def _get_monthly_distribution(distribution_name: str) -> Dict[int, Tuple[Any, int]]:
-    """
-    Get monthly distribution percentages.
-    Returns a dictionary mapping month numbers to (distribution_record, index) tuples.
-    """
-    distributions = frappe.get_all(
-        "Monthly Distribution Percentage",
-        {"parent": distribution_name},
-        ["*"],
-        order_by="idx ASC"
-    )
-    
-    return {
-        datetime.strptime(dist.month, "%B").month: (dist, dist.idx - 1)
-        for dist in distributions
-    }
-
-def _calculate_budget_factors(
-    monthly_distribution: Dict[int, Tuple[Any, int]],
-    from_month: int,
-    to_month: int,
-    fy_start_month: int,
-    fy_end_month: int
-) -> Tuple[float, float, float]:
-    """
-    Calculate budget distribution factors.
-    Returns (total_percentage, total_estimate_monthly, year_to_budget)
-    """
-    def sum_percentages(start: int, end: int) -> float:
-        return sum(
-            monthly_distribution[month][0].percentage_allocation
-            for month in range(start, end + 1)
-            if month in monthly_distribution
-        )
-    
-    total_percentage = (
-        0 if fy_start_month == from_month
-        else sum_percentages(fy_start_month, from_month - 1)
-    )
-    
-    total_estimate_monthly = sum_percentages(from_month, to_month)
-    year_to_budget = sum_percentages(fy_start_month, to_month)
-    
-    return total_percentage, total_estimate_monthly, year_to_budget
-def _parse_account_name(account_string: str) -> str:
-    """
-    Extract and clean account name from account string.
-    
-    Args:
-        account_string: Full account string with hyphen-separated parts
-        
-    Returns:
-        Cleaned account name from second part if available, otherwise first part
-    """
-    try:
-        parts = account_string.split("-")[:-1]
-        return (parts[1] if len(parts) > 1 else parts[0]).strip()
-    except (IndexError, AttributeError):
-        return account_string
-
-def _calculate_budget_values(
-    budget_amount: float,
-    budget_factors: Tuple[float, float, float],
-    is_distribution_exists: bool
-) -> Dict[str, float]:
-    """
-    Calculate budget values based on distribution factors.
-    
-    Args:
-        budget_amount: Base budget amount
-        budget_factors: Distribution percentage factors
-        is_distribution_exists: Whether to apply distribution
-        
-    Returns:
-        Dictionary of calculated budget values
-    """
-    amount = float(budget_amount or 0)
-    
-    if not is_distribution_exists:
-        return {
-            'opening_budget': amount,
-            'total_estimate_monthly': amount,
-            'year_till_date_budget': amount
-        }
-        
-    total_percentage, total_estimate_monthly, year_to_budget = budget_factors
-    return {
-        'opening_budget': amount * total_percentage / 100,
-        'total_estimate_monthly': amount * total_estimate_monthly / 100,
-        'year_till_date_budget': amount * year_to_budget / 100
-    }
-
-def _calculate_accounts_with_distribution(
-    accounts: List[Any],
-    budget_factors: Tuple[float, float, float],
-    is_distribution_exists: bool = True
-) -> Dict[str, Any]:
-    """
-    Calculate account budgets with distribution factors applied.
-    
-    Args:
-        accounts: List of account records
-        budget_factors: Tuple of (total_percentage, total_estimate_monthly, year_to_budget)
-        is_distribution_exists: Boolean indicating if monthly distribution exists
-        
-    Returns:
-        Dictionary mapping account names to their budget details
-    """
-    account_key = {}
-    
-    for account in accounts:
-        # Parse account name once
-        account_name = _parse_account_name(account.account)
-        
-        # Calculate budget values
-        budget_values = _calculate_budget_values(
-            account.budget_amount,
-            budget_factors,
-            is_distribution_exists
-        )
-        
-        # Update account with new values
-        account.update(budget_values)
-        
-        # Store in dictionary using processed account name as key
-        account_key[account_name] = account
-    
-    return account_key
-
 
 def get_companies(filters):
 	companies = {}
@@ -774,7 +598,6 @@ def get_companies(filters):
 	return all_companies, companies
 
 
-
 def get_subsidiary_companies(company):
 	lft, rgt = frappe.get_cached_value("Company", company, ["lft", "rgt"])
 
@@ -783,230 +606,118 @@ def get_subsidiary_companies(company):
 		where lft >= {lft} and rgt <= {rgt} order by lft, rgt"""
 	)
 
-def format_data_list(data_list, budget_list):
-	data_dict = []
-	key_dict = {}
-	
-	for key in data_list:
-		data = data_list[key]
-		for index,element in enumerate(data):
-			if not element:
-				data_dict.append(element)
-				continue
-			account_name = element.get('account_name').split("-")[-1].strip()
-			if account_name not in key_dict:
-				key_dict[account_name] = index
-				if account_name in budget_list:
-					element.update(budget_list[account_name])
 
-			data_dict.append(element)
-	return data_dict
-
-
-
-def set_gl_entries_by_account(
-	company,
-	from_date,
-	to_date,
-	filters,
-	gl_entries_by_account,
-	root_lft=None,
-	root_rgt=None,
-	root_type=None,
-	ignore_closing_entries=False,
-	ignore_opening_entries=False,
-):
-	"""Returns a dict like { "account": [gl entries], ... }"""
-	gl_entries = []
-
-	# For balance sheet
-	ignore_closing_balances = frappe.db.get_single_value(
-		"Accounts Settings", "ignore_account_closing_balance"
-	)
-	if not from_date and not ignore_closing_balances:
-		last_period_closing_voucher = frappe.db.get_all(
-			"Period Closing Voucher",
-			filters={
-				"docstatus": 1,
-				"company": ["in", [[filters.company]]],
-				"period_end_date": ("<", filters["period_start_date"]),
-			},
-			fields=["period_end_date", "name"],
-			order_by="period_end_date desc",
-			limit=1,
-		)
-		if last_period_closing_voucher:
-			gl_entries += get_accounting_entries(
-				"Account Closing Balance",
-				from_date,
-				to_date,
-				filters,
-				root_lft,
-				root_rgt,
-				root_type,
-				ignore_closing_entries,
-				last_period_closing_voucher[0].name,
-			)
-			from_date = add_days(last_period_closing_voucher[0].period_end_date, 1)
-			ignore_opening_entries = True
-
-	gl_entries += get_accounting_entries(
-		"GL Entry",
-		from_date,
-		to_date,
-		filters,
-		root_lft,
-		root_rgt,
-		root_type,
-		ignore_closing_entries,
-		ignore_opening_entries=ignore_opening_entries,
-	)
-
-	if filters and filters.get("presentation_currency"):
-		convert_to_presentation_currency(gl_entries, get_currency(filters))
-
-	for entry in gl_entries:
-		gl_entries_by_account.setdefault(entry.account, []).append(entry)
-
-	return gl_entries_by_account
-
-
-def get_accounting_entries(
-	doctype,
-	from_date,
-	to_date,
-	filters,
-	root_lft=None,
-	root_rgt=None,
-	root_type=None,
-	ignore_closing_entries=None,
-	period_closing_voucher=None,
-	ignore_opening_entries=False,
-):
-	gl_entry = frappe.qb.DocType(doctype)
-	query = (
-		frappe.qb.from_(gl_entry)
-		.select(
-			gl_entry.account,
-			gl_entry.debit,
-			gl_entry.credit,
-			gl_entry.debit_in_account_currency,
-			gl_entry.credit_in_account_currency,
-			gl_entry.account_currency,
-		)
-		.where(gl_entry.company == filters.company)
-	)
-
-	ignore_is_opening = frappe.db.get_single_value(
-		"Accounts Settings", "ignore_is_opening_check_for_reporting"
-	)
-
-	if doctype == "GL Entry":
-		query = query.select(gl_entry.posting_date, gl_entry.is_opening, gl_entry.fiscal_year)
-		query = query.where(gl_entry.is_cancelled == 0)
-		query = query.where(gl_entry.posting_date <= to_date)
-
-		if ignore_opening_entries and not ignore_is_opening:
-			query = query.where(gl_entry.is_opening == "No")
-	else:
-		query = query.select(gl_entry.closing_date.as_("posting_date"))
-		query = query.where(gl_entry.period_closing_voucher == period_closing_voucher)
-
-	query = apply_additional_conditions(doctype, query, from_date, ignore_closing_entries, filters)
-
-	if (root_lft and root_rgt) or root_type:
-		account_filter_query = get_account_filter_query(root_lft, root_rgt, root_type, gl_entry)
-		query = query.where(ExistsCriterion(account_filter_query))
-
-	from frappe.desk.reportview import build_match_conditions
-
-	query, params = query.walk()
-	match_conditions = build_match_conditions(doctype)
-
-	if match_conditions:
-		query += "and" + match_conditions
-
-	return frappe.db.sql(query, params, as_dict=True)
-
-def apply_additional_conditions(doctype, query, from_date, ignore_closing_entries, filters):
-	gl_entry = frappe.qb.DocType(doctype)
-	accounting_dimensions = get_accounting_dimensions(as_list=False)
-
-	if ignore_closing_entries:
-		if doctype == "GL Entry":
-			query = query.where(gl_entry.voucher_type != "Period Closing Voucher")
-		else:
-			query = query.where(gl_entry.is_period_closing_voucher_entry == 0)
-
-	if from_date and doctype == "GL Entry":
-		query = query.where(gl_entry.posting_date >= from_date)
-
-	if filters:
-		if filters.get("project"):
-			if not isinstance(filters.get("project"), list):
-				filters.project = frappe.parse_json(filters.get("project"))
-
-			query = query.where(gl_entry.project.isin(filters.project))
-
-		if filters.get("cost_center"):
-			filters.cost_center = get_cost_centers_with_children(filters.cost_center)
-			query = query.where(gl_entry.cost_center.isin(filters.cost_center))
-
-		if filters.get("include_default_book_entries"):
-			company_fb = frappe.get_cached_value("Company", filters.company, "default_finance_book")
-
-			if filters.finance_book and company_fb and cstr(filters.finance_book) != cstr(company_fb):
-				frappe.throw(
-					_("To use a different finance book, please uncheck 'Include Default FB Entries'")
-				)
-
-			query = query.where(
-				(gl_entry.finance_book.isin([cstr(filters.finance_book), cstr(company_fb), ""]))
-				| (gl_entry.finance_book.isnull())
-			)
-		else:
-			query = query.where(
-				(gl_entry.finance_book.isin([cstr(filters.finance_book), ""]))
-				| (gl_entry.finance_book.isnull())
-			)
-
-	if accounting_dimensions:
-		for dimension in accounting_dimensions:
-			if filters.get(dimension.fieldname):
-				if frappe.get_cached_value("DocType", dimension.document_type, "is_tree"):
-					filters[dimension.fieldname] = get_dimension_with_children(
-						dimension.document_type, filters.get(dimension.fieldname)
-					)
-
-				query = query.where(gl_entry[dimension.fieldname].isin(filters[dimension.fieldname]))
-
-	return query
-
-def get_cost_centers_with_children(cost_centers):
-	if not isinstance(cost_centers, list):
-		cost_centers = [d.strip() for d in cost_centers.strip().split(",") if d]
-
-	all_cost_centers = []
-	for d in cost_centers:
-		if frappe.db.exists("Cost Center", d):
-			lft, rgt = frappe.db.get_value("Cost Center", d, ["lft", "rgt"])
-			children = frappe.get_all("Cost Center", filters={"lft": [">=", lft], "rgt": ["<=", rgt]})
-			all_cost_centers += [c.name for c in children]
-		else:
-			frappe.throw(_("Cost Center: {0} does not exist").format(d))
-
-	return list(set(all_cost_centers))
+def prepare_consolidated_trial_balance(company_data):
+    """
+    Prepare consolidated trial balance data from multiple companies
+    while maintaining parent-child relationships.
+    """
+    # Create a mapping of account name to account details
+    account_map = {}
+    # Track account hierarchy
+    parent_child_map = {}
+    
+    # Process all accounts from all companies
+    for company, accounts in company_data.items():
+        for account in accounts:
+            if not isinstance(account, dict) or not account:
+                continue
+                
+            if account.get('account_name') == "'Total'":
+                continue  # Skip totals, will handle later
+                
+            account_name = account.get('account_name')
+            if not account_name:
+                continue
+                
+            # Store parent-child relationship
+            parent_account = account.get('parent_account')
+            if parent_account:
+                parent_name = None
+                for company_check, accounts_check in company_data.items():
+                    for acc in accounts_check:
+                        if isinstance(acc, dict) and acc.get('account') == parent_account:
+                            parent_name = acc.get('account_name')
+                            break
+                    if parent_name:
+                        break
+                        
+                if parent_name:
+                    if parent_name not in parent_child_map:
+                        parent_child_map[parent_name] = []
+                    if account_name not in parent_child_map[parent_name]:
+                        parent_child_map[parent_name].append(account_name)
+            
+            # Initialize or update account in our map
+            if account_name not in account_map:
+                account_map[account_name] = {
+                    'account': account.get('account'),
+                    'account_name': account_name,
+                    'indent': account.get('indent', 0),
+                    'currency': account.get('currency', 'INR'),
+                    'opening_debit': 0,
+                    'opening_credit': 0,
+                    'debit': 0,
+                    'credit': 0,
+                    'closing_debit': 0,
+                    'closing_credit': 0,
+                    'has_value': account.get('has_value', False),
+                    'parent_account': parent_account
+                }
+            
+            # Add this company's values
+            account_entry = account_map[account_name]
+            account_entry['opening_debit'] += account.get('opening_debit', 0)
+            account_entry['opening_credit'] += account.get('opening_credit', 0)
+            account_entry['debit'] += account.get('debit', 0)
+            account_entry['credit'] += account.get('credit', 0)
+            account_entry['closing_debit'] += account.get('closing_debit', 0)
+            account_entry['closing_credit'] += account.get('closing_credit', 0)
+    
+    # Create the hierarchical report data
+    report_data = []
+    
+    # Add accounts in hierarchical order
+    def add_account_with_children(acc_name, level=0):
+        if acc_name in account_map:
+            account = account_map[acc_name]
+            account['indent'] = level
+            report_data.append(account)
+            
+            # Add children
+            if acc_name in parent_child_map:
+                for child in parent_child_map[acc_name]:
+                    add_account_with_children(child, level + 1)
+    
+    # Find root accounts (those without parents) and add them with their children
+    root_accounts = []
+    for acc_name, account in account_map.items():
+        if not account.get('parent_account'):
+            root_accounts.append(acc_name)
+    
+    # Sort root accounts by name for consistent order
+    root_accounts.sort()
+    
+    # Add all accounts in hierarchical order
+    for root in root_accounts:
+        add_account_with_children(root)
+    
+    # Calculate totals
+    totals = {
+        'account': "Total",
+        'account_name': "Total",
+        'is_total_row': True,
+        'currency': 'INR',
+        'opening_debit': sum(a['opening_debit'] for a in account_map.values()),
+        'opening_credit': sum(a['opening_credit'] for a in account_map.values()),
+        'debit': sum(a['debit'] for a in account_map.values()),
+        'credit': sum(a['credit'] for a in account_map.values()),
+        'closing_debit': sum(a['closing_debit'] for a in account_map.values()),
+        'closing_credit': sum(a['closing_credit'] for a in account_map.values())
+    }
+    report_data.append(totals)
+    
+    return report_data
 
 
-def get_account_filter_query(root_lft, root_rgt, root_type, gl_entry):
-	acc = frappe.qb.DocType("Account")
-	exists_query = (
-		frappe.qb.from_(acc).select(acc.name).where(acc.name == gl_entry.account).where(acc.is_group == 0)
-	)
-	if root_lft and root_rgt:
-		exists_query = exists_query.where(acc.lft >= root_lft).where(acc.rgt <= root_rgt)
 
-	if root_type:
-		exists_query = exists_query.where(acc.root_type == root_type)
-
-	return exists_query
