@@ -40,6 +40,7 @@ from erpnext.accounts.report.profit_and_loss_statement.profit_and_loss_statement
 from erpnext.accounts.report.utils import convert, convert_to_presentation_currency
 
 from erpnext.accounts.report.financial_statements import get_cost_centers_with_children
+from erpnext.accounts.utils import get_fiscal_year
 
 def execute(filters=None):
 	columns, data, message, chart = [], [], [], []
@@ -57,8 +58,8 @@ def execute(filters=None):
 		)
 		data = balance_sheet_data_format(data)
 	elif filters.get("report") == "Profit and Loss Statement":
-		data, message, chart, report_summary = get_profit_loss_data(fiscal_year, companies, columns, filters)
-		data = pnl_formatted_report(data)
+		budget_dict, data, message, chart, report_summary = get_profit_loss_data(fiscal_year, companies, columns, filters)
+		data = pnl_formatted_report(data, budget_dict)
 		is_pnl = True
 		
 	else:
@@ -192,6 +193,7 @@ def get_profit_loss_data(fiscal_year, companies, columns, filters):
 
 	branches, company_fetched_list = [], []
 	data_list, report_summary_list = [], []
+	budget_dict = {}
 	for key in companies:
 		for company in companies[key]:
 			if company in company_fetched_list:
@@ -201,9 +203,11 @@ def get_profit_loss_data(fiscal_year, companies, columns, filters):
 			
 			for branch in branches:
 				key = (company, branch)
+				budget_dict.update(get_account_budget(company,branch, filters))
+
 				data, message, chart, report_summary = get_profit_loss_data_branch_wise(fiscal_year, companies, columns, filters, branch)
 				data_list.append({key:data})
-	return data_list, message, chart, report_summary 
+	return budget_dict, data_list, message, chart, report_summary
 
 def get_profit_loss_data_branch_wise(fiscal_year, companies, columns, filters, branch):
 	income, expense, net_profit_loss = get_income_expense_data(companies, fiscal_year, filters, branch)
@@ -431,8 +435,8 @@ def get_columns_branch_wise(companies, filters, is_pnl = False):
 			if is_pnl:
 				columns.append(
 					{
-						"fieldname": f"{branch}_{company}",
-						"label": f"Estimated {branch} - ({currency})",
+						"fieldname": f"bug_{branch}_{company}",
+						"label": f"Budget Allocated - {branch} - ({currency})",
 						"fieldtype": "Currency",
 						"options": "currency",
 						"width": 150,
@@ -441,17 +445,6 @@ def get_columns_branch_wise(companies, filters, is_pnl = False):
 					}
 				)
 
-				columns.append(
-					{
-						"fieldname": f"{branch}_{company}",
-						"label": f"Utilized {branch} - ({currency})",
-						"fieldtype": "Currency",
-						"options": "currency",
-						"width": 150,
-						"apply_currency_formatter": apply_currency_formatter,
-						"company_name": company,
-					}
-				)
 	return columns
 
 def balance_sheet_data_format(data_list):
@@ -580,22 +573,27 @@ def create_separator_row(branches):
     
     return separator
 
-
-def pnl_formatted_report(data):
+def pnl_formatted_report(data, budget_dict):
+    """
+    Format profit and loss report data with proper account hierarchy and indentation.
+    Maps child accounts to parent accounts and ensures budget values are shown even when there are no entries.
+    """
     formatted_data = []
+    account_map = {}  # To keep track of accounts by name for easy lookup
     
+    # First pass: Get all accounts from data
     for company_branch_data in data:
         for (company, branch), accounts in company_branch_data.items():
             # Process each account
             for account in accounts:
                 if not account or 'account_name' not in account:
                     continue
-                    
-                # Find if this account already exists in formatted_data
-                existing_row = next((row for row in formatted_data 
-                                    if row.get('account_name') == account.get('account_name')), None)
                 
-                if existing_row:
+                account_name = account.get('account_name')
+                
+                # Find if this account already exists in formatted_data
+                if account_name in account_map:
+                    existing_row = account_map[account_name]
                     # Update existing row with this branch's data
                     existing_row[f"{branch}"] = account.get(company, 0)
                     if 'total' in account:
@@ -603,22 +601,104 @@ def pnl_formatted_report(data):
                 else:
                     # Create new row for this account
                     new_row = {
-                        'account_name': account.get('account_name'),
+                        'account_name': account_name,
                         'account': account.get('account'),
+                        'parent_account': account.get('parent_account'),
                         'currency': account.get('currency'),
                         f"{branch}": account.get(company, 0),
                     }
-                    
                     if 'total' in account:
                         new_row['total'] = account.get('total', 0)
-                        
-                    # Add indentation info if available
-                    if 'indent' in account:
-                        new_row['indent'] = account.get('indent')
-                        
+                    
+                    # Use the provided indent if available
+                    new_row['indent'] = account.get('indent', 0)
+                    
                     formatted_data.append(new_row)
+                    account_map[account_name] = new_row
+    
+    # Second pass: Add budget data, even for accounts that might not have entries
+    for (company, branch), budget_accounts in budget_dict.items():
+        budget_key = f"bug_{branch}_{company}"
+        
+        for account_name, budget_amount in budget_accounts.items():
+            # If account exists in our formatted data, add budget
+            if account_name in account_map:
+                account_map[account_name][budget_key] = budget_amount
+            else:
+                # Try to find parent account info from Frappe DB
+                account_info = get_account_info(account_name, company)
+                indent = 0
+                
+                if account_info:
+                    indent = account_info.get('indent', 0)
+                    
+                # Create a new row for budget accounts that don't have entries
+                new_row = {
+                    'account_name': account_name,
+                    'account': account_name,  # Using account_name as fallback
+                    'indent': indent,  # Use indent from account_info if available
+                    f"{branch}": 0,  # Zero for the branch as no actual entries
+                    budget_key: budget_amount  # Add budget amount
+                }
+                formatted_data.append(new_row)
+                account_map[account_name] = new_row
+    
+    # Important: Preserve the original indentation from the input data
+    # If we need to recalculate indentation based on hierarchy, use the following:
+    # formatted_data = apply_indentation(formatted_data)
     
     return formatted_data
+
+def get_account_info(account_name, company):
+    """
+    Get account information from Frappe DB.
+    This is a placeholder - in actual implementation, you would query the database.
+    
+    Example implementation:
+    return frappe.db.get_value("Account", 
+							{"account_name": account_name, "company": company},
+							["parent_account", "is_group", "indent"], 
+							as_dict=True)
+    """
+    # Placeholder implementation
+    return None
+
+def apply_indentation(accounts_data):
+    """
+    Apply indentation based on parent-child relationships.
+    This function should be used if the original data doesn't have proper indentation.
+    """
+    # Create a map of parent to children
+    parent_map = {}
+    for account in accounts_data:
+        parent = account.get('parent_account')
+        if parent:
+            if parent not in parent_map:
+                parent_map[parent] = []
+            parent_map[parent].append(account)
+    
+    # Find root accounts (no parent or parent not in our dataset)
+    root_accounts = [account for account in accounts_data 
+                    if not account.get('parent_account') or 
+                    account.get('parent_account') not in parent_map]
+    
+    # Apply indentation recursively
+    result = []
+    for root in root_accounts:
+        result.append(root)
+        root['indent'] = 0
+        apply_indent_recursive(root, parent_map, result, 1)
+    
+    return result
+
+def apply_indent_recursive(parent, parent_map, result, indent_level):
+    """Helper function for recursive indentation"""
+    parent_name = parent.get('account_name')
+    if parent_name in parent_map:
+        for child in parent_map[parent_name]:
+            child['indent'] = indent_level
+            result.append(child)
+            apply_indent_recursive(child, parent_map, result, indent_level + 1)
 
 def get_data(companies, root_type, balance_must_be, fiscal_year, filters=None, ignore_closing_entries=False, branch=None):
 	accounts, accounts_by_name, parent_children_map = get_account_heads(root_type, companies, filters)
@@ -1151,3 +1231,123 @@ def get_account_type_based_gl_data(company, filters=None, branch_val = None):
 	)
 
 	return gl_sum[0] if gl_sum and gl_sum[0] else 0
+
+def get_account_budget(company, branch, filters):
+    budget_filter = {
+        "company": company,
+        "branch": branch,
+        "fiscal_year": filters.get("from_fiscal_year"),
+        "docstatus": 1
+    }
+    
+    account_with_budget_amount_branch_wise = {}
+    
+    # Get budget details
+    budget_dict = frappe.db.get_value(
+        "UIS - Allocate Budget", 
+        budget_filter, 
+        ['name', 'monthly_distribution'], 
+        as_dict=True
+    )
+    
+    if not budget_dict:
+        return {}
+    
+    # Get account budget amounts
+    account_with_budget_amount = frappe.db.get_values(
+        "Budget Account", 
+        {'parent': budget_dict.get("name")}, 
+        ['account', "budget_amount"], 
+        as_dict=True
+    )
+    
+    # Get monthly distribution percentages
+    monthly_distribution_dict = frappe.db.get_values(
+        "Monthly Distribution Percentage",
+        {'parent': budget_dict.get("monthly_distribution")},
+        ['month', "percentage_allocation"],
+        as_dict=True
+    )
+    
+    # Format monthly distribution according to filter period 
+    # (now returns total percentage for the period)
+    monthly_percentage = round(_format_monthly_distribution_dict(monthly_distribution_dict, filters), 2)
+    
+    # Create branch-wise account budget dictionary
+    key = (company, branch)
+    account_with_budget_amount_branch_wise[key] = {}
+    
+    for account in account_with_budget_amount:
+        account_name = _get_account_name(account)
+        if account_name:
+            if monthly_percentage:
+                allocated_budget_amount = (account.get("budget_amount", 0) * monthly_percentage) / 100
+            else:
+                allocated_budget_amount = account.get("budget_amount", 0)
+                
+            account_with_budget_amount_branch_wise[key][account_name] = allocated_budget_amount
+    
+    return account_with_budget_amount_branch_wise
+
+def _get_account_name(account):
+    """Extract non-numeric part of the account name"""
+    account_parts = account.get("account", "").split("-")
+    
+    for part in account_parts:
+        part = part.strip()
+        if part and not part.isnumeric():
+            return part
+    
+    return ""
+
+def _format_monthly_distribution_dict(monthly_distribution_dict, filters):
+    """
+    Format monthly distribution percentages for the given filter period
+    Returns total percentage allocation for months in the filter period
+    """
+    if not monthly_distribution_dict:
+        return 0
+    
+    # Get start and end dates from filters
+    start_date = filters.get("period_start_date")
+    end_date = filters.get("period_end_date")
+    
+    if not start_date or not end_date:
+        return sum(item.get("percentage_allocation", 0) for item in monthly_distribution_dict)
+    
+    # Convert string dates to datetime objects
+    from datetime import datetime
+    try:
+        start_date = datetime.strptime(start_date, "%Y-%m-%d")
+        end_date = datetime.strptime(end_date, "%Y-%m-%d")
+    except (ValueError, TypeError):
+        return sum(item.get("percentage_allocation", 0) for item in monthly_distribution_dict)
+    
+    # Month names list for index lookup
+    month_names = [
+        "January", "February", "March", "April", "May", "June",
+        "July", "August", "September", "October", "November", "December"
+    ]
+    
+    # Filter months that fall within the date range
+    start_month_idx = start_date.month - 1  # 0-indexed
+    end_month_idx = end_date.month - 1      # 0-indexed
+    
+    # Calculate total percentage for months in range
+    total_percentage = 0
+    for item in monthly_distribution_dict:
+        month = item.get("month")
+        if not month:
+            continue
+            
+        # Find month index (0-indexed)
+        try:
+            month_idx = month_names.index(month)
+        except ValueError:
+            continue
+            
+        # Check if month is in the filtered range
+        if start_month_idx <= month_idx <= end_month_idx:
+            total_percentage += item.get("percentage_allocation", 0)
+    
+    return total_percentage
