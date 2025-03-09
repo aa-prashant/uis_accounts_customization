@@ -66,6 +66,12 @@ frappe.query_reports["UIS- Trial Balance with Budget"] = {
 			options: "Project",
 		},
 		{
+			fieldname: "department",
+			label: __("Department"),
+			fieldtype: "Link",
+			options: "Department",
+		},
+		{
 			fieldname: "finance_book",
 			label: __("Finance Book"),
 			fieldtype: "Link",

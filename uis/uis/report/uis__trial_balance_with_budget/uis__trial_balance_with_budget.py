@@ -35,10 +35,18 @@ def execute(filters=None):
 	account_budget = get_total_budget(filters)
 	companies_column, companies = get_companies(filters)
 	data_list = {}
+	budget_account_dict = {}
 	for company in companies_column:
 		filters['company'] = company
-		data_list[company] = get_data(filters)
-	data = prepare_consolidated_trial_balance(data_list)
+		company_branch_list  = company_branches(company)
+		branch_list = company_branches(company) if not filters.get('branch') else filters.get('branch')
+		for branch in branch_list:
+			if branch not in company_branch_list:
+				continue
+			budget_account_dict = get_account_budget(company, branch, filters)
+			filters.update({"branch" : [branch]})
+			data_list[company, branch] = get_data(filters)
+	data = prepare_consolidated_trial_balance(data_list, budget_account_dict)
 
 	columns = get_columns()
 	return columns, data
@@ -450,6 +458,12 @@ def get_columns():
 			"hidden": 1,
 		},
 		{
+			"fieldname": "opening_allocated_budget_amount",
+			"label": _("Budget- Opening"),
+			"fieldtype": "Currency",
+			"options": "currency",
+		},
+		{
 			"fieldname": "opening_debit",
 			"label": _("Opening (Dr)"),
 			"fieldtype": "Currency",
@@ -471,6 +485,12 @@ def get_columns():
 			"width": 120,
 		},
 		{
+			"fieldname": "budget_allocated_budget_amount",
+			"label": _("Budget- For Period"),
+			"fieldtype": "Currency",
+			"options": "currency",
+		},
+		{
 			"fieldname": "credit",
 			"label": _("Credit"),
 			"fieldtype": "Currency",
@@ -490,6 +510,12 @@ def get_columns():
 			"fieldtype": "Currency",
 			"options": "currency",
 			"width": 120,
+		},
+		{
+			"fieldname": "till_date_allocated_budget_amount",
+			"label": _("Budget- Year to Date"),
+			"fieldtype": "Currency",
+			"options": "currency",
 		},
 	]
 
@@ -606,16 +632,17 @@ def get_subsidiary_companies(company):
 		where lft >= {lft} and rgt <= {rgt} order by lft, rgt"""
 	)
 
-
-def prepare_consolidated_trial_balance(company_data):
+def prepare_consolidated_trial_balance(company_data, budget_account_list):
     """
     Prepare consolidated trial balance data from multiple companies
-    while maintaining parent-child relationships.
+    while maintaining parent-child relationships and incorporating budget data.
     """
     # Create a mapping of account name to account details
     account_map = {}
     # Track account hierarchy
     parent_child_map = {}
+    # Track leaf accounts (accounts with no children)
+    leaf_accounts = set()
     
     # Process all accounts from all companies
     for company, accounts in company_data.items():
@@ -662,7 +689,12 @@ def prepare_consolidated_trial_balance(company_data):
                     'closing_debit': 0,
                     'closing_credit': 0,
                     'has_value': account.get('has_value', False),
-                    'parent_account': parent_account
+                    'parent_account': parent_account,
+                    'currency': account.get('currency'),
+                    # Add budget fields with default values
+                    'opening_allocated_budget_amount': 0,
+                    'budget_allocated_budget_amount': 0,
+                    'till_date_allocated_budget_amount': 0
                 }
             
             # Add this company's values
@@ -673,6 +705,23 @@ def prepare_consolidated_trial_balance(company_data):
             account_entry['credit'] += account.get('credit', 0)
             account_entry['closing_debit'] += account.get('closing_debit', 0)
             account_entry['closing_credit'] += account.get('closing_credit', 0)
+    
+    # Identify leaf accounts (accounts with no children)
+    for account_name in account_map:
+        if account_name not in parent_child_map:
+            leaf_accounts.add(account_name)
+    
+    # Add budget data to respective accounts
+    for company_loc, budget_accounts in budget_account_list.items():
+        for account_short_name, budget_data in budget_accounts.items():
+            # Find the matching account in our account_map
+            for account_name, account_details in account_map.items():
+                # Check if the short name is part of the full account name
+                if account_short_name in account_name:
+                    account_details['opening_allocated_budget_amount'] = budget_data.get('opening_allocated_budget_amount', 0)
+                    account_details['budget_allocated_budget_amount'] = budget_data.get('budget_allocated_budget_amount', 0)
+                    account_details['till_date_allocated_budget_amount'] = budget_data.get('till_date_allocated_budget_amount', 0)
+                    break
     
     # Create the hierarchical report data
     report_data = []
@@ -702,22 +751,208 @@ def prepare_consolidated_trial_balance(company_data):
     for root in root_accounts:
         add_account_with_children(root)
     
-    # Calculate totals
+    # Calculate totals using only leaf accounts to avoid double counting
     totals = {
         'account': "Total",
         'account_name': "Total",
         'is_total_row': True,
         'currency': 'INR',
-        'opening_debit': sum(a['opening_debit'] for a in account_map.values()),
-        'opening_credit': sum(a['opening_credit'] for a in account_map.values()),
-        'debit': sum(a['debit'] for a in account_map.values()),
-        'credit': sum(a['credit'] for a in account_map.values()),
-        'closing_debit': sum(a['closing_debit'] for a in account_map.values()),
-        'closing_credit': sum(a['closing_credit'] for a in account_map.values())
+        'opening_debit': sum(account_map[a]['opening_debit'] for a in leaf_accounts),
+        'opening_credit': sum(account_map[a]['opening_credit'] for a in leaf_accounts),
+        'debit': sum(account_map[a]['debit'] for a in leaf_accounts),
+        'credit': sum(account_map[a]['credit'] for a in leaf_accounts),
+        'closing_debit': sum(account_map[a]['closing_debit'] for a in leaf_accounts),
+        'closing_credit': sum(account_map[a]['closing_credit'] for a in leaf_accounts),
+        'opening_allocated_budget_amount': sum(account_map[a].get('opening_allocated_budget_amount', 0) for a in leaf_accounts),
+        'budget_allocated_budget_amount': sum(account_map[a].get('budget_allocated_budget_amount', 0) for a in leaf_accounts),
+        'till_date_allocated_budget_amount': sum(account_map[a].get('till_date_allocated_budget_amount', 0) for a in leaf_accounts)
     }
+    
+    # Verify if totals match what's in the original data
+    for company, accounts in company_data.items():
+        for account in accounts:
+            if isinstance(account, dict) and account.get('account_name') == "'Total'":
+                # Found a total row in the original data, use these values instead
+                if 'debit' in account and 'credit' in account:
+                    totals['debit'] = account.get('debit', 0)
+                    totals['credit'] = account.get('credit', 0)
+                if 'opening_debit' in account and 'opening_credit' in account:
+                    totals['opening_debit'] = account.get('opening_debit', 0)
+                    totals['opening_credit'] = account.get('opening_credit', 0)
+                if 'closing_debit' in account and 'closing_credit' in account:
+                    totals['closing_debit'] = account.get('closing_debit', 0)
+                    totals['closing_credit'] = account.get('closing_credit', 0)
+                if 'currency' in account:
+                    totals['currency'] = account.get('currency')
+                break
+    
     report_data.append(totals)
     
     return report_data
 
+def get_account_budget(company, branch, filters):
+	budget_filter = {
+		"company": company,
+		"branch": branch,
+		"fiscal_year": filters.get("fiscal_year"),
+		"docstatus": 1
+	}
+
+	account_with_budget_amount_branch_wise = {}
+	if "cost_center" in filters:
+		budget_filter['cost_center'] = filters.get('cost_center')
+
+	if "project" in filters:
+		budget_filter['project'] = filters.get('project')
+
+	if "department" in filters:
+		budget_filter['department'] = filters.get('department')
+
+	# Get budget details
+	budget_dict = frappe.db.get_value(
+		"UIS - Allocate Budget", 
+		budget_filter, 
+		['name', 'monthly_distribution'], 
+		as_dict=True
+	)
+
+	if not budget_dict:
+		return {}
+
+	# Get account budget amounts
+	account_with_budget_amount = frappe.db.get_values(
+		"Budget Account", 
+		{'parent': budget_dict.get("name")}, 
+		['account', "budget_amount"], 
+		as_dict=True
+	)
+
+	# Get monthly distribution percentages
+	monthly_distribution_dict = frappe.db.get_values(
+		"Monthly Distribution Percentage",
+		{'parent': budget_dict.get("monthly_distribution")},
+		['month', "percentage_allocation"],
+		as_dict=True
+	)
+
+	opening_monthly_percentage = round(_format_monthly_distribution_dict(
+																	monthly_distribution_dict, 
+																	filters.get('year_start_date'), filters.get('from_date')),
+																2)
+	
+	budget_for_period_percentage = round(_format_monthly_distribution_dict(
+																		monthly_distribution_dict, 
+																		filters.get('from_date'), filters.get('to_date')),
+																	2)
+
+	till_date_for_period_percentage = round(_format_monthly_distribution_dict(
+																		monthly_distribution_dict, 
+																		filters.get('year_start_date'), filters.get('to_date')),
+																	2)
+	
+	# Create branch-wise account budget dictionary
+	key = (company, branch)
+	account_with_budget_amount_branch_wise[key] = {}
+	opening_allocated_budget_amount = 0
+	budget_allocated_budget_amount = 0
+	till_date_allocated_budget_amount = 0
+
+	for account in account_with_budget_amount:
+		account_name = _get_account_name(account)
+		if account_name:
+			if monthly_distribution_dict:
+				opening_allocated_budget_amount = (account.get("budget_amount", 0) * opening_monthly_percentage) / 100
+				budget_allocated_budget_amount = (account.get("budget_amount", 0) * budget_for_period_percentage) / 100
+				till_date_allocated_budget_amount = (account.get("budget_amount", 0) * till_date_for_period_percentage) / 100
+			else:
+				opening_allocated_budget_amount = account.get("budget_amount", 0)
+				budget_allocated_budget_amount = opening_allocated_budget_amount
+				till_date_allocated_budget_amount = opening_allocated_budget_amount
+
+			account_with_budget_amount_branch_wise[key][account_name] = {
+				"opening_allocated_budget_amount": opening_allocated_budget_amount,
+				"budget_allocated_budget_amount": budget_allocated_budget_amount,
+				"till_date_allocated_budget_amount": till_date_allocated_budget_amount,
+			}
+
+	return account_with_budget_amount_branch_wise
+
+def _get_account_name(account):
+    """Extract non-numeric part of the account name"""
+    account_parts = account.get("account", "").split("-")
+    
+    for part in account_parts:
+        part = part.strip()
+        if part and not part.isnumeric():
+            return part
+    
+    return ""
+
+def _format_monthly_distribution_dict(monthly_distribution_dict, _start_date, _end_date):
+	"""
+	Format monthly distribution percentages for the given filter period
+	Returns total percentage allocation for months in the filter period
+	"""
+	if not monthly_distribution_dict:
+		return 0
+
+	# Get start and end dates from filters
+	start_date = _start_date
+	end_date = _end_date
+
+	if not start_date or not end_date:
+		return sum(item.get("percentage_allocation", 0) for item in monthly_distribution_dict)
+
+	# Convert string dates to datetime objects
+
+	if type(start_date) == str:
+		from datetime import datetime
+		try:
+			start_date = datetime.strptime(start_date, "%Y-%m-%d")
+			end_date = datetime.strptime(end_date, "%Y-%m-%d")
+		except (ValueError, TypeError):
+			return sum(item.get("percentage_allocation", 0) for item in monthly_distribution_dict)
+
+	# Month names list for index lookup
+	month_names = [
+		"January", "February", "March", "April", "May", "June",
+		"July", "August", "September", "October", "November", "December"
+	]
+
+	# Filter months that fall within the date range
+	start_month_idx = start_date.month - 1  # 0-indexed
+	end_month_idx = end_date.month - 1      # 0-indexed
+
+	# Calculate total percentage for months in range
+	total_percentage = 0
+	for item in monthly_distribution_dict:
+		month = item.get("month")
+		if not month:
+			continue
+			
+		# Find month index (0-indexed)
+		try:
+			month_idx = month_names.index(month)
+		except ValueError:
+			continue
+			
+		# Check if month is in the filtered range
+		if start_month_idx <= month_idx <= end_month_idx:
+			total_percentage += item.get("percentage_allocation", 0)
+
+	return total_percentage
 
 
+def company_branches(company):
+	branches = frappe.get_all("Branch", filters={"company": company}, pluck="name")
+	return branches
+
+
+def get_fy_year_opening_month(fy_year_name):
+
+	return frappe.db.get_value(
+		"Fiscal Year", 
+		fy_year_name, 
+		["year_start_date", "year_end_date"], 
+		as_dict=True
+	) 
