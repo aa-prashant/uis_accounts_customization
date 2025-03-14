@@ -173,3 +173,53 @@ def get_actual_expense(args):
         )[0][0] or 0
     )
     return amount
+
+
+def get_remaining_budget(doc, expense_account, branch=None, cost_center=None, project=None, department=None):
+    doc = frappe.parse_json(doc)
+    fiscal_year = get_fiscal_year(doc.get("posting_date"), company=doc.get("company"))[0]
+    company = doc.get("company")
+    
+    if not fiscal_year or not company:
+        return {"error": _("Fiscal Year or Company not set in defaults")}
+
+    filters = {"fiscal_year": fiscal_year, "company": company, "account": expense_account}
+    conditions = ""
+
+    if branch:
+        conditions += " AND b.branch = %(branch)s"
+        filters["branch"] = branch
+    if cost_center:
+        conditions += " AND b.cost_center = %(cost_center)s"
+        filters["cost_center"] = cost_center
+    if project:
+        conditions += " AND b.project = %(project)s"
+        filters["project"] = project
+    if department:
+        conditions += " AND b.department = %(department)s"
+        filters["department"] = department
+
+    budget_data = frappe.db.sql(
+        f"""
+        SELECT SUM(ba.budget_amount) AS total_budget,
+               (SUM(ba.budget_amount) - COALESCE(SUM(gle.debit - gle.credit), 0)) AS remaining_budget
+        FROM `tabUIS - Allocate Budget` b
+        INNER JOIN `tabBudget Account` ba ON b.name = ba.parent
+        LEFT JOIN `tabGL Entry` gle ON gle.account = ba.account
+        WHERE b.fiscal_year = %(fiscal_year)s AND ba.account = %(account)s
+        AND b.company = %(company)s {conditions}
+        """,
+        filters,
+        as_dict=True,
+    )
+
+    return budget_data[0] if budget_data else {"total_budget": 0, "remaining_budget": 0}
+
+
+
+@frappe.whitelist()
+def fetch_remaining_budget(doc, expense_account, branch=None, cost_center=None, project=None, department=None):
+    return get_remaining_budget(doc, expense_account, branch, cost_center, project, department)
+
+
+
