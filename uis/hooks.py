@@ -136,7 +136,7 @@ doctype_js = {
 
 doc_events = {
 	"Purchase Invoice": {
-		"validate": "uis.uis.custom.customization_script.purchase_invoice.validate",
+		"on_submit": "uis.uis.custom.customization_script.purchase_invoice.on_submit",
         
 	}
 
