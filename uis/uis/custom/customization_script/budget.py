@@ -139,7 +139,8 @@ def compare_expense_with_budget(args, budget_amount, action_for, action, budget_
             action = "Warn"
 
         if action == "Stop":
-            frappe.throw(msg, BudgetError, title=_("Budget Exceeded"))
+            if not is_user_allowed_for_transaction("budget_name"):
+                frappe.throw(msg, BudgetError, title=_("Budget Exceeded"))
         else:
             frappe.msgprint(msg, indicator="orange", title=_("Budget Exceeded"))
 
@@ -173,7 +174,6 @@ def get_actual_expense(args):
         )[0][0] or 0
     )
     return amount
-
 
 def get_remaining_budget(doc, expense_account, branch=None, cost_center=None, project=None, department=None):
     doc = frappe.parse_json(doc)
@@ -222,4 +222,98 @@ def fetch_remaining_budget(doc, expense_account, branch=None, cost_center=None, 
     return get_remaining_budget(doc, expense_account, branch, cost_center, project, department)
 
 
+@frappe.whitelist()
+def fetch_remaining_budget_for_item(doc, item_code, branch=None, cost_center=None, project=None, department=None):
+    doc = frappe.parse_json(doc)
 
+    is_fixed_asset = frappe.db.get_value("Item", item_code, "is_fixed_asset")
+    if not is_fixed_asset:
+        return
+    
+    fiscal_year = get_fiscal_year(doc.get("posting_date"), company=doc.get("company"))[0]
+    company = doc.get("company")
+
+    if not fiscal_year or not company:
+        return {"error": _("Fiscal Year or Company not set in defaults")}
+
+    filters = {"fiscal_year": fiscal_year, "company": company, "item_code": item_code}
+    conditions = " AND bi.item_code = %(item_code)s"
+
+    if branch:
+        conditions += " AND b.branch = %(branch)s"
+        filters["branch"] = branch
+    # if cost_center:
+    #     conditions += " AND b.cost_center = %(cost_center)s"
+    #     filters["cost_center"] = cost_center
+    # if project:
+    #     conditions += " AND b.project = %(project)s"
+    #     filters["project"] = project
+    # if department:
+    #     conditions += " AND b.department = %(department)s"
+    #     filters["department"] = department
+
+    # Fetch allocated budget for the item
+    budget_data = frappe.db.sql(
+        f"""
+        SELECT SUM(bi.budget_amount) AS total_budget,
+            b.action_if_annual_budget_exceeded,
+            b.name
+        FROM `tabUIS - Allocate Budget` b
+        INNER JOIN `tabBudget Item` bi ON b.name = bi.parent
+        WHERE b.fiscal_year = %(fiscal_year)s AND b.company = %(company)s
+        {conditions}
+        """,
+        filters,
+        as_dict=True,
+    )
+
+    if budget_data:
+        total_budget = budget_data[0]["total_budget"] 
+    else:
+        return {"total_budget": 0, "remaining_budget": 0}
+
+    # Fetch total booked expenses from Purchase Invoice, Purchase Order, and Material Requests
+    total_expense = frappe.db.sql(
+        f"""
+        SELECT COALESCE(SUM(pi.amount), 0) as total_expense
+        FROM `tabPurchase Invoice Item` pi
+        INNER JOIN `tabPurchase Invoice` pi_doc ON pi.parent = pi_doc.name
+        WHERE pi.item_code = %(item_code)s AND pi_doc.company = %(company)s AND pi_doc.docstatus = 1
+        """,
+        filters,
+        as_dict=True,
+    )
+
+    total_expense = total_expense[0]["total_expense"] if total_expense else 0
+    remaining_budget = total_budget - total_expense
+
+    return {
+            "total_budget": total_budget, 
+            "remaining_budget": remaining_budget, 
+            'action_if_annual_budget_exceeded' : budget_data[0].get('action_if_annual_budget_exceeded'),
+            "budget_name" : budget_data[0].get("name")
+        }
+
+
+
+def validate_budget_for_fixed_asset(doc, item_code, branch):
+    response = fetch_remaining_budget_for_item(doc, item_code, branch)
+#     # Validate budget on PI submission
+    if response.get('remaining_budget') < 0 and response.get('action_if_annual_budget_exceeded'):
+        msg = _(f"Budget exceeded for Item {item_code}. By Amount: {abs(response.get('remaining_budget'))}.")
+        if response.get('action_if_annual_budget_exceeded') == "Stop":
+            if not is_user_allowed_for_transaction(response.get('budget_name')):
+                frappe.throw(msg, title=_("Budget Exceeded"))
+        elif response.get('action_if_annual_budget_exceeded') == "Warn":
+            frappe.msgprint(msg, indicator="orange", title=_("Budget Warning"))
+
+def is_user_allowed_for_transaction(budget_name):
+    allowed_user_table = frappe.db.get_values("Allowed User", {'parent':budget_name}, ["from_doctype", "dynamic_link_iotq"], as_dict = True)
+    for allowed_user_row in allowed_user_table:
+        if "User" == allowed_user_row.get('from_doctype') and frappe.session.user == allowed_user_row.get('dynamic_link_iotq'):
+            return True
+        elif "Role" == 'from_doctype':
+            curr_user_roles_list = frappe.get_all("Has Role", {'parent' :frappe.session.user }, pluck = "role")
+            if allowed_user_row.get('dynamic_link_iotq') in curr_user_roles_list:
+                return True
+    return False

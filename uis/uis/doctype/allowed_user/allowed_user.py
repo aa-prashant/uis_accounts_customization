@@ -5,5 +5,5 @@
 from frappe.model.document import Document
 
 
-class UISAllocateBudget(Document):
+class AllowedUser(Document):
 	pass
