@@ -1,8 +1,8 @@
 {
  "actions": [],
  "allow_import": 1,
- "autoname": "format:{branch}-{fiscal_year}-{###}",
- "creation": "2025-02-23 15:35:48.642558",
+ "autoname": "naming_series:",
+ "creation": "2025-03-14 23:06:32.901913",
  "default_view": "List",
  "doctype": "DocType",
  "editable_grid": 1,
@@ -14,7 +14,6 @@
   "cost_center",
   "naming_series",
   "project",
-  "department",
   "fiscal_year",
   "column_break_3",
   "monthly_distribution",
@@ -33,19 +32,20 @@
   "action_if_accumulated_monthly_budget_exceeded",
   "section_break_21",
   "accounts",
-  "budget_item",
-  "workflow"
+  "fixed_assest",
+  "exception_condition_section",
+  "table_wnse"
  ],
  "fields": [
   {
    "default": "Branch",
    "fieldname": "budget_against",
-   "fieldtype": "Data",
+   "fieldtype": "Select",
+   "hidden": 1,
    "in_list_view": 1,
    "in_standard_filter": 1,
    "label": "Budget Against",
-   "read_only": 1,
-   "reqd": 1
+   "options": "\nCost Center\nProject\nBranch"
   },
   {
    "fieldname": "company",
@@ -106,7 +106,7 @@
    "fieldtype": "Link",
    "label": "Amended From",
    "no_copy": 1,
-   "options": "Budget",
+   "options": "UIS - Budget",
    "print_hide": 1,
    "read_only": 1
   },
@@ -197,61 +197,48 @@
   },
   {
    "fieldname": "section_break_21",
-   "fieldtype": "Section Break"
+   "fieldtype": "Section Break",
+   "label": "Allocate Budget For"
   },
   {
    "fieldname": "accounts",
    "fieldtype": "Table",
-   "label": "Budget Accounts",
-   "options": "Budget Account",
-   "reqd": 1
-  },
-  {
-   "fieldname": "amended_from",
-   "fieldtype": "Link",
-   "label": "Amended From",
-   "no_copy": 1,
-   "options": "Budget",
-   "print_hide": 1,
-   "read_only": 1
+   "label": "Accounts",
+   "options": "Budget Account"
   },
   {
    "fieldname": "branch",
    "fieldtype": "Link",
-   "in_list_view": 1,
+   "in_global_search": 1,
    "in_standard_filter": 1,
    "label": "Branch",
-   "options": "Branch",
-   "reqd": 1
+   "options": "Branch"
   },
   {
-   "fieldname": "department",
-   "fieldtype": "Link",
-   "in_standard_filter": 1,
-   "label": "Department",
-   "options": "Department"
-  },
-  {
-   "fieldname": "budget_item",
+   "fieldname": "fixed_assest",
    "fieldtype": "Table",
-   "label": "Budget Item",
+   "label": "Fixed Assest",
    "options": "Budget Item"
   },
   {
-   "fieldname": "workflow",
-   "fieldtype": "Link",
-   "label": "Workflow ",
-   "options": "Workflow"
+   "fieldname": "exception_condition_section",
+   "fieldtype": "Section Break",
+   "label": "Exception Condition"
+  },
+  {
+   "fieldname": "table_wnse",
+   "fieldtype": "Table",
+   "options": "Allowed User"
   }
  ],
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2025-03-08 10:25:45.332868",
+ "modified": "2025-03-15 15:03:08.896625",
  "modified_by": "Administrator",
  "module": "Uis",
- "name": "UIS - Allocate Budget",
- "naming_rule": "Expression",
+ "name": "UIS - Budget",
+ "naming_rule": "By \"Naming Series\" field",
  "owner": "Administrator",
  "permissions": [
   {

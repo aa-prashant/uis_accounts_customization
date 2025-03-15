@@ -15,7 +15,7 @@ def verify_validate_expense_against_budget(doc):
 
 def validate_expense_against_budget(args, expense_amount=0):
     args = frappe._dict(args)
-    if not frappe.get_all("UIS - Allocate Budget", limit=1):
+    if not frappe.get_all("UIS - Budget", limit=1):
         return
 
     if args.get("company") and not args.get('fiscal_year'):
@@ -25,7 +25,7 @@ def validate_expense_against_budget(args, expense_amount=0):
         "Company", args.get("company"), "exception_budget_approver_role"
     )
 
-    if not frappe.get_cached_value("UIS - Allocate Budget", {"fiscal_year": args.fiscal_year, "company": args.company}):
+    if not frappe.get_cached_value("UIS - Budget", {"fiscal_year": args.fiscal_year, "company": args.company}):
         return
 
     if not args.account:
@@ -49,6 +49,7 @@ def validate_expense_against_budget(args, expense_amount=0):
 
     query = f"""
     SELECT
+        b.name as budget_name,
         branch as budget_against, ba.budget_amount,
         b.monthly_distribution,
         IFNULL(b.applicable_on_material_request, 0) AS for_material_request,
@@ -60,7 +61,7 @@ def validate_expense_against_budget(args, expense_amount=0):
         b.action_if_accumulated_monthly_budget_exceeded_on_mr,
         b.action_if_annual_budget_exceeded_on_po,
         b.action_if_accumulated_monthly_budget_exceeded_on_po
-    FROM `tabUIS - Allocate Budget` b
+    FROM `tabUIS - Budget` b
     INNER JOIN `tabBudget Account` ba ON b.name = ba.parent
     WHERE
         b.fiscal_year = %s
@@ -82,6 +83,7 @@ def validate_budget_records(args, budget_records, expense_amount):
             args["for_purchase_order"] = budget.for_purchase_order
             args["for_actual_expenses"] = budget.for_actual_expenses
             args['budget_against_field'] = "branch"
+            args['budget_name'] =  budget.budget_name
             
             if yearly_action in ("Stop", "Warn"):
                 compare_expense_with_budget(
@@ -139,7 +141,7 @@ def compare_expense_with_budget(args, budget_amount, action_for, action, budget_
             action = "Warn"
 
         if action == "Stop":
-            if not is_user_allowed_for_transaction("budget_name"):
+            if not is_user_allowed_for_transaction(args.budget_name):
                 frappe.throw(msg, BudgetError, title=_("Budget Exceeded"))
         else:
             frappe.msgprint(msg, indicator="orange", title=_("Budget Exceeded"))
@@ -203,7 +205,7 @@ def get_remaining_budget(doc, expense_account, branch=None, cost_center=None, pr
         f"""
         SELECT SUM(ba.budget_amount) AS total_budget,
                (SUM(ba.budget_amount) - COALESCE(SUM(gle.debit - gle.credit), 0)) AS remaining_budget
-        FROM `tabUIS - Allocate Budget` b
+        FROM `tabUIS - Budget` b
         INNER JOIN `tabBudget Account` ba ON b.name = ba.parent
         LEFT JOIN `tabGL Entry` gle ON gle.account = ba.account
         WHERE b.fiscal_year = %(fiscal_year)s AND ba.account = %(account)s
@@ -255,12 +257,13 @@ def fetch_remaining_budget_for_item(doc, item_code, branch=None, cost_center=Non
     # Fetch allocated budget for the item
     budget_data = frappe.db.sql(
         f"""
-        SELECT SUM(bi.budget_amount) AS total_budget,
+        SELECT bi.budget_amount AS total_budget,
             b.action_if_annual_budget_exceeded,
             b.name
-        FROM `tabUIS - Allocate Budget` b
+        FROM `tabUIS - Budget` b
         INNER JOIN `tabBudget Item` bi ON b.name = bi.parent
         WHERE b.fiscal_year = %(fiscal_year)s AND b.company = %(company)s
+        and b.docstatus = 1
         {conditions}
         """,
         filters,
