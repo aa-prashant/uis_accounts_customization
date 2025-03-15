@@ -810,7 +810,7 @@ def get_account_budget(company, branch, filters):
 
 	# Get budget details
 	budget_dict = frappe.db.get_value(
-		"UIS - Allocate Budget", 
+		"UIS - Budget", 
 		budget_filter, 
 		['name', 'monthly_distribution'], 
 		as_dict=True
