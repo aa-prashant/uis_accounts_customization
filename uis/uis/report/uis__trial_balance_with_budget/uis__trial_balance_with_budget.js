@@ -81,8 +81,7 @@ frappe.query_reports["UIS- Trial Balance with Budget"] = {
 			fieldname: "presentation_currency",
 			label: __("Currency"),
 			fieldtype: "Select",
-			options: erpnext.get_presentation_currency_list(),
-			reqd:1
+			options: erpnext.get_presentation_currency_list()
 		},
 		{
 			fieldname: "with_period_closing_entry_for_opening",

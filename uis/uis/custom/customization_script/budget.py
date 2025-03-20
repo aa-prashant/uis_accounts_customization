@@ -8,8 +8,11 @@ from erpnext.accounts.doctype.budget.budget import (
 from frappe.utils import flt, get_last_day, fmt_money
 from frappe import _
 
-def verify_validate_expense_against_budget(doc):
-    gl_entries = doc.get_gl_entries()
+def verify_validate_expense_against_budget(doc, for_dt = None):
+    if for_dt is not None:
+        gl_entries = doc.build_gl_map()
+    else:
+        gl_entries = doc.get_gl_entries()
     for entry in gl_entries:
         validate_expense_against_budget(entry, expense_amount=flt(entry.debit) - flt(entry.credit))
 
@@ -37,40 +40,49 @@ def validate_expense_against_budget(args, expense_amount=0):
     if not args.account:
         return
 
-    # Construct dynamic conditions based on available fields
-    condition = ""
-    query_params = [args.fiscal_year, args.account]
-    
-    filters = {"cost_center": "b.cost_center", "project": "b.project", "department": "b.department", "branch": "b.branch"}
+    filters = {
+        "cost_center": "b.cost_center",
+        "project": "b.project",
+        "department": "b.department"
+    }
+
+    query_params = [args.get("fiscal_year"), args.get("account"), args.get("branch")]
+
+    # Only append dynamic filters if you will use them
+    dynamic_conditions = []
     for field, column in filters.items():
         if args.get(field):
-            condition += f" AND {column} = %s"
-            query_params.append(args.get(field).strip())
+            dynamic_conditions.append(f"{column} = '{args.get(field).strip()}'")  # Note: hardcoding into query if needed
 
     query = f"""
-    SELECT
-        b.name as budget_name,
-        branch as budget_against, ba.budget_amount,
-        b.monthly_distribution,
-        IFNULL(b.applicable_on_material_request, 0) AS for_material_request,
-        IFNULL(b.applicable_on_purchase_order, 0) AS for_purchase_order,
-        IFNULL(b.applicable_on_booking_actual_expenses, 0) AS for_actual_expenses,
-        b.action_if_annual_budget_exceeded,
-        b.action_if_accumulated_monthly_budget_exceeded,
-        b.action_if_annual_budget_exceeded_on_mr,
-        b.action_if_accumulated_monthly_budget_exceeded_on_mr,
-        b.action_if_annual_budget_exceeded_on_po,
-        b.action_if_accumulated_monthly_budget_exceeded_on_po
-    FROM `tabUIS - Budget` b
-    INNER JOIN `tabBudget Account` ba ON b.name = ba.parent
-    WHERE
-        b.fiscal_year = %s
-        AND ba.account = %s
-        AND b.docstatus = 1
-        {condition}
+        SELECT
+            b.name as budget_name,
+            b.branch as budget_against,
+            ba.budget_amount,
+            b.monthly_distribution,
+            COALESCE(b.applicable_on_material_request, 0) AS for_material_request,
+            COALESCE(b.applicable_on_purchase_order, 0) AS for_purchase_order,
+            COALESCE(b.applicable_on_booking_actual_expenses, 0) AS for_actual_expenses,
+            b.action_if_annual_budget_exceeded,
+            b.action_if_accumulated_monthly_budget_exceeded,
+            b.action_if_annual_budget_exceeded_on_mr,
+            b.action_if_accumulated_monthly_budget_exceeded_on_mr,
+            b.action_if_annual_budget_exceeded_on_po,
+            b.action_if_accumulated_monthly_budget_exceeded_on_po
+        FROM `tabUIS - Budget` b
+        INNER JOIN `tabBudget Account` ba ON b.name = ba.parent
+        WHERE
+            b.fiscal_year = %s
+            AND ba.account = %s
+            AND b.branch = %s
+            AND b.docstatus = 1
     """
 
-    budget_records = frappe.db.sql(query, tuple(query_params), as_dict=True) # nosec
+    # Optional: add dynamic conditions inline
+    if dynamic_conditions:
+        query += f"or ({' OR '.join(dynamic_conditions)})"
+
+    budget_records = frappe.db.sql(query, tuple(query_params), as_dict=True)  # nosec
 
     if budget_records:
         validate_budget_records(args, budget_records, expense_amount)

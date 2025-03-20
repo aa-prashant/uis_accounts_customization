@@ -138,6 +138,10 @@ doc_events = {
 	"Purchase Invoice": {
 		"on_submit": "uis.uis.custom.customization_script.purchase_invoice.on_submit",
         
+	},
+	"Journal Entry": {
+		"on_submit": "uis.uis.custom.customization_script.journal_entry.on_submit",
+        
 	}
 
 }
