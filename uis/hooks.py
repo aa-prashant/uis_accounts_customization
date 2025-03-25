@@ -40,6 +40,7 @@ fixtures = [
 doctype_js = {
     "Purchase Invoice" : "uis/custom/customization_dt/purchase_invoice.js",
     "Budget":"uis/custom/customization_dt/budget.js",
+    "Item Group":"uis/custom/customization_dt/item_group.js"
     }
 # doctype_list_js = {"doctype" : "public/js/doctype_list.js"}
 # doctype_tree_js = {"doctype" : "public/js/doctype_tree.js"}
