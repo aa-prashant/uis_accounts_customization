@@ -1,19 +1,19 @@
 {
  "actions": [],
  "allow_rename": 1,
- "creation": "2024-10-04 14:57:46.424484",
+ "creation": "2025-03-27 19:09:36.600865",
  "doctype": "DocType",
  "editable_grid": 1,
  "engine": "InnoDB",
  "field_order": [
-  "branch"
+  "customer_branch"
  ],
  "fields": [
   {
-   "fieldname": "branch",
+   "fieldname": "customer_branch",
    "fieldtype": "Link",
    "in_list_view": 1,
-   "label": "Branch",
+   "label": "Customer Branch",
    "options": "Customer Branch"
   }
  ],
@@ -21,10 +21,10 @@
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2025-03-27 20:51:35.373248",
+ "modified": "2025-03-27 20:51:34.989577",
  "modified_by": "Administrator",
  "module": "UIS CRM",
- "name": "Branch Table",
+ "name": "Customer Branch Table",
  "owner": "Administrator",
  "permissions": [],
  "sort_field": "modified",
