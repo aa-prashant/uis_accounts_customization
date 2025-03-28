@@ -1,30 +1,33 @@
 {
  "actions": [],
  "allow_rename": 1,
- "creation": "2024-10-04 14:57:46.424484",
+ "autoname": "field:department",
+ "creation": "2024-10-04 17:18:20.213354",
  "doctype": "DocType",
  "editable_grid": 1,
  "engine": "InnoDB",
  "field_order": [
-  "branch"
+  "department"
  ],
  "fields": [
   {
-   "fieldname": "branch",
+   "fieldname": "department",
    "fieldtype": "Link",
    "in_list_view": 1,
-   "label": "Branch",
-   "options": "Customer Branch"
+   "label": "Department",
+   "options": "Department",
+   "unique": 1
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2025-03-27 20:51:35.373248",
+ "modified": "2025-03-27 20:51:35.572443",
  "modified_by": "Administrator",
  "module": "UIS CRM",
- "name": "Branch Table",
+ "name": "Customer Department Table",
+ "naming_rule": "By fieldname",
  "owner": "Administrator",
  "permissions": [],
  "sort_field": "modified",

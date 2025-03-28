@@ -26,7 +26,6 @@
   "to",
   "description",
   "remarks",
-  "qi",
   "amended_from"
  ],
  "fields": [
@@ -129,7 +128,7 @@
    "fieldname": "cc",
    "fieldtype": "Table MultiSelect",
    "label": "CC",
-   "options": "Department CC"
+   "options": "Customer Department Table"
   },
   {
    "fieldname": "remarks",
@@ -149,10 +148,11 @@
    "options": "reference_type"
   }
  ],
+ "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2024-10-04 17:27:34.439729",
+ "modified": "2025-03-27 17:26:05.145867",
  "modified_by": "Administrator",
  "module": "UIS CRM",
  "name": "Letters",
