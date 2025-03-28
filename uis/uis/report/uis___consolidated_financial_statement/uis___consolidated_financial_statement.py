@@ -54,11 +54,11 @@ def execute(filters=None):
 	is_pnl = False
 	if filters.get("report") == "Balance Sheet":
 		data, message, chart, report_summary = get_balance_sheet_data(
-			fiscal_year, companies, columns, filters
+			fiscal_year, companies, columns, filters, companies_column
 		)
 		data = balance_sheet_data_format(data)
 	elif filters.get("report") == "Profit and Loss Statement":
-		budget_dict, data, message, chart, report_summary = get_profit_loss_data(fiscal_year, companies, columns, filters)
+		budget_dict, data, message, chart, report_summary = get_profit_loss_data(fiscal_year, companies, columns, filters, companies_column)
 		data = pnl_formatted_report(data, budget_dict)
 		is_pnl = True
 		
@@ -70,22 +70,23 @@ def execute(filters=None):
 	return columns, data, message, chart, report_summary
 
 
-def get_balance_sheet_data(fiscal_year, companies, columns, filters):
+def get_balance_sheet_data(fiscal_year, companies, columns, filters, companies_list):
 	
 	branches, company_fetched_list = [], []
-	data_list, report_summary_list = [], []
-	for key in companies:
-		for company in companies[key]:
-			if company in company_fetched_list:
-				continue
-			company_fetched_list.append(company)
-			branches = company_branches(company)
+	data_list, report_summary_list = {}, []
+
+	for company in companies_list:
+		
+		branches = company_branches(company)
+		if not branches:
+			continue
+
+		for branch in branches:
+			key = (company, branch)
+			data, message, chart, report_summary = get_balance_sheet_data_branch(fiscal_year, companies, columns, filters, branch)
+			report_summary_list = calculate_report_summary(report_summary, report_summary_list)
+			data_list[key] = data
 			
-			for branch in branches:
-				key = (company, branch)
-				data, message, chart, report_summary = get_balance_sheet_data_branch(fiscal_year, companies, columns, filters, branch)
-				report_summary_list = calculate_report_summary(report_summary, report_summary_list)
-				data_list.append({key: data})
 	return data_list, message, chart, report_summary_list
 
 def get_balance_sheet_data_branch(fiscal_year, companies, columns, filters, branch):
@@ -189,24 +190,25 @@ def get_root_account_name(root_type, company):
 		return root_account[0][0]
 
 
-def get_profit_loss_data(fiscal_year, companies, columns, filters):
+def get_profit_loss_data(fiscal_year, companies, columns, filters, companies_list):
 
 	branches, company_fetched_list = [], []
-	data_list, report_summary_list = [], []
+	data_list, report_summary_list = {}, []
 	budget_dict = {}
-	for key in companies:
-		for company in companies[key]:
-			if company in company_fetched_list:
-				continue
-			company_fetched_list.append(company)
-			branches = company_branches(company)
-			
-			for branch in branches:
-				key = (company, branch)
-				budget_dict.update(get_account_budget(company,branch, filters))
 
-				data, message, chart, report_summary = get_profit_loss_data_branch_wise(fiscal_year, companies, columns, filters, branch)
-				data_list.append({key:data})
+	for company in companies_list:
+		
+		branches = company_branches(company)
+		if not branches:
+			continue
+
+		for branch in branches:
+			key = (company, branch)
+			budget_dict.update(get_account_budget(company,branch, filters))
+
+			data, message, chart, report_summary = get_profit_loss_data_branch_wise(fiscal_year, companies, columns, filters, branch)
+			data_list[key] = data
+
 	return budget_dict, data_list, message, chart, report_summary
 
 def get_profit_loss_data_branch_wise(fiscal_year, companies, columns, filters, branch):
@@ -448,206 +450,47 @@ def get_columns_branch_wise(companies, filters, is_pnl = False):
 	return columns
 
 def balance_sheet_data_format(data_list):
-# Create a dictionary to store consolidated data by account
-    consolidated_data = {}
-    branches = []
-    
-    # First pass: extract all branches and account names
-    for branch_data in data_list:
-        for (company, branch), accounts in branch_data.items():
-            if branch not in branches:
-                branches.append(branch)
-            
-            for account in accounts:
-                if not isinstance(account, dict) or 'account_name' not in account:
-                    continue
-                    
-                account_name = account['account_name']
-                if account_name not in consolidated_data:
-                    consolidated_data[account_name] = {
-                        'account_name': account_name,
-                        'account': account.get('account', ''),
-                        'parent_account': account.get('parent_account', ''),
-                        'indent': account.get('indent', 0),
-                        'root_type': account.get('root_type', ''),
-                        'branches': {},
-						'currency' : account.get('currency')
-                    }
-    
-    # Second pass: populate branch-specific values
-    for branch_data in data_list:
-        for (company, branch), accounts in branch_data.items():
-            for account in accounts:
-                if not isinstance(account, dict) or 'account_name' not in account:
-                    continue
-                    
-                account_name = account['account_name']
-                if account_name in consolidated_data:
-                    if company in account:
-                        consolidated_data[account_name]['branches'][branch] = account[company]
-    
-    # Group accounts by root_type
-    assets = []
-    liabilities = []
-    equity = []
-    other = []
-    
-    # Prepare report data grouped by root_type
-    for account_name, account_data in consolidated_data.items():
-        row = {
-            'account_name': account_name,
-            'account': account_data['account'],
-            'parent_account': account_data['parent_account'],
-            'indent': account_data['indent'],
-            'root_type': account_data['root_type'],
-			'currency' : account.get('currency')
-        }
-        
-        # Add branch-specific columns
-        for branch in branches:
-            row[branch] = account_data['branches'].get(branch, 0)
-        
-        # Calculate total for the row across all branches
-        row['total'] = sum(account_data['branches'].values())
-        
-        # Sort into appropriate category
-        root_type = account_data['root_type'].lower() if account_data['root_type'] else ''
-        if root_type == 'asset':
-            assets.append(row)
-        elif root_type == 'liability':
-            liabilities.append(row)
-        elif root_type == 'equity':
-            equity.append(row)
-        else:
-            other.append(row)
-    
-    # Sort each category separately by indent and account name
-    for category in [assets, liabilities, equity, other]:
-        category.sort(key=lambda x: (x.get('indent', 0), x.get('account_name', '')))
-    
-    # Combine results with separator rows
-    result = []
-    
-    # Add assets section
-    result.extend(assets)
-    
-    # Add separator row after assets
-    if assets and (liabilities or equity or other):
-        result.append(create_separator_row(branches))
-    
-    # Add liabilities section
-    result.extend(liabilities)
-    
-    # Add separator row after liabilities
-    if liabilities and (equity or other):
-        result.append(create_separator_row(branches))
-    
-    # Add equity section
-    result.extend(equity)
-    
-    # Add separator row after equity if there are other accounts
-    if equity and other:
-        result.append(create_separator_row(branches))
-    
-    # Add other accounts if any
-    result.extend(other)
-    
-    return result
+	account_consolidated_dict = {}
+	for key, value in data_list.items():
+		for account_row in value:
+			try:
+				if not account_row:
+					account_consolidated_dict[frappe.utils.random_string(4)] = {}
+					continue
 
-# Helper function to create a separator row
-def create_separator_row(branches):
-    separator = {
-        'account_name': '',
-        'account': '',
-        'parent_account': '',
-        'indent': 0,
-        'root_type': '',
-        'is_separator': True  # Flag to identify separator rows
-    }
-    
-    # Add empty values for branch columns
-    for branch in branches:
-        separator[branch] = ''
-    
-    separator['total'] = ''
-    
-    return separator
+				account_name = _get_account_name(account_row['account_name'], is_dict = False)
+				account_row[key[1]] = account_row[key[0]]
+				account_consolidated_dict[account_name] = account_row
+			except Exception as e:
+				print(e)	
+	data = [ account_row for account_row in account_consolidated_dict.values()]
+	return data
 
-def pnl_formatted_report(data, budget_dict):
-    """
-    Format profit and loss report data with proper account hierarchy and indentation.
-    Maps child accounts to parent accounts and ensures budget values are shown even when there are no entries.
-    """
-    formatted_data = []
-    account_map = {}  # To keep track of accounts by name for easy lookup
-    
-    # First pass: Get all accounts from data
-    for company_branch_data in data:
-        for (company, branch), accounts in company_branch_data.items():
-            # Process each account
-            for account in accounts:
-                if not account or 'account_name' not in account:
-                    continue
-                
-                account_name = account.get('account_name')
-                
-                # Find if this account already exists in formatted_data
-                if account_name in account_map:
-                    existing_row = account_map[account_name]
-                    # Update existing row with this branch's data
-                    existing_row[f"{branch}"] = account.get(company, 0)
-                    if 'total' in account:
-                        existing_row['total'] = account.get('total', 0)
-                else:
-                    # Create new row for this account
-                    new_row = {
-                        'account_name': account_name,
-                        'account': account.get('account'),
-                        'parent_account': account.get('parent_account'),
-                        'currency': account.get('currency'),
-                        f"{branch}": account.get(company, 0),
-                    }
-                    if 'total' in account:
-                        new_row['total'] = account.get('total', 0)
-                    
-                    # Use the provided indent if available
-                    new_row['indent'] = account.get('indent', 0)
-                    
-                    formatted_data.append(new_row)
-                    account_map[account_name] = new_row
-    
-    # Second pass: Add budget data, even for accounts that might not have entries
-    for (company, branch), budget_accounts in budget_dict.items():
-        budget_key = f"bug_{branch}_{company}"
-        
-        for account_name, budget_amount in budget_accounts.items():
-            # If account exists in our formatted data, add budget
-            if account_name in account_map:
-                account_map[account_name][budget_key] = budget_amount
-            else:
-                # Try to find parent account info from Frappe DB
-                account_info = get_account_info(account_name, company)
-                indent = 0
-                
-                if account_info:
-                    indent = account_info.get('indent', 0)
-                    
-                # Create a new row for budget accounts that don't have entries
-                new_row = {
-                    'account_name': account_name,
-                    'account': account_name,  # Using account_name as fallback
-                    'indent': indent,  # Use indent from account_info if available
-                    f"{branch}": 0,  # Zero for the branch as no actual entries
-                    budget_key: budget_amount  # Add budget amount
-                }
-                formatted_data.append(new_row)
-                account_map[account_name] = new_row
-    
-    # Important: Preserve the original indentation from the input data
-    # If we need to recalculate indentation based on hierarchy, use the following:
-    # formatted_data = apply_indentation(formatted_data)
-    
-    return formatted_data
+def pnl_formatted_report(data_list, budget_dict):
+	account_with_and_pnl = {}
+	data = []
+	for key, accounts_list in data_list.items():
+		try:
+
+			account_budget_list_for_respective_company = budget_dict[key]
+			for row in accounts_list:
+				if not row:
+					
+					account_with_and_pnl[frappe.utils.random_string(4)] = row
+					continue
+				
+				account_name = _get_account_name(row['account_name'], False)
+				row[key[1]] = row[key[0]]
+
+				if account_name in account_budget_list_for_respective_company:
+					key_str = f"bug_{key[1]}_{key[0]}"
+					row[key_str] = account_budget_list_for_respective_company[account_name]
+
+				account_with_and_pnl[account_name] = row
+		except Exception as e:
+			print()
+	data = [ row for row in account_with_and_pnl.values()]
+	return data
 
 def get_account_info(account_name, company):
     """
@@ -1289,16 +1132,20 @@ def get_account_budget(company, branch, filters):
     
     return account_with_budget_amount_branch_wise
 
-def _get_account_name(account):
-    """Extract non-numeric part of the account name"""
-    account_parts = account.get("account", "").split("-")
-    
-    for part in account_parts:
-        part = part.strip()
-        if part and not part.isnumeric():
-            return part
-    
-    return ""
+
+def _get_account_name(account, is_dict = True):
+	"""Extract non-numeric part of the account name"""
+
+	account_parts = account.get("account", "").split("-") if is_dict else account.split("-")
+
+	for part in account_parts:
+		part = part.strip()
+		if part and not part.isnumeric():
+			return part
+
+	return ""
+
+
 
 def _format_monthly_distribution_dict(monthly_distribution_dict, filters):
     """
