@@ -65,11 +65,13 @@
    "options": "Cost Center"
   },
   {
+   "default": "{branch}./.YYYY.-.MM./.###",
    "fieldname": "naming_series",
    "fieldtype": "Data",
    "hidden": 1,
    "label": "Series",
    "no_copy": 1,
+   "options": "\n{branch}./.YYYY.-.MM./.###",
    "print_hide": 1,
    "read_only": 1,
    "set_only_once": 1
@@ -234,7 +236,7 @@
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2025-03-28 18:20:15.721371",
+ "modified": "2025-03-28 20:05:00.020518",
  "modified_by": "Administrator",
  "module": "Uis",
  "name": "UIS - Budget",
