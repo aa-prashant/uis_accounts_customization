@@ -1,7 +1,7 @@
 {
  "actions": [],
  "allow_import": 1,
- "autoname": "naming_series:",
+ "autoname": "naming_series:{branch}./.YYYY.-.MM./.###",
  "creation": "2025-03-14 23:06:32.901913",
  "default_view": "List",
  "doctype": "DocType",
@@ -234,7 +234,7 @@
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2025-03-15 15:03:08.896625",
+ "modified": "2025-03-28 18:20:15.721371",
  "modified_by": "Administrator",
  "module": "Uis",
  "name": "UIS - Budget",

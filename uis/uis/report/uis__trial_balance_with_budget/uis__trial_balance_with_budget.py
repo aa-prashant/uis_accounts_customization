@@ -18,6 +18,7 @@ from erpnext.accounts.report.financial_statements import (
 	set_gl_entries_by_account,
 )
 from erpnext.accounts.report.utils import convert_to_presentation_currency, get_currency
+from collections import defaultdict
 from typing import Dict, List, Optional, Tuple, Any
 
 value_fields = (
@@ -34,34 +35,30 @@ def execute(filters=None):
 	validate_filters(filters)
 
 	companies_column, companies = get_companies(filters)
-	data_list = {}
+	parent_company = filters.get('company')
+	
+	if not filters.presentation_currency :
+		filters["presentation_currency"] = erpnext.get_company_currency(filters.company)
+	
 	budget_account_dict = {}
-
-	is_branch_pre_set = True if filters.get('branch') else False
-
+	data_dict = {}
+	branch_set_by_user = filters.get('branch')
 	for company in companies_column:
+		branch_list = company_branches(company)
+
+		if not branch_list : continue
+
+		branch_as_per_company = branch_list if not branch_set_by_user else [ user_set_branch  for user_set_branch in filters.get('branch') if user_set_branch in branch_list]
+
+		if not branch_as_per_company: continue
+
 		filters['company'] = company
-		company_branch_list = company_branches(company)
+		filters['branch'] = branch_as_per_company
+		budget_account_dict.update(get_account_budget(filters))
+		data_dict[company] = get_data(filters)
+		filters['branch'] = branch_set_by_user
 
-		# If user has set branch filter, use it directly
-		if is_branch_pre_set:
-			branch_list = filters.get('branch') if isinstance(filters.get('branch'), list) else [filters.get('branch')]
-		else:
-			branch_list = company_branch_list
-
-		for branch in branch_list:
-			if branch not in company_branch_list:
-				continue
-
-			budget_account_dict.update(get_account_budget(company, branch, filters))
-
-			# Do not overwrite original filter if branch is preset
-			temp_filters = filters.copy()
-			filters['branch'] = {}
-
-			data_list[(company, branch)] = get_data(temp_filters)
-
-	data = prepare_consolidated_trial_balance(data_list, budget_account_dict)
+	data = prepare_consolidated_trial_balance(data_dict, budget_account_dict, parent_company, filters["presentation_currency"])
 	columns = get_columns()
 	return columns, data
 
@@ -800,168 +797,70 @@ def get_subsidiary_companies(company):
 		where lft >= {lft} and rgt <= {rgt} order by lft, rgt"""
 	)
 
-def prepare_consolidated_trial_balance(company_data, budget_account_list):
-    """
-    Prepare consolidated trial balance data from multiple companies
-    while maintaining parent-child relationships and incorporating budget data.
-    """
-    # Create a mapping of account name to account details
-    account_map = {}
-    # Track account hierarchy
-    parent_child_map = {}
-    # Track leaf accounts (accounts with no children)
-    leaf_accounts = set()
-    
-    # Process all accounts from all companies
-    for company, accounts in company_data.items():
-        for account in accounts:
-            if not isinstance(account, dict) or not account:
-                continue
-                
-            if account.get('account_name') == "'Total'":
-                continue  # Skip totals, will handle later
-                
-            account_name = account.get('account_name')
-            if not account_name:
-                continue
-                
-            # Store parent-child relationship
-            parent_account = account.get('parent_account')
-            if parent_account:
-                parent_name = None
-                for company_check, accounts_check in company_data.items():
-                    for acc in accounts_check:
-                        if isinstance(acc, dict) and acc.get('account') == parent_account:
-                            parent_name = acc.get('account_name')
-                            break
-                    if parent_name:
-                        break
-                        
-                if parent_name:
-                    if parent_name not in parent_child_map:
-                        parent_child_map[parent_name] = []
-                    if account_name not in parent_child_map[parent_name]:
-                        parent_child_map[parent_name].append(account_name)
-            
-            # Initialize or update account in our map
-            if account_name not in account_map:
-                account_map[account_name] = {
-                    'account': account.get('account'),
-                    'account_name': account_name,
-                    'indent': account.get('indent', 0),
-                    'currency': account.get('currency', 'INR'),
-                    'opening_debit': 0,
-                    'opening_credit': 0,
-                    'debit': 0,
-                    'credit': 0,
-                    'closing_debit': 0,
-                    'closing_credit': 0,
-                    'has_value': account.get('has_value', False),
-                    'parent_account': parent_account,
-                    'currency': account.get('currency'),
-                    # Add budget fields with default values
-                    'opening_allocated_budget_amount': 0,
-                    'budget_allocated_budget_amount': 0,
-                    'till_date_allocated_budget_amount': 0
-                }
-            
-            # Add this company's values
-            account_entry = account_map[account_name]
-            account_entry['opening_debit'] += account.get('opening_debit', 0)
-            account_entry['opening_credit'] += account.get('opening_credit', 0)
-            account_entry['debit'] += account.get('debit', 0)
-            account_entry['credit'] += account.get('credit', 0)
-            account_entry['closing_debit'] += account.get('closing_debit', 0)
-            account_entry['closing_credit'] += account.get('closing_credit', 0)
-    
-    # Identify leaf accounts (accounts with no children)
-    for account_name in account_map:
-        if account_name not in parent_child_map:
-            leaf_accounts.add(account_name)
-    
-    # Add budget data to respective accounts
-    for company_loc, budget_accounts in budget_account_list.items():
-        for account_short_name, budget_data in budget_accounts.items():
-            # Find the matching account in our account_map
-            for account_name, account_details in account_map.items():
-                # Check if the short name is part of the full account name
-                if account_short_name in account_name:
-                    account_details['opening_allocated_budget_amount'] = budget_data.get('opening_allocated_budget_amount', 0)
-                    account_details['budget_allocated_budget_amount'] = budget_data.get('budget_allocated_budget_amount', 0)
-                    account_details['till_date_allocated_budget_amount'] = budget_data.get('till_date_allocated_budget_amount', 0)
-                    break
-    
-    # Create the hierarchical report data
-    report_data = []
-    
-    # Add accounts in hierarchical order
-    def add_account_with_children(acc_name, level=0):
-        if acc_name in account_map:
-            account = account_map[acc_name]
-            account['indent'] = level
-            report_data.append(account)
-            
-            # Add children
-            if acc_name in parent_child_map:
-                for child in parent_child_map[acc_name]:
-                    add_account_with_children(child, level + 1)
-    
-    # Find root accounts (those without parents) and add them with their children
-    root_accounts = []
-    for acc_name, account in account_map.items():
-        if not account.get('parent_account'):
-            root_accounts.append(acc_name)
-    
-    # Sort root accounts by name for consistent order
-    root_accounts.sort()
-    
-    # Add all accounts in hierarchical order
-    for root in root_accounts:
-        add_account_with_children(root)
-    
-    # Calculate totals using only leaf accounts to avoid double counting
-    totals = {
-        'account': "Total",
-        'account_name': "Total",
-        'is_total_row': True,
-        'currency': 'INR',
-        'opening_debit': sum(account_map[a]['opening_debit'] for a in leaf_accounts),
-        'opening_credit': sum(account_map[a]['opening_credit'] for a in leaf_accounts),
-        'debit': sum(account_map[a]['debit'] for a in leaf_accounts),
-        'credit': sum(account_map[a]['credit'] for a in leaf_accounts),
-        'closing_debit': sum(account_map[a]['closing_debit'] for a in leaf_accounts),
-        'closing_credit': sum(account_map[a]['closing_credit'] for a in leaf_accounts),
-        'opening_allocated_budget_amount': sum(account_map[a].get('opening_allocated_budget_amount', 0) for a in leaf_accounts),
-        'budget_allocated_budget_amount': sum(account_map[a].get('budget_allocated_budget_amount', 0) for a in leaf_accounts),
-        'till_date_allocated_budget_amount': sum(account_map[a].get('till_date_allocated_budget_amount', 0) for a in leaf_accounts)
-    }
-    
-    # Verify if totals match what's in the original data
-    for company, accounts in company_data.items():
-        for account in accounts:
-            if isinstance(account, dict) and account.get('account_name') == "'Total'":
-                # Found a total row in the original data, use these values instead
-                if 'debit' in account and 'credit' in account:
-                    totals['debit'] = account.get('debit', 0)
-                    totals['credit'] = account.get('credit', 0)
-                if 'opening_debit' in account and 'opening_credit' in account:
-                    totals['opening_debit'] = account.get('opening_debit', 0)
-                    totals['opening_credit'] = account.get('opening_credit', 0)
-                if 'closing_debit' in account and 'closing_credit' in account:
-                    totals['closing_debit'] = account.get('closing_debit', 0)
-                    totals['closing_credit'] = account.get('closing_credit', 0)
-                if 'currency' in account:
-                    totals['currency'] = account.get('currency')
-                break
-    
-    report_data.append(totals)
-    
-    return report_data
 
-def get_account_budget(company, branch, filters):
+def prepare_consolidated_trial_balance(company_data, budget_account_list, parent_company, currency):
+	data = []
+	final_account_dict = {}
+	accounts = frappe.db.sql(
+		"""select name, account_number, parent_account, account_name, root_type, report_type, lft, rgt
+
+		from `tabAccount` where company=%s order by lft""",
+		parent_company,
+		as_dict=True,
+	)
+	parent_account_structure = generate_account_structure(accounts)
+	budget_account = consolidate_budget_account_list(budget_account_list)
+	for company_record in company_data.values():
+		for row in company_record:
+			if not row:
+				continue
+			account_name = _get_account_name(row['account'], False)
+			
+			if account_name in budget_account and account_name not in final_account_dict :
+				final_account_dict[account_name] = row
+				update_budget_to_account = final_account_dict[account_name]
+				update_budget_to_account.update(budget_account[account_name])
+				update_budget_to_account.update({'budget_updated' : 1})
+				continue
+			if account_name not in final_account_dict:
+				final_account_dict[account_name] = row
+			else:
+				update_account = final_account_dict[account_name]
+				update_account['opening_debit'] =  update_account['opening_debit'] + row['opening_debit']
+				update_account['opening_credit'] =  update_account['opening_credit'] + row['opening_credit']
+				update_account['debit'] =  update_account['debit'] + row['debit']
+				update_account['credit'] =  update_account['credit'] + row['credit']
+
+	data = [row for row in final_account_dict.values()]
+	return data
+
+# Placeholder helper functions (replace with your actual implementations)
+def _get_account_name(account, with_number=True):
+    # Example: Strips company suffix; adjust as per your logic
+    return account.split(" - ")[0] if " - " in account else account
+
+def generate_account_structure(accounts):
+    # Builds {parent: [children]} from tabAccount
+    structure = defaultdict(list)
+    for acc in accounts:
+        parent = acc['parent_account']
+        structure[parent].append(acc)
+    return structure
+
+def consolidate_budget_account_list(budget_list):
+    # Example: Converts budget_list to dict; adjust as per your logic
+    return budget_list
+
+
+def get_account_budget(filters):
+	company = filters['company']
+	branch = filters['branch']
+	company_currency = erpnext.get_company_currency(filters.company)
+	currecy_exchange_rate = erpnext.setup.utils.get_exchange_rate(company_currency, filters.get('presentation_currency'))
+	
 	budget_filter = {
 		"company": company,
-		"branch": branch,
+		"branch": ['in' , branch],
 		"fiscal_year": filters.get("fiscal_year"),
 		"docstatus": 1
 	}
@@ -1018,9 +917,7 @@ def get_account_budget(company, branch, filters):
 																		filters.get('year_start_date'), filters.get('to_date')),
 																	2)
 	
-	# Create branch-wise account budget dictionary
-	key = (company, branch)
-	account_with_budget_amount_branch_wise[key] = {}
+	account_with_budget_amount_branch_wise[company] = {}
 	opening_allocated_budget_amount = 0
 	budget_allocated_budget_amount = 0
 	till_date_allocated_budget_amount = 0
@@ -1037,24 +934,25 @@ def get_account_budget(company, branch, filters):
 				budget_allocated_budget_amount = opening_allocated_budget_amount
 				till_date_allocated_budget_amount = opening_allocated_budget_amount
 
-			account_with_budget_amount_branch_wise[key][account_name] = {
-				"opening_allocated_budget_amount": opening_allocated_budget_amount,
-				"budget_allocated_budget_amount": budget_allocated_budget_amount,
-				"till_date_allocated_budget_amount": till_date_allocated_budget_amount,
+			account_with_budget_amount_branch_wise[company][account_name] = {
+				"opening_allocated_budget_amount": opening_allocated_budget_amount * currecy_exchange_rate,
+				"budget_allocated_budget_amount": budget_allocated_budget_amount * currecy_exchange_rate,
+				"till_date_allocated_budget_amount": till_date_allocated_budget_amount * currecy_exchange_rate,
 			}
 
 	return account_with_budget_amount_branch_wise
 
-def _get_account_name(account):
-    """Extract non-numeric part of the account name"""
-    account_parts = account.get("account", "").split("-")
-    
-    for part in account_parts:
-        part = part.strip()
-        if part and not part.isnumeric():
-            return part
-    
-    return ""
+def _get_account_name(account, is_dict = True):
+	"""Extract non-numeric part of the account name"""
+
+	account_parts = account.get("account", "").split("-") if is_dict else account.split("-")
+
+	for part in account_parts:
+		part = part.strip()
+		if part and not part.isnumeric():
+			return part
+
+	return ""
 
 def _format_monthly_distribution_dict(monthly_distribution_dict, _start_date, _end_date):
 	"""
@@ -1124,3 +1022,37 @@ def get_fy_year_opening_month(fy_year_name):
 		["year_start_date", "year_end_date"], 
 		as_dict=True
 	) 
+
+
+def generate_account_structure(accounts, depth=20):
+	parent_children_map = {}
+	for d in accounts:
+		parent_account_name = None if not d.parent_account else _get_account_name(d.parent_account, False)
+		parent_children_map.setdefault( parent_account_name, []).append(d)
+
+	return parent_children_map or []
+
+
+def consolidate_budget_account_list(budget_account_list):
+    budget_dict = {}
+
+    for budget_account in budget_account_list.values():
+        account_name = next(iter(budget_account))  # Get the first key dynamically
+
+        if account_name not in budget_dict:
+            budget_dict[account_name] = budget_account[account_name].copy()  # Ensure a new reference
+        else:
+            account_dict = frappe._dict(budget_account[account_name])
+
+            # Fields to sum up
+            fields = [
+                "opening_allocated_budget_amount",
+                "budget_allocated_budget_amount",
+                "till_date_allocated_budget_amount"
+            ]
+
+            # Accumulate values dynamically
+            for field in fields:
+                budget_dict[account_name][field] += account_dict.get(field, 0)
+
+    return budget_dict
