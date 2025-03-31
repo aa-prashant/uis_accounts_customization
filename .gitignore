@@ -12,3 +12,5 @@ uis/uis/report/uis__trial_balance_with_budget/._uis__trial_balance_with_budget.p
 .gitignore
 uis/uis/report/uis__trial_balance_with_budget/.___pycache__
 ._*
+uis.bundle.*.js
+uis.bundle.*.js.map
