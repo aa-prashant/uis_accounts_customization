@@ -20,7 +20,7 @@ fixtures = [
     },]
 # include js, css files in header of desk.html
 # app_include_css = "/assets/uis/css/uis.css"
-# app_include_js = "/assets/uis/js/uis.js"
+app_include_js = "uis.bundle.js"
 
 # include js, css files in header of web template
 # web_include_css = "/assets/uis/css/uis.css"
@@ -39,8 +39,10 @@ fixtures = [
 # include js in doctype views
 doctype_js = {
     "Purchase Invoice" : "uis/custom/customization_dt/purchase_invoice.js",
-    "Budget":"uis/custom/customization_dt/budget.js",
-    "Item Group":"uis/custom/customization_dt/item_group.js"
+    "Item Group":"uis/custom/customization_dt/item_group.js",
+    "Address":"uis/custom/customization_dt/address.js"
+
+    
     }
 # doctype_list_js = {"doctype" : "public/js/doctype_list.js"}
 # doctype_tree_js = {"doctype" : "public/js/doctype_tree.js"}

@@ -1,41 +1,41 @@
 {
  "actions": [],
- "allow_import": 1,
  "allow_rename": 1,
- "autoname": "field:city_name",
- "creation": "2024-10-10 14:58:46.888951",
- "default_view": "List",
+ "autoname": "field:state_province",
+ "creation": "2025-03-31 08:14:16.489107",
  "doctype": "DocType",
- "editable_grid": 1,
  "engine": "InnoDB",
  "field_order": [
-  "city_name",
-  "state_province"
+  "state_province",
+  "country"
  ],
  "fields": [
   {
-   "fieldname": "city_name",
+   "fieldname": "state_province",
    "fieldtype": "Data",
    "in_list_view": 1,
-   "label": "City Name",
+   "label": " State/Province ",
    "reqd": 1,
+   "set_only_once": 1,
    "unique": 1
   },
   {
-   "fieldname": "state_province",
+   "fieldname": "country",
    "fieldtype": "Link",
-   "label": " State Province",
-   "options": "State",
-   "reqd": 1
+   "in_list_view": 1,
+   "label": "Country",
+   "options": "Country",
+   "reqd": 1,
+   "set_only_once": 1
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2025-03-31 09:40:52.104050",
+ "modified": "2025-03-31 08:27:45.372025",
  "modified_by": "Administrator",
- "module": "UIS CRM",
- "name": "City",
+ "module": "Uis",
+ "name": "State",
  "naming_rule": "By fieldname",
  "owner": "Administrator",
  "permissions": [
@@ -50,21 +50,8 @@
    "role": "System Manager",
    "share": 1,
    "write": 1
-  },
-  {
-   "create": 1,
-   "delete": 1,
-   "email": 1,
-   "export": 1,
-   "print": 1,
-   "read": 1,
-   "report": 1,
-   "role": "Sales User",
-   "share": 1,
-   "write": 1
   }
  ],
- "quick_entry": 1,
  "sort_field": "modified",
  "sort_order": "DESC",
  "states": []
