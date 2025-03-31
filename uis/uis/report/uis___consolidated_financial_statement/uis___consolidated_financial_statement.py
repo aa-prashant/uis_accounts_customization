@@ -453,16 +453,19 @@ def balance_sheet_data_format(data_list):
 	account_consolidated_dict = {}
 	for key, value in data_list.items():
 		for account_row in value:
-			try:
-				if not account_row:
+			if not account_row:
 					account_consolidated_dict[frappe.utils.random_string(4)] = {}
 					continue
 
-				account_name = _get_account_name(account_row['account_name'], is_dict = False)
+			account_name = _get_account_name(account_row['account_name'], is_dict = False)
+			if 'Unclosed Fiscal Years Profit / Loss (Credit)' in account_name:
+				continue
+			if account_name in account_consolidated_dict:
+				pre_existing_account = account_consolidated_dict[account_name]
+				pre_existing_account[key[1]] = account_row[key[0]]
+			else:
 				account_row[key[1]] = account_row[key[0]]
 				account_consolidated_dict[account_name] = account_row
-			except Exception as e:
-				print(e)	
 	data = [ account_row for account_row in account_consolidated_dict.values()]
 	return data
 
@@ -470,25 +473,28 @@ def pnl_formatted_report(data_list, budget_dict):
 	account_with_and_pnl = {}
 	data = []
 	for key, accounts_list in data_list.items():
-		try:
-
-			account_budget_list_for_respective_company = budget_dict[key]
-			for row in accounts_list:
-				if not row:
-					
-					account_with_and_pnl[frappe.utils.random_string(4)] = row
-					continue
+		account_budget_list_for_respective_company = budget_dict[key] if key in budget_dict else []
+		for row in accounts_list:
+			if not row:
 				
-				account_name = _get_account_name(row['account_name'], False)
+				account_with_and_pnl[frappe.utils.random_string(4)] = row
+				continue
+			
+			account_name = _get_account_name(row['account_name'], False)
+
+			key_str = f"bug_{key[1]}_{key[0]}"
+			if account_name in account_budget_list_for_respective_company:
+				row[key_str] = account_budget_list_for_respective_company[account_name]
+			
+			if account_name in account_with_and_pnl:
+				pre_exsist_account_with_and_pnl = account_with_and_pnl[account_name]
+				pre_exsist_account_with_and_pnl[key[1]] = row[key[0]]
+				if key_str in row:
+					pre_exsist_account_with_and_pnl[key_str] = row[key_str]
+			else:
 				row[key[1]] = row[key[0]]
-
-				if account_name in account_budget_list_for_respective_company:
-					key_str = f"bug_{key[1]}_{key[0]}"
-					row[key_str] = account_budget_list_for_respective_company[account_name]
-
 				account_with_and_pnl[account_name] = row
-		except Exception as e:
-			print()
+
 	data = [ row for row in account_with_and_pnl.values()]
 	return data
 
@@ -1123,7 +1129,7 @@ def get_account_budget(company, branch, filters):
     for account in account_with_budget_amount:
         account_name = _get_account_name(account)
         if account_name:
-            if monthly_percentage:
+            if monthly_distribution_dict:
                 allocated_budget_amount = (account.get("budget_amount", 0) * monthly_percentage) / 100
             else:
                 allocated_budget_amount = account.get("budget_amount", 0)
