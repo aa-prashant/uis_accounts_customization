@@ -458,8 +458,15 @@ def balance_sheet_data_format(data_list):
 					continue
 
 			account_name = _get_account_name(account_row['account_name'], is_dict = False)
+			
 			if 'Unclosed Fiscal Years Profit / Loss (Credit)' in account_name:
 				continue
+			has_parent_account = ('parent_account' in  account_row and account_row['parent_account'])
+			parent_account = _get_account_name(account_row['parent_account'], is_dict = False) if has_parent_account else None
+			account_row["parent_account"] = parent_account
+			account_row["account"] = account_name
+			account_row["account_name"] = account_name
+
 			if account_name in account_consolidated_dict:
 				pre_existing_account = account_consolidated_dict[account_name]
 				pre_existing_account[key[1]] = account_row[key[0]]
