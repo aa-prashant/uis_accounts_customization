@@ -453,26 +453,29 @@ def balance_sheet_data_format(data_list):
 	account_consolidated_dict = {}
 	for key, value in data_list.items():
 		for account_row in value:
-			if not account_row:
+			try:
+				if not account_row or "account_name" not in account_row:
 					account_consolidated_dict[frappe.utils.random_string(4)] = {}
 					continue
 
-			account_name = _get_account_name(account_row['account_name'], is_dict = False)
-			
-			if 'Unclosed Fiscal Years Profit / Loss (Credit)' in account_name:
-				continue
-			has_parent_account = ('parent_account' in  account_row and account_row['parent_account'])
-			parent_account = _get_account_name(account_row['parent_account'], is_dict = False) if has_parent_account else None
-			account_row["parent_account"] = parent_account
-			account_row["account"] = account_name
-			account_row["account_name"] = account_name
+				account_name = _get_account_name(account_row['account_name'], is_dict = False)
+				
+				if 'Unclosed Fiscal Years Profit / Loss (Credit)' in account_name:
+					continue
+				has_parent_account = ('parent_account' in  account_row and account_row['parent_account'])
+				parent_account = _get_account_name(account_row['parent_account'], is_dict = False) if has_parent_account else None
+				account_row["parent_account"] = parent_account
+				account_row["account"] = account_name
+				account_row["account_name"] = account_name
 
-			if account_name in account_consolidated_dict:
-				pre_existing_account = account_consolidated_dict[account_name]
-				pre_existing_account[key[1]] = account_row[key[0]]
-			else:
-				account_row[key[1]] = account_row[key[0]]
-				account_consolidated_dict[account_name] = account_row
+				if account_name in account_consolidated_dict:
+					pre_existing_account = account_consolidated_dict[account_name]
+					pre_existing_account[key[1]] = account_row[key[0]]
+				else:
+					account_row[key[1]] = account_row[key[0]]
+					account_consolidated_dict[account_name] = account_row
+			except Exception as e:
+				print("H")
 	data = [ account_row for account_row in account_consolidated_dict.values()]
 	return data
 
