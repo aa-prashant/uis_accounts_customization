@@ -1,5 +1,6 @@
 import frappe
 from frappe.utils import getdate
+import requests
 
 @frappe.whitelist()
 def get_allocated_amount(doc, selected_doc=None):
@@ -120,3 +121,85 @@ def get_allocated_amount_for_gl(doc, selected_doc):
     )
 
     return allocated_budget or 0
+
+@frappe.whitelist()
+def create_state_city():
+
+    frappe.enqueue(
+        job_name="Create State for Country",
+        method=create_state,
+        timeout=4000000,
+    )
+
+    frappe.enqueue(
+        job_name="Create City for State",
+        method=create_city,
+        timeout=4000000,
+    )
+
+def create_state():
+    country_state_list = ["Saudi Arabia", "Egypt", "India"]
+    for country in country_state_list:
+        url = "https://countriesnow.space/api/v0.1/countries/states"
+        payload = {
+            "country": country
+        }
+        headers = {
+            "Content-Type": "application/json"
+        }
+
+        response = requests.post(url, json=payload, headers=headers)
+
+        if response.status_code != 200:
+            return False
+        
+        data = response.json()['data']
+        country_name = data['name']
+        state_name_list = data['states']
+
+        state_existing_list = frappe.get_all("State", {'country' : country_name}, pluck = "name")
+        for state_name in state_name_list:
+            if state_name not in state_existing_list:
+                state_doc = frappe.new_doc("State")
+                state_doc.state_province = state_name['name']
+                state_doc.country = country
+                state_doc.insert()
+                state_existing_list.append(state_name['name'])
+        frappe.db.commit()
+    return True
+
+
+def create_city():
+    state_list = frappe.get_all("State", fields = ['name', 'country'])
+    for state_dict in state_list:
+        url = "https://countriesnow.space/api/v0.1/countries/state/cities"
+        payload = {
+            "country": state_dict['country'],
+            "state" : state_dict['name']
+        }
+        headers = {
+            "Content-Type": "application/json"
+        }
+
+        response = requests.post(url, json=payload, headers=headers)
+
+        if response.status_code != 200:
+            return False
+        
+        city_name_list = response.json()['data']
+
+        existing_city_list = frappe.get_all("City", {'state_province' : state_dict['country']}, pluck = "name")
+        error_city_list = []
+        for city in city_name_list:
+            try:
+                if city not in existing_city_list:
+                    state_doc = frappe.new_doc("City")
+                    state_doc.city_name = city
+                    state_doc.state_province = state_dict['name']
+                    state_doc.insert()
+                    existing_city_list.append(city)
+            except Exception as e:
+                frappe.log_error("While Creating city", e)
+                error_city_list.append(city)
+            frappe.db.commit()
+    return True
