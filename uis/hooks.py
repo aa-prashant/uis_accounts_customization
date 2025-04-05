@@ -17,7 +17,17 @@ fixtures = [
             ]
         ]
         ]
-    },]
+    },
+    {
+        "dt": "Property Setter", "filters": [
+        [
+            "module", "in", [
+                "Uis"
+            ]
+        ]
+        ]
+    },
+]
 # include js, css files in header of desk.html
 # app_include_css = "/assets/uis/css/uis.css"
 app_include_js = "uis.bundle.js"
@@ -130,9 +140,9 @@ doctype_js = {
 # ---------------
 # Override standard doctype classes
 
-# override_doctype_class = {
-# 	"ToDo": "custom_app.overrides.CustomToDo"
-# }
+override_doctype_class = {
+	"Sales Order": "uis.uis.custom.customization_script.sales_order.OverrideSalesOrder"
+}
 
 # Document Events
 # ---------------
