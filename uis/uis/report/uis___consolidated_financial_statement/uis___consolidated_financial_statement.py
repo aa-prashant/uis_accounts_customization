@@ -59,7 +59,7 @@ def execute(filters=None):
 		data = balance_sheet_data_format(data)
 	elif filters.get("report") == "Profit and Loss Statement":
 		budget_dict, data, message, chart, report_summary = get_profit_loss_data(fiscal_year, companies, columns, filters, companies_column)
-		data = pnl_formatted_report(data, budget_dict)
+		data = pnl_formatted_report(data, budget_dict, filters['company'])
 		is_pnl = True
 		
 	else:
@@ -411,12 +411,13 @@ def get_columns_branch_wise(companies, filters, is_pnl = False):
 	]
 
 	branches, company_fetched_list = [], []
-	
+	total_column_added = False
 	for company in companies:
-		if company in company_fetched_list:
-				continue
-		company_fetched_list.append(company)
 		branches = company_branches(company)
+		if company in company_fetched_list:
+			continue
+		
+		company_fetched_list.append(company)
 		
 		for branch in branches:
 			apply_currency_formatter = 1 if not filters.presentation_currency else 0
@@ -447,7 +448,30 @@ def get_columns_branch_wise(companies, filters, is_pnl = False):
 						"company_name": company,
 					}
 				)
-
+		if is_pnl and not total_column_added:
+			total_column_added = True
+			columns.append(
+					{
+						"fieldname": f"total_{company}",
+						"label": f"Total - ({filters.presentation_currency})",
+						"fieldtype": "Currency",
+						"options": "currency",
+						"width": 150,
+						"apply_currency_formatter": 1,
+						"company_name": company,
+					}
+				)
+			columns.append(
+					{
+						"fieldname": f"total_{company}_budget",
+						"label": f"Total Budget - ({filters.presentation_currency})",
+						"fieldtype": "Currency",
+						"options": "currency",
+						"width": 150,
+						"apply_currency_formatter": 1,
+						"company_name": company,
+					}
+				)
 	return columns
 
 def balance_sheet_data_format(data_list):
@@ -480,9 +504,13 @@ def balance_sheet_data_format(data_list):
 	data = [ account_row for account_row in account_consolidated_dict.values()]
 	return data
 
-def pnl_formatted_report(data_list, budget_dict):
+def pnl_formatted_report(data_list, budget_dict, company):
 	account_with_and_pnl = {}
 	data = []
+
+	total_account_key_str = f"total_{company}"
+	total_budget_key_str = f"total_{company}_budget"
+
 	for key, accounts_list in data_list.items():
 		account_budget_list_for_respective_company = budget_dict[key] if key in budget_dict else []
 		for row in accounts_list:
@@ -496,14 +524,24 @@ def pnl_formatted_report(data_list, budget_dict):
 			key_str = f"bug_{key[1]}_{key[0]}"
 			if account_name in account_budget_list_for_respective_company:
 				row[key_str] = account_budget_list_for_respective_company[account_name]
-			
+				row[total_budget_key_str] = row[key_str]
+
 			if account_name in account_with_and_pnl:
 				pre_exsist_account_with_and_pnl = account_with_and_pnl[account_name]
 				pre_exsist_account_with_and_pnl[key[1]] = row[key[0]]
+				pre_exsist_account_with_and_pnl[total_account_key_str] += row[key[0]]
+
 				if key_str in row:
 					pre_exsist_account_with_and_pnl[key_str] = row[key_str]
+
+					if total_budget_key_str in pre_exsist_account_with_and_pnl:
+						pre_exsist_account_with_and_pnl[total_budget_key_str] += row[key_str]
+					else:
+						pre_exsist_account_with_and_pnl[total_budget_key_str] = row[key_str]
+
 			else:
 				row[key[1]] = row[key[0]]
+				row[total_account_key_str] = row[key[0]]
 				account_with_and_pnl[account_name] = row
 
 	data = [ row for row in account_with_and_pnl.values()]
