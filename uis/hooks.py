@@ -52,9 +52,7 @@ doctype_js = {
     "Item Group":"uis/custom/customization_dt/item_group.js",
     "Address":"uis/custom/customization_dt/address.js",
     "Lead":"uis/custom/customization_dt/lead.js"
-
-    
-    }
+}
 # doctype_list_js = {"doctype" : "public/js/doctype_list.js"}
 # doctype_tree_js = {"doctype" : "public/js/doctype_tree.js"}
 # doctype_calendar_js = {"doctype" : "public/js/doctype_calendar.js"}
@@ -156,7 +154,10 @@ doc_events = {
 	"Journal Entry": {
 		"on_submit": "uis.uis.custom.customization_script.journal_entry.on_submit",
         
-	}
+	},
+    "UIS - Budget":{
+        "validate": "uis.uis.custom.customization_script.uis_budget.validate",
+    }
 
 }
 
