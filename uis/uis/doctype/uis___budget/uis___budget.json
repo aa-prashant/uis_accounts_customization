@@ -228,6 +228,7 @@
    "label": "Exception Condition"
   },
   {
+   "allow_on_submit": 1,
    "fieldname": "table_wnse",
    "fieldtype": "Table",
    "options": "Allowed User"
@@ -236,7 +237,7 @@
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2025-03-28 20:05:00.020518",
+ "modified": "2025-04-07 21:23:09.892337",
  "modified_by": "Administrator",
  "module": "Uis",
  "name": "UIS - Budget",

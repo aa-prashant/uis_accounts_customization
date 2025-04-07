@@ -7,6 +7,7 @@ frappe.ui.form.on("Purchase Invoice", {
 })
 
 frappe.ui.form.on("Purchase Invoice Item", {
+
     expense_account(frm){
         if(! frm.selected_doc.expense_account || ! frm.doc.branch){
             frappe.model.set_value(frm.selected_doc.doctype, frm.selected_doc.name, "custom_allocated_budget", 0)
@@ -32,6 +33,9 @@ frappe.ui.form.on("Purchase Invoice Item", {
     },
 
     item_code(frm){
+        
+        frm.trigger("expense_account", frm.selected_doc.doctype, frm.selected_doc.name)
+
         if(! frm.doc.branch || ! frm.selected_doc.item_code){
             frappe.model.set_value(frm.selected_doc.doctype, frm.selected_doc.name, "custom_allocated_budget", 0)
             return
@@ -52,5 +56,9 @@ frappe.ui.form.on("Purchase Invoice Item", {
             }
 
         })
+    },
+
+    branch(frm){
+        frm.trigger("expense_account", frm.selected_doc.doctype, frm.selected_doc.name)
     }
 })

@@ -97,16 +97,6 @@ def validate_budget_records(args, budget_records, expense_amount):
             args['budget_against_field'] = "branch"
             args['budget_name'] =  budget.budget_name
             
-            if yearly_action in ("Stop", "Warn"):
-                compare_expense_with_budget(
-                    args,
-                    flt(budget.budget_amount),
-                    _("Annual"),
-                    yearly_action,
-                    budget.budget_against,
-                    expense_amount,
-                )
-
             if monthly_action in ["Stop", "Warn"]:
                 budget_amount = get_accumulated_monthly_budget(
                     budget.monthly_distribution, args.posting_date, args.fiscal_year, budget.budget_amount
@@ -119,6 +109,16 @@ def validate_budget_records(args, budget_records, expense_amount):
                     budget_amount,
                     _("Accumulated Monthly"),
                     monthly_action,
+                    budget.budget_against,
+                    expense_amount,
+                )
+
+            if yearly_action in ("Stop", "Warn"):
+                compare_expense_with_budget(
+                    args,
+                    flt(budget.budget_amount),
+                    _("Annual"),
+                    yearly_action,
                     budget.budget_against,
                     expense_amount,
                 )
@@ -216,12 +216,14 @@ def get_remaining_budget(doc, expense_account, branch=None, cost_center=None, pr
     budget_data = frappe.db.sql(
         f"""
         SELECT SUM(ba.budget_amount) AS total_budget,
-               (SUM(ba.budget_amount) - COALESCE(SUM(gle.debit - gle.credit), 0)) AS remaining_budget
+        (SUM(ba.budget_amount) - COALESCE(SUM(gle.debit - gle.credit), 0)) AS remaining_budget
         FROM `tabUIS - Budget` b
         INNER JOIN `tabBudget Account` ba ON b.name = ba.parent
         LEFT JOIN `tabGL Entry` gle ON gle.account = ba.account
         WHERE b.fiscal_year = %(fiscal_year)s AND ba.account = %(account)s
         AND b.company = %(company)s {conditions}
+        AND gle.is_cancelled = 0
+        AND b.docstatus = 1
         """,
         filters,
         as_dict=True,
