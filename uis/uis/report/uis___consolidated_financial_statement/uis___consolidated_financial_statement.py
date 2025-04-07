@@ -195,6 +195,7 @@ def get_profit_loss_data(fiscal_year, companies, columns, filters, companies_lis
 	branches, company_fetched_list = [], []
 	data_list, report_summary_list = {}, []
 	budget_dict = {}
+	filters['presentation_currency'] = filters['presentation_currency'] if filters.get('presentation_currency', None) else erpnext.get_company_currency(filters['company'])
 
 	for company in companies_list:
 		
@@ -1092,61 +1093,66 @@ def get_account_type_based_gl_data(company, filters=None, branch_val = None):
 	return gl_sum[0] if gl_sum and gl_sum[0] else 0
 
 def get_account_budget(company, branch, filters):
-    budget_filter = {
-        "company": company,
-        "branch": branch,
-        "fiscal_year": filters.get("from_fiscal_year"),
-        "docstatus": 1
-    }
-    
-    account_with_budget_amount_branch_wise = {}
-    
-    # Get budget details
-    budget_dict = frappe.db.get_value(
-        "UIS - Budget", 
-        budget_filter, 
-        ['name', 'monthly_distribution'], 
-        as_dict=True
-    )
-    
-    if not budget_dict:
-        return {}
-    
-    # Get account budget amounts
-    account_with_budget_amount = frappe.db.get_values(
-        "Budget Account", 
-        {'parent': budget_dict.get("name")}, 
-        ['account', "budget_amount"], 
-        as_dict=True
-    )
-    
-    # Get monthly distribution percentages
-    monthly_distribution_dict = frappe.db.get_values(
-        "Monthly Distribution Percentage",
-        {'parent': budget_dict.get("monthly_distribution")},
-        ['month', "percentage_allocation"],
-        as_dict=True
-    )
-    
-    # Format monthly distribution according to filter period 
-    # (now returns total percentage for the period)
-    monthly_percentage = round(_format_monthly_distribution_dict(monthly_distribution_dict, filters), 2)
-    
-    # Create branch-wise account budget dictionary
-    key = (company, branch)
-    account_with_budget_amount_branch_wise[key] = {}
-    
-    for account in account_with_budget_amount:
-        account_name = _get_account_name(account)
-        if account_name:
-            if monthly_distribution_dict:
-                allocated_budget_amount = (account.get("budget_amount", 0) * monthly_percentage) / 100
-            else:
-                allocated_budget_amount = account.get("budget_amount", 0)
-                
-            account_with_budget_amount_branch_wise[key][account_name] = allocated_budget_amount
-    
-    return account_with_budget_amount_branch_wise
+	budget_filter = {
+		"company": company,
+		"branch": branch,
+		"fiscal_year": filters.get("from_fiscal_year"),
+		"docstatus": 1
+	}
+
+	# Convert Budget Amount to Selected Currency
+	company_currency = erpnext.get_company_currency(company)
+	currecy_exchange_rate = erpnext.setup.utils.get_exchange_rate(company_currency, filters.get('presentation_currency'))
+
+
+	account_with_budget_amount_branch_wise = {}
+
+	# Get budget details
+	budget_dict = frappe.db.get_value(
+		"UIS - Budget", 
+		budget_filter, 
+		['name', 'monthly_distribution'], 
+		as_dict=True
+	)
+
+	if not budget_dict:
+		return {}
+
+	# Get account budget amounts
+	account_with_budget_amount = frappe.db.get_values(
+		"Budget Account", 
+		{'parent': budget_dict.get("name")}, 
+		['account', "budget_amount"], 
+		as_dict=True
+	)
+
+	# Get monthly distribution percentages
+	monthly_distribution_dict = frappe.db.get_values(
+		"Monthly Distribution Percentage",
+		{'parent': budget_dict.get("monthly_distribution")},
+		['month', "percentage_allocation"],
+		as_dict=True
+	)
+
+	# Format monthly distribution according to filter period 
+	# (now returns total percentage for the period)
+	monthly_percentage = round(_format_monthly_distribution_dict(monthly_distribution_dict, filters), 2)
+
+	# Create branch-wise account budget dictionary
+	key = (company, branch)
+	account_with_budget_amount_branch_wise[key] = {}
+
+	for account in account_with_budget_amount:
+		account_name = _get_account_name(account)
+		if account_name:
+			if monthly_distribution_dict:
+				allocated_budget_amount = ((account.get("budget_amount", 0) * monthly_percentage) / 100) * currecy_exchange_rate
+			else:
+				allocated_budget_amount = account.get("budget_amount", 0) * currecy_exchange_rate
+				
+			account_with_budget_amount_branch_wise[key][account_name] = allocated_budget_amount
+
+	return account_with_budget_amount_branch_wise
 
 
 def _get_account_name(account, is_dict = True):
