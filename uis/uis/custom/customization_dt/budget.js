@@ -1,3 +1,3 @@
-// frappe.ui.form.on('Budget', {
+frappe.ui.form.on('UIS - Budget', {
 	
-// })
+})
