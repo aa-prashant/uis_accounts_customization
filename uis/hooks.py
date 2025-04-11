@@ -155,9 +155,6 @@ doc_events = {
 		"on_submit": "uis.uis.custom.customization_script.journal_entry.on_submit",
         
 	},
-    "UIS - Budget":{
-        "validate": "uis.uis.custom.customization_script.uis_budget.validate",
-    },
     "*":{
         "validate": "uis.uis.custom.customization_script.handler.validate",
     }

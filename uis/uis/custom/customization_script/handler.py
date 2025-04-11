@@ -45,8 +45,8 @@ def get_meta_info(doc, company, meta_mandatory_field_dict = {}, is_for_childtabl
                     get_all_doc_record = meta_mandatory_field_dict[meta_field.get("options")]
                 if doc.get(meta_field.get("fieldname")) not in get_all_doc_record:
                     if is_for_childtable:
-                        error_str += f"{doc.doctype} : Row {doc.idx}, Incorrect value in field {frappe.bold(meta_field.get("label"))}<br>"
+                        error_str += f"{doc.doctype} : Row {doc.idx}, Incorrect value in  {frappe.bold(meta_field.get("label"))} field<br>"
                     else:
-                        error_str += f"Incorrect value in field {frappe.bold(meta_field.get("label"))}<br>"
+                        error_str += f"Incorrect value in {frappe.bold(meta_field.get("label"))} field<br>"
 
     return error_str
