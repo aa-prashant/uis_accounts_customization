@@ -1,7 +1,7 @@
 import frappe
 
 def validate(doc, method):
-    if doc.doctype in ['DocType', 'Version']:
+    if not doc.get('company') or  doc.doctype in ['DocType', 'Version', 'Custom Field', "Property Setter", "Portal Settings", "Installed Applications"]:
         return
     
     doc_df_list = list(doc.as_dict().keys())
@@ -19,7 +19,7 @@ def validate(doc, method):
 
     if error_str:
         frappe.throw(error_str)
-    print()
+    
 
 def get_meta_info(doc, company, meta_mandatory_field_dict = {}, is_for_childtable = False):
 
@@ -33,9 +33,9 @@ def get_meta_info(doc, company, meta_mandatory_field_dict = {}, is_for_childtabl
             
             if not doc.get(meta_field.get("fieldname")):
                 if is_for_childtable:
-                    error_str += f" {doc.doctype} : Row {doc.idx}, {frappe.bold(meta_field.get("label"))} is a mandatory field<br>"
+                    error_str += f'{doc.doctype} : Row {doc.idx}, {frappe.bold(meta_field.get("label"))} is a mandatory field<br>'
                 else:
-                    error_str += f"{frappe.bold(meta_field.get("label"))} is a mandatory field<br>"
+                    error_str += f'{frappe.bold(meta_field.get("label"))} is a mandatory field<br>'
 
             else:
                 if meta_field.get("options") not in meta_mandatory_field_dict:
@@ -45,8 +45,8 @@ def get_meta_info(doc, company, meta_mandatory_field_dict = {}, is_for_childtabl
                     get_all_doc_record = meta_mandatory_field_dict[meta_field.get("options")]
                 if doc.get(meta_field.get("fieldname")) not in get_all_doc_record:
                     if is_for_childtable:
-                        error_str += f"{doc.doctype} : Row {doc.idx}, Incorrect value in  {frappe.bold(meta_field.get("label"))} field<br>"
+                        error_str += f'{doc.doctype} : Row {doc.idx}, Incorrect value in  {frappe.bold(meta_field.get("label"))} field<br>'
                     else:
-                        error_str += f"Incorrect value in {frappe.bold(meta_field.get("label"))} field<br>"
+                        error_str += f'Incorrect value in {frappe.bold(meta_field.get("label"))} field<br>'
 
     return error_str
