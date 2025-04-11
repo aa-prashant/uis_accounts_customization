@@ -157,6 +157,9 @@ doc_events = {
 	},
     "UIS - Budget":{
         "validate": "uis.uis.custom.customization_script.uis_budget.validate",
+    },
+    "*":{
+        "validate": "uis.uis.custom.customization_script.handler.validate",
     }
 
 }
