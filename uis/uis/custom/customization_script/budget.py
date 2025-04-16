@@ -80,7 +80,7 @@ def validate_expense_against_budget(args, expense_amount=0):
 
     # Optional: add dynamic conditions inline
     if dynamic_conditions:
-        query += f"or ({' OR '.join(dynamic_conditions)})"
+        query += f"And ({' And '.join(dynamic_conditions)})"
 
     budget_records = frappe.db.sql(query, tuple(query_params), as_dict=True)  # nosec
 
