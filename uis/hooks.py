@@ -155,9 +155,13 @@ doc_events = {
 		"on_submit": "uis.uis.custom.customization_script.journal_entry.on_submit",
         
 	},
-    "*":{
-        "validate": "uis.uis.custom.customization_script.handler.validate",
-    }
+    "Purchase Order" : {
+        "on_submit":"uis.uis.override.purchase_order.purchase_order.validate_budget",
+
+    },
+    # "*":{
+    #     "validate": "uis.uis.custom.customization_script.handler.validate",
+    # }
 
 }
 
