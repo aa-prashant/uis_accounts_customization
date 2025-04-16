@@ -159,9 +159,9 @@ doc_events = {
         "on_submit":"uis.uis.override.purchase_order.purchase_order.validate_budget",
 
     },
-    # "*":{
-    #     "validate": "uis.uis.custom.customization_script.handler.validate",
-    # }
+    "*":{
+        "validate": "uis.uis.custom.customization_script.handler.validate",
+    }
 
 }
 
