@@ -159,6 +159,9 @@ doc_events = {
         "on_submit":"uis.uis.override.purchase_order.purchase_order.validate_budget",
 
     },
+    "Asset Movement":{
+        "before_insert" : "uis.uis.override.asset_movement.asset_movement.before_insert"
+    },
     "*":{
         "validate": "uis.uis.custom.customization_script.handler.validate",
     }
