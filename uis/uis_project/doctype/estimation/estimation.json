@@ -1,8 +1,7 @@
 {
  "actions": [],
- "allow_rename": 1,
- "autoname": "Bidding.-.YYYY.-.######",
- "creation": "2024-10-13 11:50:53.450655",
+ "autoname": "EST-.YY.-.#####",
+ "creation": "2025-05-09 09:45:33.396132",
  "default_view": "List",
  "doctype": "DocType",
  "editable_grid": 1,
@@ -44,6 +43,15 @@
    "fieldname": "estimation_tab",
    "fieldtype": "Tab Break",
    "label": "Estimation"
+  },
+  {
+   "fieldname": "opportunity",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Opportunity",
+   "options": "Opportunity",
+   "reqd": 1,
+   "unique": 1
   },
   {
    "fieldname": "section_break_teczl",
@@ -169,17 +177,6 @@
    "read_only": 1
   },
   {
-   "fieldname": "section_break_25btr",
-   "fieldtype": "Section Break",
-   "label": "Profit Margin for Project"
-  },
-  {
-   "bold": 1,
-   "fieldname": "profit_margin",
-   "fieldtype": "Percent",
-   "label": "Profit Margin"
-  },
-  {
    "bold": 1,
    "fieldname": "amount_before_additions",
    "fieldtype": "Currency",
@@ -194,6 +191,17 @@
    "label": "Amount After Additions",
    "options": "Currency",
    "read_only": 1
+  },
+  {
+   "fieldname": "section_break_25btr",
+   "fieldtype": "Section Break",
+   "label": "Profit Margin for Project"
+  },
+  {
+   "bold": 1,
+   "fieldname": "profit_margin",
+   "fieldtype": "Percent",
+   "label": "Profit Margin"
   },
   {
    "bold": 1,
@@ -212,13 +220,14 @@
    "read_only": 1
   },
   {
-   "fieldname": "opportunity",
+   "fieldname": "amended_from",
    "fieldtype": "Link",
-   "in_list_view": 1,
-   "label": "Opportunity",
-   "options": "Opportunity",
+   "label": "Amended From",
+   "no_copy": 1,
+   "options": "Bidding",
+   "print_hide": 1,
    "read_only": 1,
-   "reqd": 1
+   "search_index": 1
   },
   {
    "fieldname": "amended_from",
@@ -235,11 +244,11 @@
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2025-05-09 09:38:38.113638",
+ "modified": "2025-05-09 17:37:32.472471",
  "modified_by": "Administrator",
  "module": "UIS Project",
- "name": "Bidding",
- "naming_rule": "By script",
+ "name": "Estimation",
+ "naming_rule": "Expression (old style)",
  "owner": "Administrator",
  "permissions": [
   {

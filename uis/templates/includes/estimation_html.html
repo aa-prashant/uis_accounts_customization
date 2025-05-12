@@ -1,0 +1,34 @@
+<div style="font-family: Arial, sans-serif; padding: 15px;">
+    <h2>Estimation Summary</h2>
+    <p><strong>Opportunity:</strong> {{ doc.opportunity }}</p>
+    <p><strong>Grand Total:</strong> {{ doc.grand_total }}</p>
+    <p><strong>Profit Margin:</strong> {{ doc.profit_margin }}%</p>
+    <p><strong>Total Employees:</strong> {{ doc.total_employees }}</p>
+    <p><strong>Total Assets:</strong> {{ doc.total_assets }}</p>
+    <p><strong>Total Operation:</strong> {{ doc.total_operation }}</p>
+    <p><strong>Total Miscellaneous:</strong> {{ doc.total_miscellaneous }}</p>
+    <p><strong>Total Subcontraction:</strong> {{ doc.total_subcontraction }}</p>
+    <p><strong>Total Bank Fee:</strong> {{ doc.total_bank_fee }}</p>
+
+    {% if doc.bidding_emp %}
+    <h4 style="margin-top: 20px;">Employee Breakdown</h4>
+    <table border="1" cellspacing="0" cellpadding="5">
+        <tr>
+            <th>Employee</th>
+            <th>Job Title</th>
+            <th>Qty</th>
+            <th>Cost</th>
+            <th>Total</th>
+        </tr>
+        {% for row in doc.bidding_emp %}
+        <tr>
+            <td>{{ row.employee_name }}</td>
+            <td>{{ row.job_title }}</td>
+            <td>{{ row.qyt }}</td>
+            <td>{{ row.cost_to_company }}</td>
+            <td>{{ row.total_amount }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+    {% endif %}
+</div>
