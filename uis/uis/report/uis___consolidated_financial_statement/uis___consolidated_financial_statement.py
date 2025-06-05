@@ -419,11 +419,11 @@ def get_columns_branch_wise(companies, filters, is_pnl = False):
 		
 		company_fetched_list.append(company)
 		
+		apply_currency_formatter = 1 if not filters.presentation_currency else 0
+		currency = filters.presentation_currency
+		if not currency:
+			currency = erpnext.get_company_currency(company)
 		for branch in branches:
-			apply_currency_formatter = 1 if not filters.presentation_currency else 0
-			currency = filters.presentation_currency
-			if not currency:
-				currency = erpnext.get_company_currency(company)
 
 			columns.append(
 				{
@@ -457,7 +457,7 @@ def get_columns_branch_wise(companies, filters, is_pnl = False):
 						"fieldtype": "Currency",
 						"options": "currency",
 						"width": 150,
-						"apply_currency_formatter": 1,
+						"apply_currency_formatter": apply_currency_formatter,
 						"company_name": company,
 					}
 				)
@@ -468,7 +468,7 @@ def get_columns_branch_wise(companies, filters, is_pnl = False):
 						"fieldtype": "Currency",
 						"options": "currency",
 						"width": 150,
-						"apply_currency_formatter": 1,
+						"apply_currency_formatter": apply_currency_formatter,
 						"company_name": company,
 					}
 				)
