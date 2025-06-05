@@ -1044,9 +1044,6 @@ def add_total_row(out, root_type, balance_must_be, companies, company_currency):
 	if "total" in total_row:
 		out.append(total_row)
 
-		# blank row after Total
-		out.append({})
-
 
 def filter_accounts(accounts, depth=10):
 	parent_children_map = {}

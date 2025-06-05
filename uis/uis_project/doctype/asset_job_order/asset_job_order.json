@@ -9,12 +9,7 @@
   "asset_code",
   "asset_name",
   "asset_category",
-  "branch",
-  "column_break_cfwk",
-  "activity_start_at",
-  "activity_ends_at",
-  "working_hours",
-  "total_cost_incurred"
+  "branch"
  ],
  "fields": [
   {
@@ -40,54 +35,22 @@
    "label": "Asset Category"
   },
   {
-   "fetch_from": "asset_code.branch",
+   "fetch_from": "asset_code.custom_branch",
    "fieldname": "branch",
    "fieldtype": "Read Only",
    "in_list_view": 1,
    "label": "Branch"
-  },
-  {
-   "fieldname": "column_break_cfwk",
-   "fieldtype": "Column Break"
-  },
-  {
-   "allow_on_submit": 1,
-   "fieldname": "activity_start_at",
-   "fieldtype": "Datetime",
-   "label": "Activity start at",
-   "read_only": 1
-  },
-  {
-   "allow_on_submit": 1,
-   "fieldname": "activity_ends_at",
-   "fieldtype": "Datetime",
-   "label": "Activity ends at",
-   "read_only": 1
-  },
-  {
-   "fieldname": "working_hours",
-   "fieldtype": "Float",
-   "label": "Working Hours",
-   "precision": "2",
-   "read_only": 1
-  },
-  {
-   "fieldname": "total_cost_incurred",
-   "fieldtype": "Currency",
-   "label": "Total Cost Incurred"
   }
  ],
- "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2025-05-09 20:04:59.628911",
+ "modified": "2024-09-17 12:50:21.182725",
  "modified_by": "Administrator",
  "module": "UIS Project",
  "name": "asset job order",
  "owner": "Administrator",
  "permissions": [],
- "row_format": "Dynamic",
  "sort_field": "modified",
  "sort_order": "DESC",
  "states": []

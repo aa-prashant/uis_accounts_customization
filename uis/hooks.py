@@ -51,8 +51,7 @@ doctype_js = {
     "Purchase Invoice" : "uis/custom/customization_dt/purchase_invoice.js",
     "Item Group":"uis/custom/customization_dt/item_group.js",
     "Address":"uis/custom/customization_dt/address.js",
-    "Lead":"uis/custom/customization_dt/lead.js",
-    "Opportunity":"public/js/opportunity.js"
+    "Lead":"uis/custom/customization_dt/lead.js"
 }
 # doctype_list_js = {"doctype" : "public/js/doctype_list.js"}
 # doctype_tree_js = {"doctype" : "public/js/doctype_tree.js"}
