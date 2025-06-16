@@ -5,28 +5,31 @@ app_description = "Accounts Description"
 app_email = "hello@actinoids-io.in"
 app_license = "mit"
 
-# Apps
-# ------------------
-
-# required_apps = []
-
-# Each item in the list will be shown as an app in the apps page
-# add_to_apps_screen = [
-# 	{
-# 		"name": "uis_accounts_customization",
-# 		"logo": "/assets/uis_accounts_customization/logo.png",
-# 		"title": "Uis Accounts Customization",
-# 		"route": "/uis_accounts_customization",
-# 		"has_permission": "uis_accounts_customization.api.permission.has_app_permission"
-# 	}
-# ]
-
 # Includes in <head>
 # ------------------
-
+fixtures = [
+    {
+        "dt": "Custom Field", "filters": [
+        [
+            "module", "in", [
+                "Other Customization"
+            ]
+        ]
+        ]
+    },
+    {
+        "dt": "Property Setter", "filters": [
+        [
+            "module", "in", [
+                "Other Customization"
+            ]
+        ]
+        ]
+    },
+]
 # include js, css files in header of desk.html
-# app_include_css = "/assets/uis_accounts_customization/css/uis_accounts_customization.css"
-# app_include_js = "/assets/uis_accounts_customization/js/uis_accounts_customization.js"
+# app_include_css = "/assets/uis/css/uis.css"
+app_include_js = "uis_accounts_customization.bundle.js"
 
 # include js, css files in header of web template
 # web_include_css = "/assets/uis_accounts_customization/css/uis_accounts_customization.css"
@@ -43,7 +46,12 @@ app_license = "mit"
 # page_js = {"page" : "public/js/file.js"}
 
 # include js in doctype views
-# doctype_js = {"doctype" : "public/js/doctype.js"}
+doctype_js = {
+    "Purchase Invoice" : "uis_accounts_customization/customization_js/purchase_invoice.js",
+    "Item Group":"uis_accounts_customization/customization_js/item_group.js",
+    "Address":"uis_accounts_customization/customization_js/address.js",
+    "Lead":"uis_accounts_customization/customization_js/lead.js"
+}
 # doctype_list_js = {"doctype" : "public/js/doctype_list.js"}
 # doctype_tree_js = {"doctype" : "public/js/doctype_tree.js"}
 # doctype_calendar_js = {"doctype" : "public/js/doctype_calendar.js"}
@@ -129,21 +137,35 @@ app_license = "mit"
 # ---------------
 # Override standard doctype classes
 
-# override_doctype_class = {
-# 	"ToDo": "custom_app.overrides.CustomToDo"
-# }
+override_doctype_class = {
+	"Sales Order": "uis.uis.custom.customization_script.sales_order.OverrideSalesOrder"
+}
 
 # Document Events
 # ---------------
 # Hook on document methods and events
 
-# doc_events = {
-# 	"*": {
-# 		"on_update": "method",
-# 		"on_cancel": "method",
-# 		"on_trash": "method"
-# 	}
-# }
+doc_events = {
+	"Purchase Invoice": {
+		"on_submit": "uis.uis.custom.customization_script.purchase_invoice.on_submit",
+        
+	},
+	"Journal Entry": {
+		"on_submit": "uis.uis.custom.customization_script.journal_entry.on_submit",
+        
+	},
+    "Purchase Order" : {
+        "on_submit":"uis.uis.override.purchase_order.purchase_order.validate_budget",
+
+    },
+    "Asset Movement":{
+        "before_insert" : "uis.uis.override.asset_movement.asset_movement.before_insert"
+    },
+    "*":{
+        "validate": "uis.uis.custom.customization_script.handler.validate",
+    }
+
+}
 
 # Scheduled Tasks
 # ---------------
