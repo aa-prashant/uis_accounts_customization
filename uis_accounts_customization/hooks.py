@@ -147,22 +147,22 @@ override_doctype_class = {
 
 doc_events = {
 	"Purchase Invoice": {
-		"on_submit": "uis.uis.custom.customization_script.purchase_invoice.on_submit",
+		"on_submit": "uis_accounts_customization.customization_script.purchase_invoice.on_submit",
         
 	},
 	"Journal Entry": {
-		"on_submit": "uis.uis.custom.customization_script.journal_entry.on_submit",
+		"on_submit": "uis_accounts_customization.customization_script.journal_entry.on_submit",
         
 	},
     "Purchase Order" : {
-        "on_submit":"uis.uis.override.purchase_order.purchase_order.validate_budget",
+        "on_submit":"uis_accounts_customization.customization_script.purchase_order.purchase_order.validate_budget",
 
     },
     "Asset Movement":{
-        "before_insert" : "uis.uis.override.asset_movement.asset_movement.before_insert"
+        "before_insert" : "uis_accounts_customization.customization_script.asset_movement.asset_movement.before_insert"
     },
     "*":{
-        "validate": "uis.uis.custom.customization_script.handler.validate",
+        "validate": "uis_accounts_customization.customization_script.handler.validate",
     }
 
 }
