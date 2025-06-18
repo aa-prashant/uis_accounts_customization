@@ -37,7 +37,7 @@ function create_item(frm){
 
 function validate_and_create_item(frm, stock_uom, value){
     frappe.call({
-        method:"uis.uis.custom.customization_script.item_group.validate_and_create_item",
+        method:"uis_accounts_customization.customization_script.item_group.validate_and_create_item",
         args:{"data" : value, "item_group_details" : frm.doc, "stock_uom" : stock_uom},
         callback:(r)=>{
             if(r.message.status){

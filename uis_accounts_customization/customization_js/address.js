@@ -15,7 +15,7 @@ frappe.ui.form.on('Address', {
         if(frm.is_dirty()){
             frm.set_value("custom_state_province", "")
         }
-        uis.utils.create_state_city_filter(frm, "custom_state_province", state_filters)
+        uis_accounts_customization.utils.create_state_city_filter(frm, "custom_state_province", state_filters)
     },
 
     custom_state_province(frm){
@@ -26,7 +26,7 @@ frappe.ui.form.on('Address', {
         if(frm.is_dirty()){
             frm.set_value("custom_custom_city", "")
         }
-        uis.utils.create_state_city_filter(frm, "custom_custom_city", city_filters)
+        uis_accounts_customization.utils.create_state_city_filter(frm, "custom_custom_city", city_filters)
     },
 
     custom_custom_city(frm){
