@@ -3,7 +3,7 @@ from frappe.utils import getdate
 import requests
 
 @frappe.whitelist()
-def get_allocated_amount(doc, selected_doc=None):
+def get_allocated_amount(doc = None, selected_doc=None):
     doc = frappe._dict(frappe.parse_json(doc)) if type(doc) == str else doc
     selected_doc = frappe._dict(frappe.parse_json(selected_doc))  if type(selected_doc) == str else selected_doc
     

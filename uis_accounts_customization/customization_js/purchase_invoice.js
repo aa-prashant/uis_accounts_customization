@@ -14,7 +14,7 @@ frappe.ui.form.on("Purchase Invoice Item", {
             return
         }
         frm.call({
-            method:"uis.uis.custom.customization_script.budget.fetch_remaining_budget",
+            method:"uis_accounts_customization.customization_script.budget.fetch_remaining_budget",
             args :{
                 doc:frm.doc,
                 expense_account : frm.selected_doc.expense_account, 
@@ -41,7 +41,7 @@ frappe.ui.form.on("Purchase Invoice Item", {
             return
         }
         frm.call({
-            method:"uis.uis.custom.customization_script.budget.fetch_remaining_budget_for_item",
+            method:"uis_accounts_customization.customization_script.budget.fetch_remaining_budget_for_item",
             args :{
                 doc:frm.doc, 
                 branch : frm.doc.branch, 
