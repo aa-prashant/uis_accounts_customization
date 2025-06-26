@@ -1077,7 +1077,7 @@ def filter_accounts(accounts, depth=10):
 	return filtered_accounts, accounts_by_name, parent_children_map
 
 def company_branches(company):
-	branches = frappe.get_all("Branch", filters={"company": company}, pluck="name")
+	branches = frappe.get_all("Branch", filters={"custom_company": company}, pluck="name")
 	return branches
 
 def calculate_report_summary(report_summary, report_summary_list):

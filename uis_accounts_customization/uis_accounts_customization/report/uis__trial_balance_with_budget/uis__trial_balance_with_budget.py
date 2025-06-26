@@ -1010,7 +1010,7 @@ def _format_monthly_distribution_dict(monthly_distribution_dict, _start_date, _e
 
 
 def company_branches(company):
-	branches = frappe.get_all("Branch", filters={"company": company}, pluck="name")
+	branches = frappe.get_all("Branch", filters={"custom_company": company}, pluck="name")
 	return branches
 
 
