@@ -8,8 +8,8 @@ from frappe.model.document import Document
 class UISBudget(Document):
 	def validate(self):
 
-		if not self.accounts and not self.fixed_assest:
-			frappe.throw("UIS - Budget need to be create aganist Account or Fixed Asset")
+                if not self.accounts and not self.fixed_assest:
+                        frappe.throw("UIS - Budget needs to be created against Account or Fixed Asset")
 
 		doc_filter = {
 			"branch" : self.branch,
