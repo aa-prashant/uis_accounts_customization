@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["../../../../../apps/uis_accounts_customization/uis_accounts_customization/public/js/utils.js"],
+  "sourcesContent": ["frappe.provide(\"uis_accounts_customization.utils\");\n\n$.extend(uis_accounts_customization.utils, {\n    create_state_city_filter(frm, fieldName, filter_obj){\n        frm.set_query(fieldName, ()=>{\n            return  {\n                filters:filter_obj\n            }\n        })\n    }\n})"],
+  "mappings": ";;AAAA,SAAO,QAAQ,kCAAkC;AAEjD,IAAE,OAAO,2BAA2B,OAAO;AAAA,IACvC,yBAAyB,KAAK,WAAW,YAAW;AAChD,UAAI,UAAU,WAAW,MAAI;AACzB,eAAQ;AAAA,UACJ,SAAQ;AAAA,QACZ;AAAA,MACJ,CAAC;AAAA,IACL;AAAA,EACJ,CAAC;",
+  "names": []
+}
