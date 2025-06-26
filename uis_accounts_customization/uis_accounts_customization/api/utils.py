@@ -1,6 +1,7 @@
 import frappe
 from frappe.utils import getdate
 import requests
+from requests.exceptions import RequestException
 
 @frappe.whitelist()
 def get_allocated_amount(doc = None, selected_doc=None):
@@ -147,12 +148,24 @@ def create_state():
         headers = {
             "Content-Type": "application/json"
         }
-
-        response = requests.post(url, json=payload, headers=headers)
+        try:
+            response = requests.post(url, json=payload, headers=headers, timeout=30)
+        except RequestException as e:
+            frappe.log_error(f"Network error while fetching states for {country}", e)
+            return {
+                "status": False,
+                "message": "Unable to reach Countries service. Please check network connection."
+            }
 
         if response.status_code != 200:
-            return False
-        
+            frappe.log_error(
+                f"Failed to fetch states for {country}", f"Status code: {response.status_code}"
+            )
+            return {
+                "status": False,
+                "message": f"Countries service returned {response.status_code} while fetching states for {country}."
+            }
+
         data = response.json()['data']
         country_name = data['name']
         state_name_list = data['states']
@@ -166,7 +179,7 @@ def create_state():
                 state_doc.insert()
                 state_existing_list.append(state_name['name'])
         frappe.db.commit()
-    return True
+    return {"status": True, "message": "States created successfully."}
 
 
 def create_city():
@@ -180,12 +193,27 @@ def create_city():
         headers = {
             "Content-Type": "application/json"
         }
-
-        response = requests.post(url, json=payload, headers=headers)
+        try:
+            response = requests.post(url, json=payload, headers=headers, timeout=30)
+        except RequestException as e:
+            frappe.log_error(
+                f"Network error while fetching cities for {state_dict['name']}",
+                e,
+            )
+            return {
+                "status": False,
+                "message": "Unable to reach Countries service. Please check network connection."
+            }
 
         if response.status_code != 200:
-            return False
-        
+            frappe.log_error(
+                f"Failed to fetch cities for {state_dict['name']}", f"Status code: {response.status_code}"
+            )
+            return {
+                "status": False,
+                "message": f"Countries service returned {response.status_code} while fetching cities for {state_dict['name']}."
+            }
+
         city_name_list = response.json()['data']
 
         existing_city_list = frappe.get_all("City", {'state_province' : state_dict['country']}, pluck = "name")
@@ -202,4 +230,4 @@ def create_city():
                 frappe.log_error("While Creating city", e)
                 error_city_list.append(city)
             frappe.db.commit()
-    return True
+    return {"status": True, "message": "Cities created successfully."}
