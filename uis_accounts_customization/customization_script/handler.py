@@ -28,7 +28,8 @@ def get_meta_info(doc, company, meta_mandatory_field_dict = {}, is_for_childtabl
     meta_df_list = frappe.get_meta(doc.doctype).fields
 
     for meta_field in meta_df_list:
-        
+        if meta_field.fieldtype == "Data":
+            continue
         if meta_field.get("fieldname") in mandatory_field_list:
             
             if not doc.get(meta_field.get("fieldname")):
