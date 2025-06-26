@@ -1,3 +1,23 @@
+"""Utilities used for field validation during document save events.
+
+This module hooks into various DocType events to ensure that mandatory
+company specific fields such as ``branch``, ``cost_center``, ``department`` and
+``project`` are present on the document.  It also checks child table rows for
+the same mandatory data and verifies that the values exist for the given
+company.  If any issues are found a consolidated error message is thrown using
+``frappe.throw``.
+
+Key functions
+-------------
+``validate``
+    Entry point executed on the ``validate`` event of a document.  It inspects
+    all fields and delegates the mandatory checks to ``get_meta_info``.
+
+``get_meta_info``
+    Performs the actual validation and collects error messages for missing or
+    invalid references.
+"""
+
 import frappe
 
 def validate(doc, method):

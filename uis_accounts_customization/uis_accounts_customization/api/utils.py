@@ -1,3 +1,21 @@
+"""Helper APIs for custom budget allocation and master data creation.
+
+This module exposes whitelisted functions that are callable from the client
+side. They provide utility features for budget allocation checks on Purchase
+Invoices and other transactions as well as background jobs that create State
+and City masters by consuming data from an external API.
+
+Key functions
+-------------
+``get_allocated_amount``
+    Determines the remaining budget for a given document row, supporting both
+    asset and expense based budgeting.
+
+``create_state_city``
+    Enqueues long running background tasks that populate the ``State`` and
+    ``City`` doctypes using the `countriesnow.space` API.
+"""
+
 import frappe
 from frappe.utils import getdate
 import requests

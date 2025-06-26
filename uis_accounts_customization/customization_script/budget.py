@@ -1,3 +1,25 @@
+"""Custom budget validation utilities for UIS.
+
+The functions in this module extend ERPNext's standard budget checks. They
+retrieve budget data from custom "UIS - Budget" documents and compare expenses
+against allocated amounts for various documents such as purchase invoices or
+general ledger entries. The helpers also provide APIs to compute the remaining
+budget for a given account or item and enqueue jobs for budget checking.
+
+Key functions
+-------------
+``verify_validate_expense_against_budget``
+    Iterates over GL entries produced by a document and triggers validation.
+
+``validate_expense_against_budget``
+    Core function that fetches matching budget records and verifies that the
+    transaction does not exceed them.
+
+``get_remaining_budget``
+    Public API used to fetch the remaining budget amount for a particular
+    expense account.
+"""
+
 import frappe
 
 from erpnext.accounts.utils import get_fiscal_year
