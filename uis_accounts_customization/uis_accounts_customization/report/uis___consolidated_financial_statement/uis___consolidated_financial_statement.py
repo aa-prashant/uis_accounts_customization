@@ -87,7 +87,7 @@ def get_balance_sheet_data(fiscal_year, companies, columns, filters, companies_l
 			report_summary_list = calculate_report_summary(report_summary, report_summary_list)
 			data_list[key] = data
 			
-	return data_list, message, chart, report_summary_list
+	return data_list, chart, report_summary_list
 
 def get_balance_sheet_data_branch(fiscal_year, companies, columns, filters, branch):
 	asset = get_data(companies, "Asset", "Debit", fiscal_year, filters=filters, branch=branch)
