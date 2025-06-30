@@ -138,7 +138,7 @@ doctype_js = {
 # Override standard doctype classes
 
 override_doctype_class = {
-	"Sales Order": "uis_accounts_customization.uis_accounts_customization.customization_script.sales_order.OverrideSalesOrder"
+    "Sales Order": "uis_accounts_customization.customization_script.sales_order.OverrideSalesOrder"
 }
 
 # Document Events
