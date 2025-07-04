@@ -47,10 +47,11 @@ app_include_js = "uis_accounts_customization.bundle.js"
 
 # include js in doctype views
 doctype_js = {
-    "Purchase Invoice" : "uis_accounts_customization/customization_js/purchase_invoice.js",
-    "Item Group":"uis_accounts_customization/customization_js/item_group.js",
-    "Address":"uis_accounts_customization/customization_js/address.js",
-    "Lead":"uis_accounts_customization/customization_js/lead.js"
+    "Purchase Invoice" : "customization_js/purchase_invoice.js",
+    "Item Group":"customization_js/item_group.js",
+    "Address":"customization_js/address.js",
+    "Lead":"customization_js/lead.js",
+    "Journal Entry":"customization_js/journal_entry.js"
 }
 # doctype_list_js = {"doctype" : "public/js/doctype_list.js"}
 # doctype_tree_js = {"doctype" : "public/js/doctype_tree.js"}
@@ -138,7 +139,7 @@ doctype_js = {
 # Override standard doctype classes
 
 override_doctype_class = {
-	"Sales Order": "uis.uis.custom.customization_script.sales_order.OverrideSalesOrder"
+	"Sales Order": "uis_accounts_customization.customization_script.sales_order.OverrideSalesOrder"
 }
 
 # Document Events
