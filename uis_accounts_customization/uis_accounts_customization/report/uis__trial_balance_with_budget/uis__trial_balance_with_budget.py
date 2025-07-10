@@ -20,6 +20,7 @@ from erpnext.accounts.report.financial_statements import (
 from erpnext.accounts.report.utils import convert_to_presentation_currency, get_currency
 from collections import defaultdict
 from typing import Dict, List, Optional, Tuple, Any
+from erpnext.accounts.report.utils import convert
 
 value_fields = (
 	"opening_debit",
@@ -857,7 +858,8 @@ def get_account_budget(filters):
 	branch = filters['branch']
 	company_currency = erpnext.get_company_currency(filters.company)
 	currecy_exchange_rate = erpnext.setup.utils.get_exchange_rate(company_currency, filters.get('presentation_currency'))
-	
+	report_date = filters.get("to_date") or filters.get("period_end_date")
+	# convert_val = convert()
 	budget_filter = {
 		"company": company,
 		"branch": ['in' , branch],
@@ -933,11 +935,11 @@ def get_account_budget(filters):
 				opening_allocated_budget_amount = account.get("budget_amount", 0)
 				budget_allocated_budget_amount = opening_allocated_budget_amount
 				till_date_allocated_budget_amount = opening_allocated_budget_amount
-
+				
 			account_with_budget_amount_branch_wise[company][account_name] = {
-				"opening_allocated_budget_amount": opening_allocated_budget_amount * currecy_exchange_rate,
-				"budget_allocated_budget_amount": budget_allocated_budget_amount * currecy_exchange_rate,
-				"till_date_allocated_budget_amount": till_date_allocated_budget_amount * currecy_exchange_rate,
+				"opening_allocated_budget_amount": convert(opening_allocated_budget_amount, filters.get('presentation_currency'), company_currency, report_date),
+				"budget_allocated_budget_amount": convert(budget_allocated_budget_amount, filters.get('presentation_currency'), company_currency, report_date),
+				"till_date_allocated_budget_amount": convert(till_date_allocated_budget_amount, filters.get('presentation_currency'), company_currency, report_date),
 			}
 
 	return account_with_budget_amount_branch_wise
