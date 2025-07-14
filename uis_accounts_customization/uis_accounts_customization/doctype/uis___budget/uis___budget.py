@@ -38,7 +38,11 @@ class UISBudget(Document):
 						if fixed_asset.item_code in another_budget_doc_name_list:
 							error_str += f"Row No. {fixed_asset.idx} : Fixed Asset {frappe.bold(fixed_asset.item_code)} repeat with UIS - Budget ID {frappe.bold(another_doc_name)} <br>"
 
-		
+		accounts_list = frappe.get_all("Account", {"company": self.company}, pluck="name")
+		for account in self.accounts:
+			if account.account not in accounts_list:
+				frappe.throw(f"Row No. {account.idx} : Account {frappe.bold(account.account)} not found in company {frappe.bold(self.company)}")
+				
 		if error_str:
 			frappe.throw(error_str)
 		return another_budget_doc_name_list

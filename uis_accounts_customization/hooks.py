@@ -51,7 +51,8 @@ doctype_js = {
     "Item Group":"customization_js/item_group.js",
     "Address":"customization_js/address.js",
     "Lead":"customization_js/lead.js",
-    "Journal Entry":"customization_js/journal_entry.js"
+    "Journal Entry":"customization_js/journal_entry.js",
+    "Sales Invoice":"customization_js/sales_invoice.js",
 }
 # doctype_list_js = {"doctype" : "public/js/doctype_list.js"}
 # doctype_tree_js = {"doctype" : "public/js/doctype_tree.js"}
