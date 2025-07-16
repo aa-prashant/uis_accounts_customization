@@ -22,6 +22,7 @@ from collections import defaultdict
 from typing import Dict, List, Optional, Tuple, Any
 from erpnext.accounts.report.utils import convert
 
+
 value_fields = (
 	"opening_debit",
 	"opening_credit",
@@ -927,15 +928,24 @@ def get_account_budget(filters):
 	for account in account_with_budget_amount:
 		account_name = _get_account_name(account)
 		if account_name:
+			budget_posting_date = getdate(budget_dict.get("posting_date"))
+			from_date = getdate(filters.get("from_date"))
+
 			if monthly_distribution_dict:
-				opening_allocated_budget_amount = (account.get("budget_amount", 0) * opening_monthly_percentage) / 100
+				
 				budget_allocated_budget_amount = (account.get("budget_amount", 0) * budget_for_period_percentage) / 100
 				till_date_allocated_budget_amount = (account.get("budget_amount", 0) * till_date_for_period_percentage) / 100
+
 			else:
-				opening_allocated_budget_amount = account.get("budget_amount", 0)
-				budget_allocated_budget_amount = opening_allocated_budget_amount
-				till_date_allocated_budget_amount = opening_allocated_budget_amount
 				
+				budget_allocated_budget_amount = account.get("budget_amount", 0)
+				till_date_allocated_budget_amount = account.get("budget_amount", 0)
+				
+			if budget_posting_date > from_date:
+				opening_allocated_budget_amount = 0  # No opening budget
+			else:
+				opening_allocated_budget_amount = (account.get("budget_amount", 0) * opening_monthly_percentage) / 100
+
 			account_with_budget_amount_branch_wise[company][account_name] = {
 				"opening_allocated_budget_amount": convert(opening_allocated_budget_amount, filters.get('presentation_currency'), company_currency, report_date),
 				"budget_allocated_budget_amount": convert(budget_allocated_budget_amount, filters.get('presentation_currency'), company_currency, report_date),
