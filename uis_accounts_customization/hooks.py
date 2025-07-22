@@ -21,12 +21,25 @@ fixtures = [
         "dt": "Property Setter", "filters": [
         [
             "module", "in", [
-                "Other Customization"
-            ]
+                "Other Customization", "Uis Accounts Customization"
+            ],
+            
+        ]
+        ]
+    },
+    {
+        "dt": "Client Script", "filters": [
+        [
+            "module", "in", [
+                "Other Customization", "Uis Accounts Customization"
+            ],
+            
         ]
         ]
     },
 ]
+
+
 # include js, css files in header of desk.html
 # app_include_css = "/assets/uis/css/uis.css"
 app_include_js = "uis_accounts_customization.bundle.js"
@@ -198,9 +211,9 @@ doc_events = {
 # Overriding Methods
 # ------------------------------
 #
-# override_whitelisted_methods = {
-# 	"frappe.desk.doctype.event.event.get_events": "uis_accounts_customization.event.get_events"
-# }
+override_whitelisted_methods = {
+	"frappe.desk.search.search_link": "uis_accounts_customization.api.custom_search.custom_search"
+}
 #
 # each overriding function accepts a `data` argument;
 # generated from the base implementation of the doctype dashboard,

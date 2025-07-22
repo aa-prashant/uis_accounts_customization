@@ -1,0 +1,13 @@
+[
+ {
+  "docstatus": 0,
+  "doctype": "Client Script",
+  "dt": "Quotation",
+  "enabled": 1,
+  "modified": "2025-07-23 07:06:40.907148",
+  "module": "Uis Accounts Customization",
+  "name": "Quotation",
+  "script": "frappe.ui.form.on('Quotation', {\n\trefresh(frm) {\n\t    frm.trigger(\"update_party_name_query\")\n\t},\n\tquotation_to(frm) {\n\t    frm.trigger(\"update_party_name_query\")\n\t},\n\tupdate_party_name_query(){\n\t    if(cur_frm.doc.quotation_to == \"Customer\"){\n    \t\tcur_frm.set_query(\"party_name\", function () {\n    \t\t\t\treturn {\n    \t\t\t\t\tfilters: {\n    \t\t\t\t\t\tcompany: [\"=\", cur_frm.doc.company],\n    \t\t\t\t\t},\n    \t\t\t\t};\n    \t\t});\n\t    }\n\t    else{\n            cur_frm.fields_dict.party_name.get_query = null;\n\t    }\n\t}\n})",
+  "view": "Form"
+ }
+]
