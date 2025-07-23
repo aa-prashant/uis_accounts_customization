@@ -40,8 +40,11 @@ def custom_search(
         filters = json.loads(filters)
 
         if reference_doctype in ["Sales Order", "Purchase Order"]:
-            filters = [["Party Account", "company", "=", filters["company"][-1]]]
+            company_name = filters["company"][-1]
 
+            filters = [
+                    ["Party Account", "company", "=", company_name]
+            ]
         elif reference_doctype == "Quotation":
             company_val = filters.get("company")
             if isinstance(company_val, list):
