@@ -179,8 +179,16 @@ doc_events = {
     "*":{
         "validate": "uis_accounts_customization.customization_script.handler.validate",
     }
-
 }
+
+# Adding the dictionary comprehension separately
+for dt in ["Account", "Cost Center", "Department"]:
+    doc_events[dt] = {
+        "validate":     "uis_accounts_customization.customization_script.company_tree_sync.guard_and_sync",
+        "after_insert": "uis_accounts_customization.customization_script.company_tree_sync.guard_and_sync",
+        "on_update":    "uis_accounts_customization.customization_script.company_tree_sync.guard_and_sync",
+        "on_trash":     "uis_accounts_customization.customization_script.company_tree_sync.prevent_child_delete",
+    }
 
 # Scheduled Tasks
 # ---------------
