@@ -4,7 +4,6 @@ import json
 from frappe.utils import cint, cstr
 from frappe.database.schema import SPECIAL_CHAR_PATTERN
 from frappe import _, is_whitelisted
-from frappe.utils.data import make_filter_tuple
 from frappe.permissions import has_permission
 from frappe.model.db_query import get_order_by
 from frappe.desk.search import (
@@ -18,7 +17,6 @@ from frappe.desk.search import (
 def sanitize_searchfield(searchfield: str):
     if not searchfield:
         return
-
     if SPECIAL_CHAR_PATTERN.search(searchfield):
         frappe.throw(_("Invalid Search Field {0}").format(searchfield), frappe.DataError)
 
@@ -45,26 +43,15 @@ def custom_search(
             filters = [["Party Account", "company", "=", filters["company"][-1]]]
 
         elif reference_doctype == "Quotation":
-            company_filter = filters.get("company")
-
-            # company_filter might be a list or a plain string – normalise it
-            if isinstance(company_filter, list):
+            company_val = filters.get("company")
+            if isinstance(company_val, list):
                 # examples: ['=', 'UIS Group']  OR  ['company', '=', 'UIS Group']
-                if len(company_filter) == 3:
-                    # already [field, op, value]
-                    fieldname, operator, value = company_filter
+                if len(company_val) == 3:
+                    company_val = company_val[-1]
                 else:
-                    # operator + value only → assume default fieldname = "company"
-                    operator, value = company_filter
-                    fieldname = "company"
-            else:
-                # simple string → assume '=' comparison
-                fieldname = "company"
-                operator = "="
-                value = company_filter
-
-            # build a valid filter (3‑tuple is fine; 4‑tuple also accepted)
-            filters = [[fieldname, operator, value]]
+                    company_val = company_val[1]
+            # company_val is now the plain company string
+            filters = [["Party Account", "company", "=", company_val]]
 
         results = search_widget(
             doctype,
@@ -112,16 +99,14 @@ def search_widget(
 
     if searchfield:
         sanitize_searchfield(searchfield)
-
     if not searchfield:
         searchfield = "name"
 
     standard_queries = frappe.get_hooks().standard_queries or {}
-
     if not query and doctype in standard_queries:
         query = standard_queries[doctype][-1]
 
-    if query:  # Query = custom search query i.e. python function
+    if query:
         try:
             is_whitelisted(frappe.get_attr(query))
             return frappe.call(
@@ -168,7 +153,6 @@ def search_widget(
         search_fields = ["name"]
         if meta.title_field:
             search_fields.append(meta.title_field)
-
         if meta.search_fields:
             search_fields.extend(meta.get_search_fields())
 
@@ -184,30 +168,24 @@ def search_widget(
     if meta.get("fields", {"fieldname": "disabled", "fieldtype": "Check"}):
         filters.append([doctype, "disabled", "!=", 1])
 
-    # format a list of fields combining search fields and filter fields
     fields = get_std_fields_list(meta, searchfield or "name")
     if filter_fields:
         fields = list(set(fields + json.loads(filter_fields)))
     formatted_fields = [f"`tab{meta.name}`.`{f.strip()}`" for f in fields]
 
-    # Insert title field query after name
     if meta.show_title_field_in_link and meta.title_field:
         formatted_fields.insert(1, f"`tab{meta.name}`.{meta.title_field} as `label`")
 
     order_by_based_on_meta = get_order_by(doctype, meta)
-    # `idx` is number of times a document is referred, check link_count.py
     order_by = f"`tab{doctype}`.idx desc, {order_by_based_on_meta}"
 
     if not meta.translated_doctype:
         _txt = frappe.db.escape((txt or "").replace("%", "").replace("@", ""))
-        # locate returns 0 if string is not found, convert 0 to null and then sort null to end in order by
         _relevance = f"(1 / nullif(locate({_txt}, `tab{doctype}`.`name`), 0))"
-        formatted_fields.append(f"""{_relevance} as `_relevance`""")
-        # Since we are sorting by alias postgres needs to know number of column we are sorting
+        formatted_fields.append(f"{_relevance} as `_relevance`")
         if frappe.db.db_type == "mariadb":
             order_by = f"ifnull(_relevance, -9999) desc, {order_by}"
         elif frappe.db.db_type == "postgres":
-            # Since we are sorting by alias postgres needs to know number of column we are sorting
             order_by = f"{len(formatted_fields)} desc nulls last, {order_by}"
 
     ignore_permissions = doctype == "DocType" or (
@@ -234,7 +212,6 @@ def search_widget(
     )
 
     if meta.translated_doctype:
-        # Filtering the values array so that query is included in very element
         values = (
             result
             for result in values
@@ -244,10 +221,8 @@ def search_widget(
             )
         )
 
-    # Sorting the values array so that relevant results always come first
     values = sorted(values, key=lambda x: relevance_sorter(x, txt, as_dict))
 
-    # remove _relevance from results
     if not meta.translated_doctype:
         if as_dict:
             for r in values:
