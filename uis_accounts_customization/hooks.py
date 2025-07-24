@@ -181,6 +181,9 @@ doc_events = {
     },
     "Cost Center" : {
         "after_insert":"uis_accounts_customization.customization_script.cost_center.db_insert",
+    },
+    "Department" : {
+        "after_insert":"uis_accounts_customization.customization_script.department.db_insert",
 
     },
 

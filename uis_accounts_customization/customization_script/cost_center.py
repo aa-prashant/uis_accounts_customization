@@ -56,6 +56,8 @@ def create_cc_for_company(source_doc, target_company_name):
     cc.disabled = source_doc.disabled
     cc.save()
 
+    frappe.msgprint(f"New Department '{cc.name}' is created")
+
 def get_target_company_cc(source_doc, target_company):
     """
     Get the parent cost center for the target company.
