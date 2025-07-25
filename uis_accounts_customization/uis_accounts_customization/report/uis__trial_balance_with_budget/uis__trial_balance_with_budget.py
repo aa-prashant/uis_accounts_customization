@@ -816,8 +816,11 @@ def prepare_consolidated_trial_balance(company_data, budget_account_list, parent
 		for row in company_record:
 			if not row:
 				continue
-			account_name = _get_account_name(row['account'], False)
 			
+			if "5202 - Commission on Sales" in row['account']:
+				""
+
+			account_name = _get_account_name(row['account'], False)
 			if account_name in budget_account and account_name not in final_account_dict :
 				final_account_dict[account_name] = row
 				update_budget_to_account = final_account_dict[account_name]
@@ -832,6 +835,9 @@ def prepare_consolidated_trial_balance(company_data, budget_account_list, parent
 				update_account['opening_credit'] =  update_account['opening_credit'] + row['opening_credit']
 				update_account['debit'] =  update_account['debit'] + row['debit']
 				update_account['credit'] =  update_account['credit'] + row['credit']
+				update_account['closing_debit'] =  update_account['closing_debit'] + row['closing_debit']
+				update_account['closing_credit'] =  update_account['closing_credit'] + row['closing_credit']
+
 
 	data = [row for row in final_account_dict.values()]
 	return data
