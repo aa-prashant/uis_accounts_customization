@@ -30,13 +30,14 @@ def validate(doc, method):
 
     # 2️⃣  Mandatory / validity checks (same as before)
     meta_cache = {}  # <doctype>  →  [valid record names]
-    error = get_meta_info(doc, meta_cache)
+    company = doc.company
+    error = get_meta_info(doc, meta_cache, company)
 
     for table_field in (
         f for f, v in doc.as_dict().items() if isinstance(v, list)
     ):
         for row in doc.get(table_field):
-            error += get_meta_info(row, meta_cache, is_child=True)
+            error += get_meta_info(row, meta_cache, company, is_child=True)
 
     if error:
         frappe.throw(error)
@@ -71,6 +72,7 @@ def propagate_dimensions_from_parent(doc):
 def get_meta_info(
     record,
     meta_cache: dict,
+    company: str,
     is_child: bool = False,
 ) -> str:
     """
@@ -98,7 +100,7 @@ def get_meta_info(
         doctype = df.options
         if doctype not in meta_cache:
             meta_cache[doctype] = frappe.get_all(
-                doctype, {"company": record.company}, pluck="name"
+                doctype, {"company": company}, pluck="name"
             )
 
         if record.get(fieldname) not in meta_cache[doctype]:
