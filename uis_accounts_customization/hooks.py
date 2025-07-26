@@ -178,7 +178,14 @@ doc_events = {
     },
     "*":{
         "validate": "uis_accounts_customization.customization_script.handler.validate",
-    }
+    },
+    "Cost Center" : {
+        "after_insert":"uis_accounts_customization.customization_script.cost_center.db_insert",
+    },
+    "Department" : {
+        "after_insert":"uis_accounts_customization.customization_script.department.db_insert",
+
+    },
 }
 
 # Adding the dictionary comprehension separately
