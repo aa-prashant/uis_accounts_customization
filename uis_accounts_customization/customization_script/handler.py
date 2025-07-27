@@ -28,16 +28,21 @@ def validate(doc, method):
     # 1️⃣  Auto-fill children that are missing dimensions
     propagate_dimensions_from_parent(doc)
 
-    # 2️⃣  Mandatory / validity checks (same as before)
-    meta_cache = {}  # <doctype>  →  [valid record names]
-    company = doc.company
-    error = get_meta_info(doc, meta_cache, company)
+    # 2️⃣  Mandatory / validity checks
+    meta_cache = {}  # <doctype> → [valid record names]
+    error = get_meta_info(doc, meta_cache)
 
     for table_field in (
         f for f, v in doc.as_dict().items() if isinstance(v, list)
     ):
         for row in doc.get(table_field):
-            error += get_meta_info(row, meta_cache, company, is_child=True)
+            error += get_meta_info(
+                row,
+                meta_cache,
+                is_child=True,
+                parent_doctype=doc.doctype,
+                parent_company=doc.company
+            )
 
     if error:
         frappe.throw(error)
@@ -61,7 +66,6 @@ def propagate_dimensions_from_parent(doc):
         f for f, v in doc.as_dict().items() if isinstance(v, list)
     ):
         for row in doc.get(table_field):
-            # ensure row has the field before setting
             for fld, val in parent_dims.items():
                 if fld in row.as_dict() and not row.get(fld):
                     row.set(fld, val)
@@ -72,8 +76,9 @@ def propagate_dimensions_from_parent(doc):
 def get_meta_info(
     record,
     meta_cache: dict,
-    company: str,
     is_child: bool = False,
+    parent_doctype: str = None,
+    parent_company: str = None,
 ) -> str:
     """
     Return HTML string listing any problems for *record*.
@@ -85,28 +90,38 @@ def get_meta_info(
 
     for df in meta.fields:
         fieldname = df.fieldname
-        if df.fieldtype == "Data" or fieldname not in DIMENSIONS:
+
+        if df.fieldtype != "Link" or fieldname not in DIMENSIONS:
             continue
 
         label = frappe.bold(df.label)
 
+        # ❗ Special case: 'project' is not mandatory for Sales Order
+        skip_mandatory_check = (
+            (record.doctype == "Sales Order" or parent_doctype == "Sales Order")
+            and fieldname == "project"
+        )
+
         # -- 1. Missing value -------------------------------------------------
-        if not record.get(fieldname):
-            prefix = f"{record.doctype} : Row {record.idx}, " if is_child else ""
+        if not record.get(fieldname) and not skip_mandatory_check:
+            prefix = f"{record.doctype} : Row {getattr(record, 'idx', '?')}, " if is_child else ""
             problems.append(f"{prefix}{label} is a mandatory field<br>")
             continue
 
         # -- 2. Ensure linked value belongs to same company -------------------
-        doctype = df.options
-        if doctype not in meta_cache:
-            meta_cache[doctype] = frappe.get_all(
-                doctype, {"company": company}, pluck="name"
-            )
+        if record.get(fieldname):
+            doctype = df.options
+            company = getattr(record, "company", parent_company)
 
-        if record.get(fieldname) not in meta_cache[doctype]:
-            prefix = f"{record.doctype} : Row {record.idx}, " if is_child else ""
-            problems.append(
-                f"{prefix}Incorrect value in {label} field<br>"
-            )
+            if doctype not in meta_cache:
+                meta_cache[doctype] = frappe.get_all(
+                    doctype, {"company": company}, pluck="name"
+                )
+
+            if record.get(fieldname) not in meta_cache[doctype]:
+                prefix = f"{record.doctype} : Row {getattr(record, 'idx', '?')}, " if is_child else ""
+                problems.append(
+                    f"{prefix}Incorrect value in {label} field<br>"
+                )
 
     return "".join(problems)
