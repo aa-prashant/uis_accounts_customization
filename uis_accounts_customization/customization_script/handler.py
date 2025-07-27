@@ -1,53 +1,127 @@
 import frappe
+from frappe.utils import cint
 
+# ------------------------------------------------------------------------- #
+# ❶  Main validate hook
+# ------------------------------------------------------------------------- #
 def validate(doc, method):
-    if not doc.get('company') or  doc.doctype in ['DocType', 'Version', 'Custom Field', "Property Setter", "Portal Settings", "Installed Applications"]:
+    """
+    • Propagate accounting-dimension values from parent → child rows
+    • Enforce mandatory accounting-dimension presence & company correctness
+    """
+
+    # Skip meta / system doctypes or docs without a company
+    if (
+        not doc.get("company")
+        or doc.doctype
+        in (
+            "DocType",
+            "Version",
+            "Custom Field",
+            "Property Setter",
+            "Portal Settings",
+            "Installed Applications",
+        )
+    ):
         return
-    
-    doc_df_list = list(doc.as_dict().keys())
-    
-    meta_mandatory_field_dict = {}
-    child_table_name_list = [ df_name for df_name in doc_df_list if isinstance(doc.get(df_name), list)]
 
+    # 1️⃣  Auto-fill children that are missing dimensions
+    propagate_dimensions_from_parent(doc)
 
-    error_str = ""
-    error_str = get_meta_info(doc,doc.company, meta_mandatory_field_dict)
+    # 2️⃣  Mandatory / validity checks
+    meta_cache = {}  # <doctype> → [valid record names]
+    error = get_meta_info(doc, meta_cache)
 
-    for df_name in child_table_name_list:
-        for row in doc.get(df_name):
-            error_str += get_meta_info(row,doc.company, meta_mandatory_field_dict, 1)
+    for table_field in (
+        f for f, v in doc.as_dict().items() if isinstance(v, list)
+    ):
+        for row in doc.get(table_field):
+            error += get_meta_info(
+                row,
+                meta_cache,
+                is_child=True,
+                parent_doctype=doc.doctype,
+                parent_company=doc.company
+            )
 
-    if error_str:
-        frappe.throw(error_str)
-    
+    if error:
+        frappe.throw(error)
 
-def get_meta_info(doc, company, meta_mandatory_field_dict = {}, is_for_childtable = False):
+# ------------------------------------------------------------------------- #
+# ❷  Utility: propagate dimensions
+# ------------------------------------------------------------------------- #
+DIMENSIONS = {"branch", "cost_center", "department", "project"}
 
-    mandatory_field_list = ['branch', "cost_center", "department", "project"]
-    error_str = ""
-    meta_df_list = frappe.get_meta(doc.doctype).fields
+def propagate_dimensions_from_parent(doc):
+    """
+    Copy each dimension from parent → child row **once**
+    (only when child field is blank / falsy).
+    """
+    parent_dims = {fld: doc.get(fld) for fld in DIMENSIONS if doc.get(fld)}
 
-    for meta_field in meta_df_list:
-        if meta_field.fieldtype == "Data":
+    if not parent_dims:
+        return  # Nothing to copy
+
+    for table_field in (
+        f for f, v in doc.as_dict().items() if isinstance(v, list)
+    ):
+        for row in doc.get(table_field):
+            for fld, val in parent_dims.items():
+                if fld in row.as_dict() and not row.get(fld):
+                    row.set(fld, val)
+
+# ------------------------------------------------------------------------- #
+# ❸  Utility: validate dimensions
+# ------------------------------------------------------------------------- #
+def get_meta_info(
+    record,
+    meta_cache: dict,
+    is_child: bool = False,
+    parent_doctype: str = None,
+    parent_company: str = None,
+) -> str:
+    """
+    Return HTML string listing any problems for *record*.
+    Uses meta_cache to avoid repetitive DB hits.
+    """
+
+    meta = frappe.get_meta(record.doctype)
+    problems = []
+
+    for df in meta.fields:
+        fieldname = df.fieldname
+
+        if df.fieldtype != "Link" or fieldname not in DIMENSIONS:
             continue
-        if meta_field.get("fieldname") in mandatory_field_list:
-            
-            if not doc.get(meta_field.get("fieldname")):
-                if is_for_childtable:
-                    error_str += f'{doc.doctype} : Row {doc.idx}, {frappe.bold(meta_field.get("label"))} is a mandatory field<br>'
-                else:
-                    error_str += f'{frappe.bold(meta_field.get("label"))} is a mandatory field<br>'
 
-            else:
-                if meta_field.get("options") not in meta_mandatory_field_dict:
-                    get_all_doc_record =  frappe.get_all(meta_field.get("options"), {"company" :company}, pluck = "name")
-                    meta_mandatory_field_dict[meta_field.get("options")] = get_all_doc_record
-                else :
-                    get_all_doc_record = meta_mandatory_field_dict[meta_field.get("options")]
-                if doc.get(meta_field.get("fieldname")) not in get_all_doc_record:
-                    if is_for_childtable:
-                        error_str += f'{doc.doctype} : Row {doc.idx}, Incorrect value in  {frappe.bold(meta_field.get("label"))} field<br>'
-                    else:
-                        error_str += f'Incorrect value in {frappe.bold(meta_field.get("label"))} field<br>'
+        label = frappe.bold(df.label)
 
-    return error_str
+        # ❗ Special case: 'project' is not mandatory for Sales Order
+        skip_mandatory_check = (
+            (record.doctype == "Sales Order" or parent_doctype == "Sales Order")
+            and fieldname == "project"
+        )
+
+        # -- 1. Missing value -------------------------------------------------
+        if not record.get(fieldname) and not skip_mandatory_check:
+            prefix = f"{record.doctype} : Row {getattr(record, 'idx', '?')}, " if is_child else ""
+            problems.append(f"{prefix}{label} is a mandatory field<br>")
+            continue
+
+        # -- 2. Ensure linked value belongs to same company -------------------
+        if record.get(fieldname):
+            doctype = df.options
+            company = getattr(record, "company", parent_company)
+
+            if doctype not in meta_cache:
+                meta_cache[doctype] = frappe.get_all(
+                    doctype, {"company": company}, pluck="name"
+                )
+
+            if record.get(fieldname) not in meta_cache[doctype]:
+                prefix = f"{record.doctype} : Row {getattr(record, 'idx', '?')}, " if is_child else ""
+                problems.append(
+                    f"{prefix}Incorrect value in {label} field<br>"
+                )
+
+    return "".join(problems)

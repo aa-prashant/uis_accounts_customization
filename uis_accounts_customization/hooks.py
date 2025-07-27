@@ -179,15 +179,24 @@ doc_events = {
     "*":{
         "validate": "uis_accounts_customization.customization_script.handler.validate",
     },
-    "Cost Center" : {
-        "after_insert":"uis_accounts_customization.customization_script.cost_center.db_insert",
-    },
-    "Department" : {
-        "after_insert":"uis_accounts_customization.customization_script.department.db_insert",
+    # "Cost Center" : {
+    #     "after_insert":"uis_accounts_customization.customization_script.cost_center.db_insert",
+    # },
+    # "Department" : {
+    #     "after_insert":"uis_accounts_customization.customization_script.department.db_insert",
 
-    },
-
+    # },
 }
+
+for dt in ["Account", "Cost Center", "Department"]:
+    doc_events[dt] = {
+        "validate":      "uis_accounts_customization.customization_script.company_tree_sync.ensure_group_company",
+        "before_rename": "uis_accounts_customization.customization_script.company_tree_sync.block_leaf_rename",
+        "after_insert":  "uis_accounts_customization.customization_script.company_tree_sync.mirror",
+        "on_update":     "uis_accounts_customization.customization_script.company_tree_sync.mirror",
+        "after_rename":  "uis_accounts_customization.customization_script.company_tree_sync.propagate_rename",
+        "on_trash":      "uis_accounts_customization.customization_script.company_tree_sync.cascade_delete",
+    }
 
 # Scheduled Tasks
 # ---------------
