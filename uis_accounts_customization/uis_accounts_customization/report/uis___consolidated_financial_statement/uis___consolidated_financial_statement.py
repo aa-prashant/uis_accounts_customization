@@ -42,6 +42,7 @@ from erpnext.accounts.report.utils import convert, convert_to_presentation_curre
 from erpnext.accounts.report.financial_statements import get_cost_centers_with_children
 from erpnext.accounts.utils import get_fiscal_year
 
+
 def execute(filters=None):
 	columns, data, message, chart = [], [], [], []
 
@@ -67,7 +68,7 @@ def execute(filters=None):
 	
 	columns = get_columns_branch_wise(companies_column, filters, is_pnl)
 	
-	return columns, data, message, chart, report_summary
+	return columns, data
 
 
 def get_balance_sheet_data(fiscal_year, companies, columns, filters, companies_list):
@@ -205,7 +206,10 @@ def get_profit_loss_data(fiscal_year, companies, columns, filters, companies_lis
 
 		for branch in branches:
 			key = (company, branch)
-			budget_dict.update(get_account_budget(company,branch, filters))
+			total_budget_amount, budget_dict_company = get_account_budget(company,branch, filters, budget_dict.get("total", {}))
+			if "total" not in budget_dict:
+				budget_dict.update({"total": total_budget_amount})
+			budget_dict.update(budget_dict_company)
 
 			data, message, chart, report_summary = get_profit_loss_data_branch_wise(fiscal_year, companies, columns, filters, branch)
 			data_list[key] = data
@@ -483,12 +487,12 @@ def balance_sheet_data_format(data_list):
 					# account_consolidated_dict[frappe.utils.random_string(4)] = {}
 					continue
 
-				account_name = _get_account_name(account_row['account_name'], is_dict = False)
+				account_name = _get_account_name(account_row, is_dict = False)
 				
 				if 'Unclosed Fiscal Years Profit / Loss (Credit)' in account_name:
 					continue
 				has_parent_account = ('parent_account' in  account_row and account_row['parent_account'])
-				parent_account = _get_account_name(account_row['parent_account'], is_dict = False) if has_parent_account else None
+				parent_account = _get_account_name(account_row['parent_account'], is_dict = False, other_account_name=account_row['parent_account']) if has_parent_account else None
 				account_row["parent_account"] = parent_account
 				account_row["account"] = account_name
 				account_row["account_name"] = account_name
@@ -519,7 +523,7 @@ def pnl_formatted_report(data_list, budget_dict, company):
 				account_with_and_pnl[frappe.utils.random_string(4)] = row
 				continue
 			
-			account_name = _get_account_name(row['account_name'], False)
+			account_name = _get_account_name(row, False)
 
 			key_str = f"bug_{key[1]}_{key[0]}"
 			if account_name in account_budget_list_for_respective_company:
@@ -1127,7 +1131,7 @@ def get_account_type_based_gl_data(company, filters=None, branch_val = None):
 
 	return gl_sum[0] if gl_sum and gl_sum[0] else 0
 
-def get_account_budget(company, branch, filters):
+def get_account_budget(company, branch, filters, account_total_based_on_company={}):
 	budget_filter = {
 		"company": company,
 		"branch": branch,
@@ -1137,69 +1141,78 @@ def get_account_budget(company, branch, filters):
 
 	# Convert Budget Amount to Selected Currency
 	company_currency = erpnext.get_company_currency(company)
-	currecy_exchange_rate = erpnext.setup.utils.get_exchange_rate(company_currency, filters.get('presentation_currency'))
-
+	report_date = filters.get("to_date") or filters.get("period_end_date")
 
 	account_with_budget_amount_branch_wise = {}
 
 	# Get budget details
-	budget_dict = frappe.db.get_value(
+	budget_dict_list = frappe.db.get_values(
 		"UIS - Budget", 
 		budget_filter, 
 		['name', 'monthly_distribution'], 
 		as_dict=True
 	)
 
-	if not budget_dict:
-		return {}
+	if not budget_dict_list:
+		return {}, {}
+	for budget_dict in budget_dict_list:
+		# Get account budget amounts
+		account_with_budget_amount = frappe.db.get_values(
+			"Budget Account", 
+			{'parent': budget_dict.get("name")}, 
+			['account', "budget_amount"], 
+			as_dict=True
+		)
 
-	# Get account budget amounts
-	account_with_budget_amount = frappe.db.get_values(
-		"Budget Account", 
-		{'parent': budget_dict.get("name")}, 
-		['account', "budget_amount"], 
-		as_dict=True
-	)
+		# Get monthly distribution percentages
+		monthly_distribution_dict = frappe.db.get_values(
+			"Monthly Distribution Percentage",
+			{'parent': budget_dict.get("monthly_distribution")},
+			['month', "percentage_allocation"],
+			as_dict=True
+		)
 
-	# Get monthly distribution percentages
-	monthly_distribution_dict = frappe.db.get_values(
-		"Monthly Distribution Percentage",
-		{'parent': budget_dict.get("monthly_distribution")},
-		['month', "percentage_allocation"],
-		as_dict=True
-	)
+		# Format monthly distribution according to filter period 
+		# (now returns total percentage for the period)
+		monthly_percentage = round(_format_monthly_distribution_dict(monthly_distribution_dict, filters), 2)
 
-	# Format monthly distribution according to filter period 
-	# (now returns total percentage for the period)
-	monthly_percentage = round(_format_monthly_distribution_dict(monthly_distribution_dict, filters), 2)
+		# Create branch-wise account budget dictionary
+		key = (company, branch)
+		account_with_budget_amount_branch_wise[key] = {} if key not in account_with_budget_amount_branch_wise else account_with_budget_amount_branch_wise[key]
 
-	# Create branch-wise account budget dictionary
-	key = (company, branch)
-	account_with_budget_amount_branch_wise[key] = {}
-
-	for account in account_with_budget_amount:
-		account_name = _get_account_name(account)
-		if account_name:
-			if monthly_distribution_dict:
-				allocated_budget_amount = ((account.get("budget_amount", 0) * monthly_percentage) / 100) * currecy_exchange_rate
-			else:
-				allocated_budget_amount = account.get("budget_amount", 0) * currecy_exchange_rate
+		for account in account_with_budget_amount:
+			account_name = _get_account_name(account)
+			
+			if account_name:
+				if monthly_distribution_dict:
+					allocated_budget_amount = (account.get("budget_amount", 0) * monthly_percentage) / 100
+				else:
+					allocated_budget_amount = account.get("budget_amount", 0)
 				
-			account_with_budget_amount_branch_wise[key][account_name] = allocated_budget_amount
+				allocated_budget_amount = convert(allocated_budget_amount, filters.get('presentation_currency'), company_currency, report_date)
+				account_with_budget_amount_branch_wise[key][account_name] = allocated_budget_amount
 
-	return account_with_budget_amount_branch_wise
+			if not account_total_based_on_company or account_name not in account_total_based_on_company:
+				account_total_based_on_company.update({account_name: round(allocated_budget_amount, 2)})
+			else:
+				addition_of_previous_new_amount = account_total_based_on_company.get(account_name, 0) + allocated_budget_amount
+				account_total_based_on_company.update({account_name: round(addition_of_previous_new_amount, 2)})
+
+	return account_total_based_on_company, account_with_budget_amount_branch_wise
 
 
-def _get_account_name(account, is_dict = True):
+def _get_account_name(account, is_dict = True, other_account_name = None):
 	"""Extract non-numeric part of the account name"""
-
-	account_parts = account.get("account", "").split("-") if is_dict else account.split("-")
-
-	for part in account_parts:
-		part = part.strip()
-		if part and not part.isnumeric():
-			return part
-
+	
+	account_name = other_account_name if other_account_name else account.get("account") 
+	account_name = frappe.db.get_value("Account", {"name": account_name, "disabled" : 0}, ["account_name", "account_number"], as_dict=True)
+	if account_name:
+		if account_name.account_number:
+			account_name = f"{account_name.account_number}-{account_name.account_name}"
+		else:
+			account_name = f"{account_name.account_name}"
+		return account_name
+	
 	return ""
 
 
