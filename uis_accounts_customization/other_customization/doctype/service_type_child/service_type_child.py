@@ -5,5 +5,5 @@
 from frappe.model.document import Document
 
 
-class Competitors(Document):
+class ServiceTypeChild(Document):
 	pass

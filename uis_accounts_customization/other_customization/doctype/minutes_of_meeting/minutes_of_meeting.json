@@ -1,0 +1,72 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2025-07-29 14:41:16.023934",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "noting_date",
+  "agenda",
+  "decision",
+  "responsible",
+  "last_modified_on",
+  "closing_date",
+  "status"
+ ],
+ "fields": [
+  {
+   "fieldname": "noting_date",
+   "fieldtype": "Date",
+   "label": "Noting Date",
+   "options": "Today",
+   "read_only": 1
+  },
+  {
+   "fieldname": "agenda",
+   "fieldtype": "Small Text",
+   "label": "Agenda"
+  },
+  {
+   "fieldname": "decision",
+   "fieldtype": "Small Text",
+   "label": "Decision"
+  },
+  {
+   "fieldname": "responsible",
+   "fieldtype": "Link",
+   "label": "Responsible",
+   "options": "Employee"
+  },
+  {
+   "fieldname": "closing_date",
+   "fieldtype": "Date",
+   "label": "Closing Date"
+  },
+  {
+   "fieldname": "status",
+   "fieldtype": "Select",
+   "label": "Status",
+   "options": "\nOpen\nIn Process\nClosed"
+  },
+  {
+   "fieldname": "last_modified_on",
+   "fieldtype": "Date",
+   "label": "Last Modified On"
+  }
+ ],
+ "grid_page_length": 50,
+ "index_web_pages_for_search": 1,
+ "istable": 1,
+ "links": [],
+ "modified": "2025-07-29 14:49:29.581956",
+ "modified_by": "Administrator",
+ "module": "Other Customization",
+ "name": "Minutes of Meeting",
+ "owner": "Administrator",
+ "permissions": [],
+ "row_format": "Dynamic",
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}

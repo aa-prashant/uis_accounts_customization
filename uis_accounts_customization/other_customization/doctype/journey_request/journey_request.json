@@ -21,7 +21,8 @@
   "employee_details_section",
   "employee_details",
   "vehicle_details_section",
-  "vehicle_details",
+  "vehicle",
+  "vehicle_display",
   "amended_from"
  ],
  "fields": [
@@ -103,7 +104,7 @@
   {
    "fieldname": "employee_details",
    "fieldtype": "Table",
-   "options": "Employee Details"
+   "options": "Visit Employee Detail"
   },
   {
    "fieldname": "vehicle_details_section",
@@ -111,15 +112,21 @@
    "label": "Vehicle Details"
   },
   {
-   "fieldname": "vehicle_details",
-   "fieldtype": "Table",
-   "options": "Vehicle Details"
+   "fieldname": "vehicle",
+   "fieldtype": "Link",
+   "label": "Vehicle",
+   "options": "Vehicle"
+  },
+  {
+   "fieldname": "vehicle_display",
+   "fieldtype": "HTML",
+   "label": "Vehicle Display"
   }
  ],
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2024-10-08 14:18:49.005019",
+ "modified": "2025-07-29 14:07:07.775196",
  "modified_by": "Administrator",
  "module": "Other Customization",
  "name": "Journey Request",
@@ -139,6 +146,7 @@
    "write": 1
   }
  ],
+ "row_format": "Dynamic",
  "sort_field": "modified",
  "sort_order": "DESC",
  "states": []
