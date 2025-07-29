@@ -5,3 +5,4 @@ def before_insert(doc, method):
         asset = asset_row.asset
         department_name = frappe.db.get_value("Asset",asset, "department")
         asset_row.department = department_name
+        frappe.log_error(f"Department for asset {asset} is {department_name}")

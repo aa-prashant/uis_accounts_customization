@@ -100,15 +100,14 @@ def get_meta_info(
         skip_mandatory_check = (
             (record.doctype == "Sales Order" or parent_doctype == "Sales Order")
             and fieldname == "project"
-        ) or (
-            (
-                record.doctype in ("Asset Movement", "Asset Movement Item")
-                or parent_doctype == "Asset Movement"
-            )
-            and fieldname in ("branch", "department")
         )
 
-        # -- 1. Missing value -------------------------------------------------
+         # ❗ Special case: Skip all validation for Branch and Department on Asset Movement
+        if (
+            record.doctype in ("Asset Movement", "Asset Movement Item")
+            or parent_doctype == "Asset Movement"
+        ) and fieldname in ("branch", "department"):
+            continue
 
 
 
