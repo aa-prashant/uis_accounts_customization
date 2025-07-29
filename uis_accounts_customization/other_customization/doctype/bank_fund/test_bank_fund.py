@@ -5,5 +5,5 @@
 from frappe.tests.utils import FrappeTestCase
 
 
-class TestCompetitors(FrappeTestCase):
+class TestBankFund(FrappeTestCase):
 	pass

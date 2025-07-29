@@ -115,9 +115,9 @@
   },
   {
    "fieldname": "attestation",
-   "fieldtype": "Link",
+   "fieldtype": "Table MultiSelect",
    "label": "Attestation",
-   "options": "Attestation",
+   "options": "Attestation Child",
    "reqd": 1
   },
   {
@@ -157,7 +157,7 @@
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2025-07-25 19:24:33.723600",
+ "modified": "2025-07-29 15:53:52.116394",
  "modified_by": "Administrator",
  "module": "Other Customization",
  "name": "Letters",

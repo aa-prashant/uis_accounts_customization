@@ -96,11 +96,21 @@ def get_meta_info(
 
         label = frappe.bold(df.label)
 
-        # ❗ Special case: 'project' is not mandatory for Sales Order
+        # ❗ Special cases
         skip_mandatory_check = (
             (record.doctype == "Sales Order" or parent_doctype == "Sales Order")
             and fieldname == "project"
+        ) or (
+            (
+                record.doctype in ("Asset Movement", "Asset Movement Item")
+                or parent_doctype == "Asset Movement"
+            )
+            and fieldname in ("branch", "department")
         )
+
+        # -- 1. Missing value -------------------------------------------------
+
+
 
         # -- 1. Missing value -------------------------------------------------
         if not record.get(fieldname) and not skip_mandatory_check:
