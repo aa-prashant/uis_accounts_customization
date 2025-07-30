@@ -7,25 +7,10 @@
  "engine": "InnoDB",
  "field_order": [
   "section_break_rdwc",
-  "rfq_date",
-  "orgnization_type",
-  "orgnization_name",
-  "contact_person",
-  "department_con",
-  "job_title",
-  "mobile",
-  "email",
-  "address",
-  "address_type",
-  "google_map_link",
-  "city",
-  "country",
+  "opportunity",
   "column_break_vkjd",
-  "requested_by",
   "to",
-  "uis_territory",
   "uis_branch",
-  "transaction_time",
   "status",
   "reason",
   "subcontracting",
@@ -46,21 +31,13 @@
    "fieldtype": "Column Break"
   },
   {
-   "default": "Today",
-   "fieldname": "rfq_date",
-   "fieldtype": "Date",
-   "in_list_view": 1,
-   "label": "RFQ Date",
-   "reqd": 1
-  },
-  {
    "fieldname": "rfq_details_section",
    "fieldtype": "Section Break",
    "label": "RFQ Details"
   },
   {
    "fieldname": "rfq_details",
-   "fieldtype": "Text",
+   "fieldtype": "Text Editor",
    "in_list_view": 1,
    "label": "Description",
    "reqd": 1
@@ -72,15 +49,8 @@
   },
   {
    "fieldname": "technical_reply",
-   "fieldtype": "Text",
+   "fieldtype": "Text Editor",
    "label": "Technical Reply"
-  },
-  {
-   "fieldname": "requested_by",
-   "fieldtype": "Link",
-   "label": "Requested By",
-   "options": "Department",
-   "reqd": 1
   },
   {
    "fieldname": "to",
@@ -100,61 +70,11 @@
    "search_index": 1
   },
   {
-   "fieldname": "orgnization_type",
-   "fieldtype": "Select",
-   "label": "Orgnization Type",
-   "options": "Customer\nLead\nCompetitors\nGovernment\nSupplier\nBank Funds",
-   "reqd": 1
-  },
-  {
-   "fieldname": "orgnization_name",
-   "fieldtype": "Dynamic Link",
-   "label": "Orgnization Name",
-   "options": "orgnization_type",
-   "reqd": 1
-  },
-  {
-   "fieldname": "contact_person",
-   "fieldtype": "Link",
-   "label": "Contact Person",
-   "options": "Contact"
-  },
-  {
-   "fetch_from": "contact_person.phone",
-   "fieldname": "mobile",
-   "fieldtype": "Read Only",
-   "label": "Mobile"
-  },
-  {
-   "fetch_from": "contact_person.email_id",
-   "fieldname": "email",
-   "fieldtype": "Read Only",
-   "label": "Email"
-  },
-  {
-   "fetch_from": "address.custom_google_map_link",
-   "fieldname": "google_map_link",
-   "fieldtype": "Read Only",
-   "label": "Google Map Link"
-  },
-  {
-   "fieldname": "uis_territory",
-   "fieldtype": "Link",
-   "label": "UIS Territory",
-   "options": "Territory",
-   "reqd": 1
-  },
-  {
    "fieldname": "uis_branch",
    "fieldtype": "Link",
    "label": "UIS Branch",
    "options": "Branch",
    "reqd": 1
-  },
-  {
-   "fieldname": "transaction_time",
-   "fieldtype": "Time",
-   "label": "Transaction time"
   },
   {
    "fieldname": "status",
@@ -175,46 +95,16 @@
    "options": "\nYes\nNo"
   },
   {
-   "fieldname": "address",
+   "fieldname": "opportunity",
    "fieldtype": "Link",
-   "label": "Address",
-   "options": "Address"
-  },
-  {
-   "fetch_from": "address.address_type",
-   "fieldname": "address_type",
-   "fieldtype": "Read Only",
-   "label": "Address Type"
-  },
-  {
-   "fetch_from": "address.city",
-   "fieldname": "city",
-   "fieldtype": "Read Only",
-   "label": "City"
-  },
-  {
-   "fetch_from": "address.country",
-   "fieldname": "country",
-   "fieldtype": "Read Only",
-   "label": "Country"
-  },
-  {
-   "fetch_from": "contact_person.department",
-   "fieldname": "department_con",
-   "fieldtype": "Read Only",
-   "label": "Department"
-  },
-  {
-   "fetch_from": "contact_person.designation",
-   "fieldname": "job_title",
-   "fieldtype": "Read Only",
-   "label": "Job Title"
+   "label": "Opportunity",
+   "options": "Opportunity"
   }
  ],
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2024-10-29 10:24:47.010724",
+ "modified": "2025-07-30 21:35:05.487449",
  "modified_by": "Administrator",
  "module": "Other Customization",
  "name": "technical inquiry",
@@ -235,6 +125,7 @@
    "write": 1
   }
  ],
+ "row_format": "Dynamic",
  "sort_field": "modified",
  "sort_order": "DESC",
  "states": []
