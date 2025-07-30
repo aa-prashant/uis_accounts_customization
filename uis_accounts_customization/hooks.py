@@ -176,6 +176,9 @@ doc_events = {
     "Asset Movement":{
         "before_insert" : "uis_accounts_customization.customization_script.asset_movement.asset_movement.before_insert"
     },
+    "Asset Depreciation Schedule":{
+        "before_insert" : "uis_accounts_customization.customization_script.asset_depericiation_schedule.asset_depreciation_schedule.before_insert"
+    },
     "*":{
         "validate": "uis_accounts_customization.customization_script.handler.validate",
     },
