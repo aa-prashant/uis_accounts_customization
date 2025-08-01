@@ -15,6 +15,7 @@
   "orgnization_name",
   "purpose",
   "subject",
+  "subject_in_arabic",
   "attestation",
   "attachment",
   "cc",
@@ -77,9 +78,10 @@
   },
   {
    "fieldname": "orgnization_type",
-   "fieldtype": "Select",
+   "fieldtype": "Link",
    "label": "Orgnization Type",
-   "options": "Customer\nLead\nCompetitors\nGovernment\nSupplier\nBank Funds",
+   "link_filters": "[[\"DocType\",\"name\",\"in\",[\"Lead\",\"Opportunity\",\"Customer\",\"Supplier\",\"Government\",\"Bank Fund\",\"Employee\",\"Company\"]]]",
+   "options": "DocType",
    "reqd": 1
   },
   {
@@ -91,9 +93,8 @@
   },
   {
    "fieldname": "to",
-   "fieldtype": "Link",
+   "fieldtype": "Small Text",
    "label": "To",
-   "options": "Contact",
    "reqd": 1
   },
   {
@@ -151,13 +152,19 @@
    "fieldname": "description_arabic",
    "fieldtype": "Small Text",
    "label": "Description (In Arabic)"
+  },
+  {
+   "fieldname": "subject_in_arabic",
+   "fieldtype": "Data",
+   "label": "Subject (In Arabic)",
+   "reqd": 1
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2025-07-29 15:53:52.116394",
+ "modified": "2025-07-30 21:54:53.443540",
  "modified_by": "Administrator",
  "module": "Other Customization",
  "name": "Letters",
