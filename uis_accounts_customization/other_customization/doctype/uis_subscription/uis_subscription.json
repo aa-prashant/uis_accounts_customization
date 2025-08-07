@@ -1,0 +1,122 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "autoname": "field:subscription_name",
+ "creation": "2025-08-07 16:22:34.481430",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "section_break_gv8j",
+  "subscription_name",
+  "company",
+  "branch",
+  "supplier",
+  "status",
+  "column_break_dqyv",
+  "responsible_employee",
+  "estimated_cost",
+  "remarks_"
+ ],
+ "fields": [
+  {
+   "fieldname": "section_break_gv8j",
+   "fieldtype": "Section Break",
+   "label": "Document Details"
+  },
+  {
+   "fieldname": "company",
+   "fieldtype": "Link",
+   "label": "Company",
+   "options": "Company",
+   "search_index": 1
+  },
+  {
+   "fieldname": "branch",
+   "fieldtype": "Link",
+   "label": "Branch",
+   "options": "Branch",
+   "search_index": 1
+  },
+  {
+   "fieldname": "supplier",
+   "fieldtype": "Link",
+   "label": "Supplier",
+   "options": "Supplier",
+   "search_index": 1
+  },
+  {
+   "fieldname": "column_break_dqyv",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "responsible_employee",
+   "fieldtype": "Link",
+   "label": "Responsible Employee",
+   "options": "Employee",
+   "search_index": 1
+  },
+  {
+   "fieldname": "estimated_cost",
+   "fieldtype": "Currency",
+   "label": "Estimated Cost",
+   "options": "Document and Subscription"
+  },
+  {
+   "fieldname": "remarks_",
+   "fieldtype": "Data",
+   "label": "Remarks"
+  },
+  {
+   "fieldname": "subscription_name",
+   "fieldtype": "Data",
+   "label": "Subscription Name",
+   "unique": 1
+  },
+  {
+   "fieldname": "status",
+   "fieldtype": "Select",
+   "label": "Status",
+   "options": "Active\nExpiring Soon\nExpired"
+  }
+ ],
+ "grid_page_length": 50,
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2025-08-07 16:38:43.573505",
+ "modified_by": "Administrator",
+ "module": "Other Customization",
+ "name": "UIS Subscription",
+ "naming_rule": "By fieldname",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "row_format": "Dynamic",
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [
+  {
+   "color": "Green",
+   "title": "Active"
+  },
+  {
+   "color": "Orange",
+   "title": "Expiring Soon"
+  },
+  {
+   "color": "Red",
+   "title": "Expired"
+  }
+ ]
+}

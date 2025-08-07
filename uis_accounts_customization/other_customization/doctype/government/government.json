@@ -3,36 +3,26 @@
  "allow_events_in_timeline": 1,
  "allow_import": 1,
  "allow_rename": 1,
- "autoname": "naming_series:",
- "creation": "2025-07-29 13:28:20.805424",
+ "autoname": "GOV-####",
+ "creation": "2025-07-29 13:58:26.845688",
  "default_view": "List",
- "description": "Buyer of Goods and Services.",
  "doctype": "DocType",
  "document_type": "Setup",
  "engine": "InnoDB",
  "field_order": [
   "basic_info",
   "naming_series",
-  "competitor_name",
-  "competitor_name_arabic",
-  "competing_to",
-  "column_break0",
+  "government_name",
+  "government_name_arabic",
+  "company",
   "territory",
-  "accreditation",
-  "pre_qualification_and_approvals",
-  "competition_of_services",
-  "service_type",
+  "branch",
   "image",
-  "section_break_qqhz",
-  "column_break_14",
-  "default_price_list",
-  "column_break_oiux",
   "more_info",
-  "market_segment",
   "industry",
   "website",
   "column_break_45",
-  "competitor_details",
+  "government_details",
   "dashboard_tab",
   "contact_and_address_tab",
   "address_contacts",
@@ -41,10 +31,10 @@
   "contact_html",
   "primary_address_and_contact_detail",
   "column_break_26",
-  "competitor_primary_address",
+  "government_primary_address",
   "primary_address",
   "column_break_nwor",
-  "competitor_primary_contact",
+  "government_primary_contact",
   "mobile_no",
   "email_id"
  ],
@@ -52,6 +42,7 @@
   {
    "fieldname": "basic_info",
    "fieldtype": "Section Break",
+   "label": "Government Details",
    "oldfieldtype": "Section Break",
    "options": "fa fa-user"
   },
@@ -64,9 +55,27 @@
    "set_only_once": 1
   },
   {
-   "fieldname": "column_break0",
-   "fieldtype": "Column Break",
-   "width": "50%"
+   "bold": 1,
+   "fieldname": "government_name",
+   "fieldtype": "Data",
+   "in_global_search": 1,
+   "label": "Government Name",
+   "no_copy": 1,
+   "oldfieldname": "customer_name",
+   "oldfieldtype": "Data",
+   "reqd": 1,
+   "search_index": 1
+  },
+  {
+   "fieldname": "government_name_arabic",
+   "fieldtype": "Data",
+   "label": "Government Name (Arabic)"
+  },
+  {
+   "fieldname": "company",
+   "fieldtype": "Link",
+   "label": "Company",
+   "options": "Company"
   },
   {
    "fieldname": "territory",
@@ -80,22 +89,17 @@
    "print_hide": 1
   },
   {
+   "fieldname": "branch",
+   "fieldtype": "Link",
+   "label": "Branch",
+   "options": "Branch"
+  },
+  {
    "fieldname": "image",
    "fieldtype": "Attach Image",
    "hidden": 1,
    "label": "Image",
    "print_hide": 1
-  },
-  {
-   "fieldname": "column_break_14",
-   "fieldtype": "Column Break"
-  },
-  {
-   "fieldname": "default_price_list",
-   "fieldtype": "Link",
-   "ignore_user_permissions": 1,
-   "label": "Default Price List",
-   "options": "Price List"
   },
   {
    "collapsible": 1,
@@ -105,12 +109,6 @@
    "label": "More Information",
    "oldfieldtype": "Section Break",
    "options": "fa fa-file-text"
-  },
-  {
-   "fieldname": "market_segment",
-   "fieldtype": "Link",
-   "label": "Market Segment",
-   "options": "Market Segment"
   },
   {
    "fieldname": "industry",
@@ -126,6 +124,14 @@
   {
    "fieldname": "column_break_45",
    "fieldtype": "Column Break"
+  },
+  {
+   "description": "Additional information regarding the Government.",
+   "fieldname": "government_details",
+   "fieldtype": "Text",
+   "label": "Government Details",
+   "oldfieldname": "customer_details",
+   "oldfieldtype": "Code"
   },
   {
    "fieldname": "dashboard_tab",
@@ -166,7 +172,7 @@
    "read_only": 1
   },
   {
-   "description": "Select, to make the customer searchable with these fields",
+   "description": "Select, to make the Government searchable with these fields",
    "fieldname": "primary_address_and_contact_detail",
    "fieldtype": "Section Break",
    "label": "Primary Address and Contact"
@@ -174,6 +180,13 @@
   {
    "fieldname": "column_break_26",
    "fieldtype": "Column Break"
+  },
+  {
+   "description": "Reselect, if the chosen address is edited after save",
+   "fieldname": "government_primary_address",
+   "fieldtype": "Link",
+   "label": "Government Primary Address",
+   "options": "Address"
   },
   {
    "fieldname": "primary_address",
@@ -184,6 +197,13 @@
   {
    "fieldname": "column_break_nwor",
    "fieldtype": "Column Break"
+  },
+  {
+   "description": "Reselect, if the chosen contact is edited after save",
+   "fieldname": "government_primary_contact",
+   "fieldtype": "Link",
+   "label": "Government Primary Contact",
+   "options": "Contact"
   },
   {
    "fetch_from": "customer_primary_contact.mobile_no",
@@ -198,100 +218,17 @@
    "fieldtype": "Read Only",
    "label": "Email Id",
    "options": "Email"
-  },
-  {
-   "bold": 1,
-   "fieldname": "competitor_name",
-   "fieldtype": "Data",
-   "in_global_search": 1,
-   "label": "Competitor Name",
-   "no_copy": 1,
-   "oldfieldname": "customer_name",
-   "oldfieldtype": "Data",
-   "reqd": 1,
-   "search_index": 1
-  },
-  {
-   "fieldname": "competitor_name_arabic",
-   "fieldtype": "Data",
-   "label": "Competitor Name (Arabic)"
-  },
-  {
-   "fieldname": "accreditation",
-   "fieldtype": "Table MultiSelect",
-   "label": "Accreditation ",
-   "options": "Accreditation Child"
-  },
-  {
-   "fieldname": "pre_qualification_and_approvals",
-   "fieldtype": "Table MultiSelect",
-   "label": "Pre qualification and Approvals",
-   "options": "Pre qualification and Approvals child"
-  },
-  {
-   "fieldname": "service_type",
-   "fieldtype": "Table MultiSelect",
-   "label": "Service Type",
-   "options": "Service Type Child"
-  },
-  {
-   "fieldname": "competing_to",
-   "fieldtype": "Link",
-   "label": "Competing To",
-   "options": "Company"
-  },
-  {
-   "description": "Additional information regarding the customer.",
-   "fieldname": "competitor_details",
-   "fieldtype": "Text",
-   "label": "Competitor Details",
-   "oldfieldname": "customer_details",
-   "oldfieldtype": "Code"
-  },
-  {
-   "description": "Reselect, if the chosen address is edited after save",
-   "fieldname": "competitor_primary_address",
-   "fieldtype": "Link",
-   "label": "Competitor Primary Address",
-   "options": "Address"
-  },
-  {
-   "description": "Reselect, if the chosen contact is edited after save",
-   "fieldname": "competitor_primary_contact",
-   "fieldtype": "Link",
-   "label": "Competitor Primary Contact",
-   "options": "Contact"
-  },
-  {
-   "fieldname": "competition_of_services",
-   "fieldtype": "Table MultiSelect",
-   "label": "Competition of Services",
-   "options": "Item Name"
-  },
-  {
-   "fieldname": "section_break_qqhz",
-   "fieldtype": "Section Break"
-  },
-  {
-   "fieldname": "column_break_oiux",
-   "fieldtype": "Column Break"
   }
  ],
  "icon": "fa fa-user",
  "image_field": "image",
  "index_web_pages_for_search": 1,
- "links": [
-  {
-   "group": "Allowed Items",
-   "link_doctype": "Party Specific Item",
-   "link_fieldname": "party"
-  }
- ],
- "modified": "2025-07-31 05:34:30.404671",
+ "links": [],
+ "modified": "2025-08-01 07:52:44.030242",
  "modified_by": "Administrator",
  "module": "Other Customization",
- "name": "Competitors",
- "naming_rule": "By \"Naming Series\" field",
+ "name": "Government",
+ "naming_rule": "By script",
  "owner": "Administrator",
  "permissions": [
   {
@@ -371,6 +308,6 @@
  "sort_field": "modified",
  "sort_order": "DESC",
  "states": [],
- "title_field": "competitor_name",
+ "title_field": "government_name",
  "track_changes": 1
 }

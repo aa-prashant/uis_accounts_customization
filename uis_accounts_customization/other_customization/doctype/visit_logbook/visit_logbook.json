@@ -1,0 +1,294 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "autoname": "VISIT.######",
+ "creation": "2024-09-24 10:36:05.642623",
+ "default_view": "List",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "visit_details_section",
+  "column_break_nbixc",
+  "type",
+  "orgnization_type",
+  "contact_person",
+  "column_break_caiw",
+  "purpose",
+  "orgnization_name",
+  "start_time",
+  "end_time",
+  "employee_details_section",
+  "employee_details",
+  "text_of_the_visit_section",
+  "text_of_the_visit",
+  "visit_evaluation",
+  "amended_from",
+  "section_break_dhtd",
+  "trip_request",
+  "section_break_jpof",
+  "address",
+  "nationality",
+  "division",
+  "department",
+  "designation",
+  "country",
+  "city",
+  "google_map_link",
+  "phone",
+  "email",
+  "section_break_nrgs",
+  "reference_type",
+  "column_break_uqbk",
+  "reference_name"
+ ],
+ "fields": [
+  {
+   "fieldname": "visit_details_section",
+   "fieldtype": "Section Break",
+   "label": "Visit Details"
+  },
+  {
+   "fieldname": "amended_from",
+   "fieldtype": "Link",
+   "label": "Amended From",
+   "no_copy": 1,
+   "options": "Visit Logbook",
+   "print_hide": 1,
+   "read_only": 1,
+   "search_index": 1
+  },
+  {
+   "fieldname": "column_break_nbixc",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "orgnization_type",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Orgnization Type",
+   "options": "Customer\nLead\nCompetitors\nGovernment\nSupplier\nBank Funds",
+   "reqd": 1
+  },
+  {
+   "fieldname": "orgnization_name",
+   "fieldtype": "Dynamic Link",
+   "in_list_view": 1,
+   "label": "Orgnization Name",
+   "options": "orgnization_type"
+  },
+  {
+   "fieldname": "contact_person",
+   "fieldtype": "Link",
+   "label": "Contact Person",
+   "options": "Contact"
+  },
+  {
+   "fieldname": "text_of_the_visit_section",
+   "fieldtype": "Section Break",
+   "label": "Visit Result"
+  },
+  {
+   "fieldname": "text_of_the_visit",
+   "fieldtype": "Text Editor",
+   "label": "Description"
+  },
+  {
+   "bold": 1,
+   "fetch_from": "address.custom_google_map_link",
+   "fieldname": "google_map_link",
+   "fieldtype": "Data",
+   "label": "Google Map Link",
+   "read_only": 1
+  },
+  {
+   "fieldname": "purpose",
+   "fieldtype": "Table MultiSelect",
+   "label": "Purpose",
+   "options": "Visit Purpose Child"
+  },
+  {
+   "bold": 1,
+   "fetch_from": "contact_person.mobile_no",
+   "fieldname": "phone",
+   "fieldtype": "Read Only",
+   "label": "Mobile",
+   "read_only": 1
+  },
+  {
+   "bold": 1,
+   "fetch_from": "contact_person.email_id",
+   "fieldname": "email",
+   "fieldtype": "Read Only",
+   "label": "Email",
+   "read_only": 1
+  },
+  {
+   "fieldname": "reference_type",
+   "fieldtype": "Link",
+   "label": "Reference Type",
+   "options": "DocType"
+  },
+  {
+   "fieldname": "reference_name",
+   "fieldtype": "Dynamic Link",
+   "label": "Reference Name",
+   "options": "reference_type"
+  },
+  {
+   "fieldname": "employee_details_section",
+   "fieldtype": "Section Break",
+   "label": "Employee Details"
+  },
+  {
+   "fieldname": "employee_details",
+   "fieldtype": "Table",
+   "options": "Visit Employee Detail"
+  },
+  {
+   "fetch_from": "contact_person.address",
+   "fieldname": "address",
+   "fieldtype": "Link",
+   "label": "Address",
+   "options": "Address"
+  },
+  {
+   "bold": 1,
+   "fetch_from": "address.country",
+   "fieldname": "country",
+   "fieldtype": "Link",
+   "label": "Country",
+   "options": "Country",
+   "read_only": 1
+  },
+  {
+   "bold": 1,
+   "fetch_from": "address.custom_custom_city",
+   "fieldname": "city",
+   "fieldtype": "Link",
+   "label": "City",
+   "options": "City",
+   "read_only": 1
+  },
+  {
+   "bold": 1,
+   "fetch_from": "contact_person.designation",
+   "fieldname": "designation",
+   "fieldtype": "Data",
+   "label": "Designation",
+   "read_only": 1
+  },
+  {
+   "collapsible": 1,
+   "fieldname": "section_break_nrgs",
+   "fieldtype": "Section Break",
+   "label": "Reference Documents"
+  },
+  {
+   "fieldname": "column_break_uqbk",
+   "fieldtype": "Column Break"
+  },
+  {
+   "bold": 1,
+   "fetch_from": "contact_person.department",
+   "fieldname": "department",
+   "fieldtype": "Data",
+   "label": "Department",
+   "options": "Contact",
+   "read_only": 1
+  },
+  {
+   "default": "Today",
+   "fieldname": "start_time",
+   "fieldtype": "Datetime",
+   "in_list_view": 1,
+   "label": "Start Time",
+   "reqd": 1
+  },
+  {
+   "default": "Today",
+   "fieldname": "end_time",
+   "fieldtype": "Datetime",
+   "label": "End Time"
+  },
+  {
+   "fieldname": "type",
+   "fieldtype": "Table MultiSelect",
+   "label": "Type",
+   "options": "Visit Type Child"
+  },
+  {
+   "bold": 1,
+   "fetch_from": "contact_person.custom_nationality",
+   "fieldname": "nationality",
+   "fieldtype": "Link",
+   "label": "Nationality",
+   "options": "Country",
+   "read_only": 1
+  },
+  {
+   "bold": 1,
+   "fieldname": "visit_evaluation",
+   "fieldtype": "Select",
+   "label": "Visit Evaluation",
+   "options": "\n- Succeed tangible result\n- Moderate - Follow up\n- Failed",
+   "reqd": 1
+  },
+  {
+   "bold": 1,
+   "fetch_from": "contact_person.custom_division",
+   "fieldname": "division",
+   "fieldtype": "Data",
+   "label": "Division",
+   "options": "Contact",
+   "read_only": 1
+  },
+  {
+   "collapsible": 1,
+   "fieldname": "section_break_jpof",
+   "fieldtype": "Section Break",
+   "label": "Contact Person Details"
+  },
+  {
+   "fieldname": "section_break_dhtd",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "trip_request",
+   "fieldtype": "Link",
+   "label": "Trip Request",
+   "options": "Trip Request"
+  },
+  {
+   "fieldname": "column_break_caiw",
+   "fieldtype": "Column Break"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "is_submittable": 1,
+ "links": [],
+ "modified": "2025-08-07 17:33:09.068739",
+ "modified_by": "Administrator",
+ "module": "Other Customization",
+ "name": "Visit Logbook",
+ "naming_rule": "By script",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "row_format": "Dynamic",
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}

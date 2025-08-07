@@ -1,0 +1,32 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2025-08-01 08:02:31.494392",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "visit_purpose_child"
+ ],
+ "fields": [
+  {
+   "fieldname": "visit_purpose_child",
+   "fieldtype": "Link",
+   "label": "Visit Purpose",
+   "options": "Visit Purpose"
+  }
+ ],
+ "grid_page_length": 50,
+ "index_web_pages_for_search": 1,
+ "istable": 1,
+ "links": [],
+ "modified": "2025-08-01 08:03:19.215094",
+ "modified_by": "Administrator",
+ "module": "Other Customization",
+ "name": "Visit Purpose Child",
+ "owner": "Administrator",
+ "permissions": [],
+ "row_format": "Dynamic",
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}

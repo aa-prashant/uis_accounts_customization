@@ -1,7 +1,7 @@
 {
  "actions": [],
  "allow_rename": 1,
- "autoname": "Letter.######",
+ "autoname": "LT.-.YY.-.MM.-.###",
  "creation": "2024-09-29 12:18:03.453386",
  "default_view": "List",
  "doctype": "DocType",
@@ -111,15 +111,14 @@
   },
   {
    "fieldname": "description",
-   "fieldtype": "Small Text",
+   "fieldtype": "Text Editor",
    "label": "Description"
   },
   {
    "fieldname": "attestation",
    "fieldtype": "Table MultiSelect",
    "label": "Attestation",
-   "options": "Attestation Child",
-   "reqd": 1
+   "options": "Attestation Child"
   },
   {
    "fieldname": "attachment",
@@ -150,21 +149,20 @@
   },
   {
    "fieldname": "description_arabic",
-   "fieldtype": "Small Text",
+   "fieldtype": "Text Editor",
    "label": "Description (In Arabic)"
   },
   {
    "fieldname": "subject_in_arabic",
    "fieldtype": "Data",
-   "label": "Subject (In Arabic)",
-   "reqd": 1
+   "label": "Subject (In Arabic)"
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2025-07-30 21:54:53.443540",
+ "modified": "2025-08-01 02:16:43.942043",
  "modified_by": "Administrator",
  "module": "Other Customization",
  "name": "Letters",

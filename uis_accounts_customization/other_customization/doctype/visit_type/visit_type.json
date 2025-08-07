@@ -15,13 +15,12 @@
    "fieldtype": "Data",
    "in_list_view": 1,
    "label": "Visit Type",
-   "reqd": 1,
    "unique": 1
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-10-02 12:10:29.566103",
+ "modified": "2025-08-01 07:54:37.973642",
  "modified_by": "Administrator",
  "module": "Other Customization",
  "name": "Visit Type",
@@ -42,6 +41,7 @@
   }
  ],
  "quick_entry": 1,
+ "row_format": "Dynamic",
  "sort_field": "modified",
  "sort_order": "DESC",
  "states": []

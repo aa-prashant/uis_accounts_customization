@@ -1,0 +1,32 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2025-08-01 08:01:04.654440",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "visit_type_child"
+ ],
+ "fields": [
+  {
+   "fieldname": "visit_type_child",
+   "fieldtype": "Link",
+   "label": "Visit Type",
+   "options": "Visit Type"
+  }
+ ],
+ "grid_page_length": 50,
+ "index_web_pages_for_search": 1,
+ "istable": 1,
+ "links": [],
+ "modified": "2025-08-01 08:01:54.943486",
+ "modified_by": "Administrator",
+ "module": "Other Customization",
+ "name": "Visit Type Child",
+ "owner": "Administrator",
+ "permissions": [],
+ "row_format": "Dynamic",
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}

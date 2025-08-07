@@ -1,0 +1,32 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2025-08-01 08:04:05.810038",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "subject_of_visit_child"
+ ],
+ "fields": [
+  {
+   "fieldname": "subject_of_visit_child",
+   "fieldtype": "Link",
+   "label": "Subject of Visit Child",
+   "options": "Subject of Visit"
+  }
+ ],
+ "grid_page_length": 50,
+ "index_web_pages_for_search": 1,
+ "istable": 1,
+ "links": [],
+ "modified": "2025-08-01 08:04:46.882924",
+ "modified_by": "Administrator",
+ "module": "Other Customization",
+ "name": "Subject of Visit Child",
+ "owner": "Administrator",
+ "permissions": [],
+ "row_format": "Dynamic",
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}

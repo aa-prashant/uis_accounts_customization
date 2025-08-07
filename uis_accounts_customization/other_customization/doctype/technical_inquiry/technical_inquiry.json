@@ -1,19 +1,18 @@
 {
  "actions": [],
  "allow_rename": 1,
- "autoname": "RFQ.-.#####",
+ "autoname": "TINQ.-.YY.-.MM.-.####",
  "creation": "2024-09-16 16:00:56.621537",
  "doctype": "DocType",
  "engine": "InnoDB",
  "field_order": [
-  "section_break_rdwc",
   "opportunity",
-  "column_break_vkjd",
+  "service_type",
   "to",
   "uis_branch",
-  "status",
   "reason",
   "subcontracting",
+  "result",
   "rfq_details_section",
   "rfq_details",
   "technical_reply_section",
@@ -21,15 +20,6 @@
   "amended_from"
  ],
  "fields": [
-  {
-   "fieldname": "section_break_rdwc",
-   "fieldtype": "Section Break",
-   "label": "Technical Inquiry"
-  },
-  {
-   "fieldname": "column_break_vkjd",
-   "fieldtype": "Column Break"
-  },
   {
    "fieldname": "rfq_details_section",
    "fieldtype": "Section Break",
@@ -39,8 +29,7 @@
    "fieldname": "rfq_details",
    "fieldtype": "Text Editor",
    "in_list_view": 1,
-   "label": "Description",
-   "reqd": 1
+   "label": "Description"
   },
   {
    "fieldname": "technical_reply_section",
@@ -50,21 +39,20 @@
   {
    "fieldname": "technical_reply",
    "fieldtype": "Text Editor",
-   "label": "Technical Reply"
+   "label": "Description"
   },
   {
    "fieldname": "to",
    "fieldtype": "Link",
    "label": "To",
-   "options": "Department",
-   "reqd": 1
+   "options": "Department"
   },
   {
    "fieldname": "amended_from",
    "fieldtype": "Link",
    "label": "Amended From",
    "no_copy": 1,
-   "options": "technical inquiry",
+   "options": "Technical Inquiry",
    "print_hide": 1,
    "read_only": 1,
    "search_index": 1
@@ -73,14 +61,7 @@
    "fieldname": "uis_branch",
    "fieldtype": "Link",
    "label": "UIS Branch",
-   "options": "Branch",
-   "reqd": 1
-  },
-  {
-   "fieldname": "status",
-   "fieldtype": "Select",
-   "label": "Status",
-   "options": "Accept\nDecline"
+   "options": "Branch"
   },
   {
    "fieldname": "reason",
@@ -98,16 +79,33 @@
    "fieldname": "opportunity",
    "fieldtype": "Link",
    "label": "Opportunity",
-   "options": "Opportunity"
+   "options": "Opportunity",
+   "read_only": 1,
+   "reqd": 1,
+   "unique": 1
+  },
+  {
+   "fetch_from": "opportunity.custom_service_type",
+   "fieldname": "service_type",
+   "fieldtype": "Link",
+   "label": "Service Type",
+   "options": "Service Type",
+   "read_only": 1
+  },
+  {
+   "fieldname": "result",
+   "fieldtype": "Select",
+   "label": "Result",
+   "options": "\nAccept\nDecline"
   }
  ],
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2025-07-30 21:35:05.487449",
+ "modified": "2025-08-07 14:32:58.425769",
  "modified_by": "Administrator",
  "module": "Other Customization",
- "name": "technical inquiry",
+ "name": "Technical Inquiry",
  "naming_rule": "By script",
  "owner": "Administrator",
  "permissions": [
