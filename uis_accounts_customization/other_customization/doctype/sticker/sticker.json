@@ -6,7 +6,9 @@
  "engine": "InnoDB",
  "field_order": [
   "section_break_t8fa",
-  "sticker_no"
+  "sticker_no",
+  "column_break_etuw",
+  "status"
  ],
  "fields": [
   {
@@ -18,12 +20,33 @@
    "fieldtype": "Data",
    "label": "Sticker No.",
    "unique": 1
+  },
+  {
+   "default": "Unassigned",
+   "fieldname": "status",
+   "fieldtype": "Select",
+   "label": "Status",
+   "options": "\nUnassigned\nAssigned",
+   "read_only": 1
+  },
+  {
+   "fieldname": "column_break_etuw",
+   "fieldtype": "Column Break"
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
- "links": [],
- "modified": "2025-07-31 02:44:26.262162",
+ "links": [
+  {
+   "link_doctype": "Certificate",
+   "link_fieldname": "sticker_no"
+  },
+  {
+   "link_doctype": "Certificate Register",
+   "link_fieldname": "sticker_no"
+  }
+ ],
+ "modified": "2025-08-08 12:57:40.226308",
  "modified_by": "Administrator",
  "module": "Other Customization",
  "name": "Sticker",
@@ -46,5 +69,14 @@
  "row_format": "Dynamic",
  "sort_field": "modified",
  "sort_order": "DESC",
- "states": []
+ "states": [
+  {
+   "color": "Blue",
+   "title": "Unassigned"
+  },
+  {
+   "color": "Green",
+   "title": "Assigned"
+  }
+ ]
 }

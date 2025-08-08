@@ -6,7 +6,9 @@
  "doctype": "DocType",
  "engine": "InnoDB",
  "field_order": [
-  "hologram_no"
+  "hologram_no",
+  "column_break_nndh",
+  "status"
  ],
  "fields": [
   {
@@ -14,12 +16,33 @@
    "fieldtype": "Data",
    "label": "Hologram No.",
    "unique": 1
+  },
+  {
+   "fieldname": "column_break_nndh",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "Unassigned",
+   "fieldname": "status",
+   "fieldtype": "Select",
+   "label": "Status",
+   "options": "\nUnassigned\nAssigned",
+   "read_only": 1
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
- "links": [],
- "modified": "2025-07-31 02:52:02.318932",
+ "links": [
+  {
+   "link_doctype": "Certificate",
+   "link_fieldname": "hologram_no"
+  },
+  {
+   "link_doctype": "Certificate Register",
+   "link_fieldname": "hologram_no"
+  }
+ ],
+ "modified": "2025-08-08 12:57:04.505089",
  "modified_by": "Administrator",
  "module": "Other Customization",
  "name": "Hologram",
@@ -42,5 +65,14 @@
  "row_format": "Dynamic",
  "sort_field": "modified",
  "sort_order": "DESC",
- "states": []
+ "states": [
+  {
+   "color": "Blue",
+   "title": "Unassigned"
+  },
+  {
+   "color": "Green",
+   "title": "Assigned"
+  }
+ ]
 }
