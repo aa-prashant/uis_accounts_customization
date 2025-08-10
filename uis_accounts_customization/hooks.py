@@ -62,7 +62,7 @@ app_include_js = "uis_accounts_customization.bundle.js"
 doctype_js = {
     "Purchase Invoice" : "customization_js/purchase_invoice.js",
     "Item Group":"customization_js/item_group.js",
-    "Address":"customization_js/address.js",
+    "Address":"overrides/doctype/address/address.js",
     "Lead":"customization_js/lead.js",
     "Journal Entry":"customization_js/journal_entry.js",
     "Sales Invoice":"customization_js/sales_invoice.js",
