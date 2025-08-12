@@ -182,6 +182,9 @@ doc_events = {
     "*":{
         "validate": "uis_accounts_customization.customization_script.handler.validate",
     },
+    "Address": {
+        "before_save":"uis_accounts_customization.overrides.doctype.address.address.set_address_lines"
+    },
     # "Cost Center" : {
     #     "after_insert":"uis_accounts_customization.customization_script.cost_center.db_insert",
     # },

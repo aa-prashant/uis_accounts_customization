@@ -57,3 +57,17 @@ def extract_lat_lng_from_maps_url(url: str) -> str:
 
     # Return as-is (client already converts to GeoJSON and handles swap if needed)
     return json.dumps({"ok": True, "lat": lat, "lng": lng})
+
+def set_address_lines(doc, method):
+    if doc.custom_national_address_arabic:
+        lines = (doc.custom_national_address_arabic or "").splitlines()
+
+        first_line = ""
+        if len(lines) > 0:
+            first_line = lines[0].strip()
+        doc.address_line1 = first_line[:240]
+
+        second_line = ""
+        if len(lines) > 1:
+            second_line = lines[1].strip()
+        doc.address_line2 = second_line[:240]
