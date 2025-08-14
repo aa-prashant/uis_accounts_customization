@@ -71,3 +71,7 @@ def set_address_lines(doc, method):
         if len(lines) > 1:
             second_line = lines[1].strip()
         doc.address_line2 = second_line[:240]
+
+def set_address_title(doc, method):
+    if doc.links:
+        doc.address_title = doc.links[0].link_title
