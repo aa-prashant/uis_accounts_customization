@@ -1,5 +1,6 @@
 import frappe
 import json
+import re  # used by translated-doctype branch in search_widget
 
 from frappe.utils import cint, cstr
 from frappe.database.schema import SPECIAL_CHAR_PATTERN
@@ -21,6 +22,133 @@ def sanitize_searchfield(searchfield: str):
         frappe.throw(_("Invalid Search Field {0}").format(searchfield), frappe.DataError)
 
 
+# ------------------------ helpers ------------------------
+
+def _safe_json(val):
+    if isinstance(val, str):
+        try:
+            return json.loads(val)
+        except Exception:
+            return None
+    return val
+
+
+def _normalize_null_filters(val):
+    """
+    Convert [..., '=', None] -> [..., 'is', 'not set']
+            [..., '!=', None] -> [..., 'is', 'set']
+    Handles 3-tuple and 4-tuple filter rows.
+    """
+    if not isinstance(val, list):
+        return val
+    out = []
+    i = 0
+    n = len(val)
+    while i < n:
+        row = val[i]
+        if isinstance(row, (list, tuple)):
+            ln = len(row)
+            if ln == 4:
+                dt, field, op, v = row
+                if v is None and op in ("=", "!="):
+                    if op == "=":
+                        out.append([dt, field, "is", "not set"])
+                    else:
+                        out.append([dt, field, "is", "set"])
+                else:
+                    out.append([dt, field, op, v])
+            elif ln == 3:
+                field, op, v = row
+                if v is None and op in ("=", "!="):
+                    if op == "=":
+                        out.append([field, "is", "not set"])
+                    else:
+                        out.append([field, "is", "set"])
+                else:
+                    out.append([field, op, v])
+            else:
+                out.append(list(row))
+        else:
+            out.append(row)
+        i = i + 1
+    return out
+
+
+def _extract_company_from_filters(parsed):
+    """Extract plain company from dict-or-list style filters."""
+    company_val = None
+    if isinstance(parsed, dict):
+        cv = parsed.get("company")
+        if isinstance(cv, list):
+            company_val = cv[-1] if len(cv) == 3 else (cv[1] if len(cv) >= 2 else None)
+        else:
+            company_val = cv
+    elif isinstance(parsed, list):
+        j = 0
+        m = len(parsed)
+        while j < m and not company_val:
+            row = parsed[j]
+            if isinstance(row, (list, tuple)):
+                if len(row) == 3 and row[0] == "company":
+                    company_val = row[2]
+                elif len(row) == 4 and row[1] == "company":
+                    company_val = row[3]
+            j = j + 1
+    return company_val
+
+
+def _extract_company_from_doc_payload():
+    """
+    For new Payment Entry (unsaved), company is on the posted doc JSON: doc.company.
+    Also works for child rows that carry parent info (parent/parenttype).
+    """
+    doc_json = frappe.form_dict.get("doc")
+    if not doc_json:
+        return None
+
+    try:
+        payload = json.loads(doc_json)
+    except Exception:
+        return None
+
+    if isinstance(payload, dict):
+        if payload.get("company"):
+            return payload.get("company")
+        if payload.get("parent") and payload.get("parenttype"):
+            try:
+                return frappe.db.get_value(payload.get("parenttype"), payload.get("parent"), "company")
+            except Exception:
+                return None
+    return None
+
+
+def _elog(title: str, data: dict):
+    """Safe error logger (compact JSON)."""
+    try:
+        msg = frappe.as_json(data, indent=None)
+        frappe.log_error(message=msg, title=title)
+    except Exception:
+        pass
+
+
+def _peek_rows(rows, limit=3):
+    """Return a tiny preview of result rows to avoid huge logs."""
+    if not isinstance(rows, list):
+        return None
+    out = []
+    i = 0
+    n = len(rows)
+    while i < n and i < limit:
+        try:
+            out.append(rows[i])
+        except Exception:
+            break
+        i = i + 1
+    return out
+
+
+# ------------------------ main API ------------------------
+
 @frappe.whitelist()
 def custom_search(
     doctype: str,
@@ -32,6 +160,7 @@ def custom_search(
     reference_doctype: str | None = None,
     ignore_user_permissions: bool = False,
 ):
+    # A) Customer/Supplier for Sales Order / Quotation / Purchase Order (your existing behavior)
     if (
         doctype in ["Customer", "Supplier"]
         and reference_doctype in ["Sales Order", "Quotation", "Purchase Order"]
@@ -41,19 +170,15 @@ def custom_search(
 
         if reference_doctype in ["Sales Order", "Purchase Order"]:
             company_name = filters["company"][-1]
+            filters = [["Party Account", "company", "=", company_name]]
 
-            filters = [
-                    ["Party Account", "company", "=", company_name]
-            ]
         elif reference_doctype == "Quotation":
             company_val = filters.get("company")
             if isinstance(company_val, list):
-                # examples: ['=', 'UIS Group']  OR  ['company', '=', 'UIS Group']
                 if len(company_val) == 3:
                     company_val = company_val[-1]
                 else:
                     company_val = company_val[1]
-            # company_val is now the plain company string
             filters = [["Party Account", "company", "=", company_val]]
 
         results = search_widget(
@@ -66,20 +191,88 @@ def custom_search(
             reference_doctype=reference_doctype,
             ignore_user_permissions=ignore_user_permissions,
         )
-    else:
-        results = std_search_widget(
+        return build_for_autosuggest(results, doctype=doctype)
+
+    # B) Payment Entry → Customer/Supplier/Employee/Shareholder (with detailed logs)
+    if reference_doctype == "Payment Entry" and doctype in ["Customer", "Supplier", "Employee", "Shareholder"]:
+        # Log the incoming call
+        _elog("PE.enter", {
+            "doctype": doctype,
+            "txt": txt,
+            "query_in": query,
+            "filters_raw_type": type(filters).__name__ if filters is not None else "NoneType",
+            "filters_raw_preview": filters if isinstance(filters, str) else frappe.as_json(filters, indent=None),
+            "doc_json_present": bool(frappe.form_dict.get("doc")),
+        })
+
+        parsed = _safe_json(filters) if isinstance(filters, str) else filters
+
+        # company from filters; if missing, try doc.company
+        company_from_filters = _extract_company_from_filters(parsed)
+        company_from_doc = None if company_from_filters else _extract_company_from_doc_payload()
+        company_val = company_from_filters or company_from_doc
+
+        _elog("PE.company_extracted", {
+            "company_from_filters": company_from_filters,
+            "company_from_doc": company_from_doc,
+            "company_used": company_val,
+        })
+
+        pe_filters = []
+        if company_val:
+            if doctype in ["Customer", "Supplier"]:
+                # Multi-company mapping via Party Account
+                pe_filters.append(["Party Account", "company", "=", company_val])
+            else:
+                # Employee / Shareholder: direct company field
+                pe_filters.append([doctype, "company", "=", company_val])
+
+        _elog("PE.before_search", {
+            "doctype": doctype,
+            "query_used": None,  # we call our own search_widget, not a core query
+            "final_filters": pe_filters,
+            "page_length": page_length,
+        })
+
+        # Use our internal search so the filter is honored (skip any version-specific core queries)
+        results = search_widget(
             doctype,
             txt.strip(),
-            query,
+            None,
             searchfield=searchfield,
             page_length=page_length,
-            filters=filters,
+            filters=pe_filters,
             reference_doctype=reference_doctype,
             ignore_user_permissions=ignore_user_permissions,
         )
 
+        _elog("PE.after_search", {
+            "result_count": len(results) if isinstance(results, list) else None,
+            "result_peek": _peek_rows(results, limit=3),
+        })
+
+        return build_for_autosuggest(results, doctype=doctype)
+
+    # C) Default path — sanitize bad null comparisons first (fixes Sales Person traceback)
+    sanitized = filters
+    if isinstance(sanitized, str):
+        sanitized = _safe_json(sanitized)
+    sanitized = _normalize_null_filters(sanitized) if isinstance(sanitized, list) else sanitized
+
+    results = std_search_widget(
+        doctype,
+        txt.strip(),
+        query,
+        searchfield=searchfield,
+        page_length=page_length,
+        filters=sanitized,
+        reference_doctype=reference_doctype,
+        ignore_user_permissions=ignore_user_permissions,
+    )
     return build_for_autosuggest(results, doctype=doctype)
 
+
+# ------------------------ local search (unchanged) ------------------------
 
 @frappe.whitelist()
 def search_widget(

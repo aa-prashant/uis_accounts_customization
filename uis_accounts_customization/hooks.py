@@ -69,6 +69,8 @@ doctype_js = {
     "Lead":"customization_js/lead.js",
     "Journal Entry":"customization_js/journal_entry.js",
     "Sales Invoice":"customization_js/sales_invoice.js",
+    "Travel Request":"overrides/doctype/travel_request/travel_request.js",
+    "Payment Entry":"overrides/doctype/payment_entry/payment_entry.js",
 }
 # doctype_list_js = {"doctype" : "public/js/doctype_list.js"}
 # doctype_tree_js = {"doctype" : "public/js/doctype_tree.js"}
