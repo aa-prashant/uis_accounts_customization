@@ -1,4 +1,4 @@
-# Copyright (c) 2025, Actinoids-IO and Contributors
+# Copyright (c) 2026, Actinoids-IO and Contributors
 # See license.txt
 
 # import frappe

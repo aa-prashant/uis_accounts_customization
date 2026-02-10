@@ -37,9 +37,6 @@ fixtures = [
         ]
         ]
     },
-    {
-        "dt": "Document Naming Rule"
-    },
 ]
 
 
